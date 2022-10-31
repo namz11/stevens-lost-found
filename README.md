@@ -1,10 +1,9 @@
-# stevens-buy-sell
+# EzSplit 
 
 *NOTE: This project is part of CS-546 coursework at Stevens for Fall 2022*
 
-Today's shoppers like browsing fresh merchandise, shopping online, and making everyday purchases. We often had stuff that we didn't need but purchased nevertheless. Or perhaps we believed we'd need something but did not end up utilizing it. People like that may now sell their items online using our web application so that someone in need can purchase them. 
- 
-“Stevens - Buy and Sell” is a web application that connects individuals who want to either purchase or sell used or unused items. The stevens community may explore, acquire, and sell items on the website. Our goal is to have a large number of people from Stevens post their items on our website and sell them with ease.
+EzSplit aka EasySplit is an app for splitting expenses with your housemates, friends, family, colleagues or anybody else. It keeps track of your shared expenses and lets you add these expenses and split them amongst the group. EzSplit helps you manage, track and settle up group expenses.
+
 
 # members
 
