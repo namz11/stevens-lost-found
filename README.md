@@ -1,8 +1,8 @@
-# EzSplit 
+# Stevens - Lost & Found 
 
 *NOTE: This project is part of CS-546 coursework at Stevens for Fall 2022*
 
-EzSplit aka EasySplit is an app for splitting expenses with your housemates, friends, family, colleagues or anybody else. It keeps track of your shared expenses and lets you add these expenses and split them amongst the group. EzSplit helps you manage, track and settle up group expenses.
+The birth of this idea was during last tuesday’s CS546 lecture, when we found someone’s glasses in the classroom table. The idea is fairly simple; to be able to report a lost item or report items you found on campus. Somebody looses their duckcard, their phone, their laptop, or absolutely anything they should be able to list it on the web app and hopefully find it. We want to create a platform which can enable users to find their lost items easily without to stress about it too much! The ideal solution would be to send out a weekly or twice in a week email about the items found & lost on campus to all stevens students, faculty, staff etc as that could create more impact but we take that as a limitation and try to build a web app.
 
 
 # members
