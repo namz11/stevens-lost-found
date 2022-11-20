@@ -8,6 +8,7 @@ class User {
 		this.email = helpers.sanitizeString(obj.email);
 		this.phone = helpers.sanitizeString(obj.phone);
 		this.password = obj.password; // TODO encrypt pwd
+		this.isVerified = obj.isVerified || false;
 	}
 
 	deserialize(user) {
@@ -29,4 +30,4 @@ class User {
 	}
 }
 
-export { User };
+module.exports = { User };

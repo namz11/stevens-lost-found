@@ -26,4 +26,4 @@ class Comment {
 	}
 }
 
-export { Comment };
+module.exports = { Comment };

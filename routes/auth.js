@@ -1,6 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const path = require('path'); // can you for static files if needed
+const {
+	UserOTPVerification,
+} = require('../data/models/userOTPVerification.model');
+const { userVerificationDL, userDL } = require('../data');
+const { sendOTPVerificationEmail } = require('../utils/mailer');
 
 router
 	.route('/register')
@@ -40,5 +45,46 @@ router
 		// verify user
 		// redirect to listings
 	});
+
+router.route('/verify-user').post(async (req, res) => {
+	try {
+		const { userId, otp } = req.body;
+		// TODO validations
+		const verifications = await userVerificationDL.getUserVerificationByUserId(
+			userId
+		);
+		if (verifications.length > 0) {
+			const verification = verifications[0];
+			if (verification.expiresAt < Date.now()) {
+				await userVerificationDL.deleteMany(userId);
+				throw 'Code has expired. Try again';
+				// TODO send error to user
+			} else {
+				if (otp === verification.otp) {
+					const userObj = await userDL.verifyUser(userId);
+					// TODO store userObj in localstorage
+					await userVerificationDL.deleteMany(userId); // delete verification data after success
+					// TODO send success to user
+				} else {
+					throw 'Invalid code. Check your inbox';
+					// TODO send error to user
+				}
+			}
+		}
+	} catch (error) {
+		// TODO send error to user
+	}
+});
+
+router.route('/resend-otp').post(async (req, res) => {
+	try {
+		const { userId, email } = req.body;
+		// TODO validations
+		await userVerificationDL.deleteMany(userId);
+		sendOTPVerificationEmail({ userId, email }, res);
+	} catch (error) {
+		// TODO send error to user
+	}
+});
 
 module.exports = router;
