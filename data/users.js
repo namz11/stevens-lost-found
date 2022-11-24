@@ -1,6 +1,6 @@
 const { ObjectId } = require('mongodb');
 const { helpers } = require('../utils/helpers');
-const { User } = require('./models/users.model');
+const { User } = require('./models/user.model');
 const { usersCollection } = require('../config/mongoCollections');
 
 const getUserById = async (id) => {
