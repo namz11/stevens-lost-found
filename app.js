@@ -17,11 +17,11 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(flash());
 app.use(
-    session({
-        secret: "secret",
-        resave: false,
-        saveUninitialized: false,
-    })
+  session({
+    secret: "secret",
+    resave: false,
+    saveUninitialized: false,
+  })
 );
 
 app.use(passport.initialize());
@@ -34,6 +34,6 @@ app.set("view engine", "handlebars");
 configRoutes(app);
 
 app.listen(3000, () => {
-    console.log("We've now got a server!");
-    console.log("Your routes will be running on http://localhost:3000");
+  console.log("We've now got a server!");
+  console.log("Your routes will be running on http://localhost:3000");
 });
