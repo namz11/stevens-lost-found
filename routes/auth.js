@@ -6,12 +6,13 @@ const {
 } = require("../data/models/userOTPVerification.model");
 const { userVerificationDL, userDL } = require("../data");
 const { sendOTPVerificationEmail } = require("../utils/mailer");
-const dataFunctions = require("../data/users");
+const data = require("../data");
+const dataFunctions = data.userDL;
 const bcrypt = require("bcryptjs");
 const passport = require("passport");
 const LocalStorage = require("node-localstorage").LocalStorage;
 var localStorage = new LocalStorage("./scratch");
-const initializePassport = require("../config/passport");
+const initializePassport = require("../utils/passport");
 const { usersCollection } = require("../config/mongoCollections");
 
 //
