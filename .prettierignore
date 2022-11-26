@@ -1,0 +1,3 @@
+node_modules
+# adding this to ignore because prettier config remove the DOCTYPE tag
+views/layouts/main.handlebars
