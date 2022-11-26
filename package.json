@@ -1,26 +1,38 @@
 {
-	"name": "stevens-lost-found",
-	"version": "1.0.0",
-	"description": "This project is part of CS-546 coursework at Stevens for Fall 2022.",
-	"main": "app.js",
-	"scripts": {
-		"start": "node app.js"
-	},
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/namz11/stevens-lost-found.git"
-	},
-	"author": "",
-	"license": "MIT",
-	"bugs": {
-		"url": "https://github.com/namz11/stevens-lost-found/issues"
-	},
-	"homepage": "https://github.com/namz11/stevens-lost-found#readme",
-	"dependencies": {
-		"express": "^4.18.2",
-		"express-handlebars": "^6.0.6",
-		"lodash": "^4.17.21",
-		"mongodb": "^4.11.0",
-		"nodemailer": "^6.8.0"
-	}
+    "name": "stevens-lost-found",
+    "version": "1.0.0",
+    "description": "This project is part of CS-546 coursework at Stevens for Fall 2022.",
+    "main": "app.js",
+    "scripts": {
+        "start": "node app.js",
+        "devStart": "nodemon app.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/namz11/stevens-lost-found.git"
+    },
+    "author": "",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/namz11/stevens-lost-found/issues"
+    },
+    "homepage": "https://github.com/namz11/stevens-lost-found#readme",
+    "dependencies": {
+        "bcrypt": "^5.1.0",
+        "bcryptjs": "^2.4.3",
+        "express": "^4.18.2",
+        "express-flash": "^0.0.2",
+        "express-handlebars": "^6.0.6",
+        "express-session": "^1.17.3",
+        "lodash": "^4.17.21",
+        "method-override": "^3.0.0",
+        "mongodb": "^4.11.0",
+        "node-localstorage": "^2.2.1",
+        "nodemailer": "^6.8.0",
+        "passport": "^0.6.0",
+        "passport-local": "^1.0.0"
+    },
+    "devDependencies": {
+        "nodemon": "^2.0.20"
+    }
 }

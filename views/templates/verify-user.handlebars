@@ -1,0 +1,24 @@
+<h1>Verify User</h1>
+
+<form id="verify" action="/auth/verify-user" method="post">
+    {{!-- <div>
+        <label for="email">Email: </label>
+        <input type="email" id="email" name="email" placeholder="Enter Email">
+    </div> --}}
+    <div>
+        <label for="OTP">OTP: </label>
+        <input type="number" id="OTP" name="OTP" placeholder="Enter OTP">
+    </div>
+    <br>
+    <button type="submit" value="Submit">Submit</button>
+    <div>
+        {{#if messages.error}}
+        <p>{{messages.error}}</p>
+        {{/if}}
+    </div>
+</form>
+
+<br>
+<br>
+
+<a href="/auth/register">Resend OTP</a>
