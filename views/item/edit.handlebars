@@ -1,0 +1,107 @@
+<article>
+  <h1>
+    Edit Item
+  </h1>
+
+  <form action="{{action}}" method="POST" id="editItemForm">
+    You can edit the below details of
+    {{item.type}}
+    item.
+
+    <div id="editSecondaryItemForm">
+      <div>
+        <label for="itemName">
+          Name
+          <input
+            id="itemName"
+            type="text"
+            name="name"
+            value="{{item.name}}"
+            placeholder="Name..."
+            required
+          />
+        </label>
+      </div>
+
+      <div>
+        <label for="itemDescription">
+          Description
+          <input
+            id="itemDescription"
+            type="text"
+            name="description"
+            placeholder="Describe the item..."
+            value="{{item.description}}"
+            required
+          />
+        </label>
+      </div>
+
+      <div>
+        <label for="itemLostOrFoundLocation">
+          {{#compare item.type "lost" operator="==="}}
+            Where did you lose the item?
+          {{/compare}}
+          {{#compare item.type "found" operator="==="}}
+            Where did you find the item?
+          {{/compare}}
+          <input
+            id="itemLostOrFoundLocation"
+            type="text"
+            name="lostOrFoundLocation"
+            placeholder="Location..."
+            value="{{item.lostOrFoundLocation}}"
+            required
+          />
+        </label>
+      </div>
+
+      <div>
+        <label for="itemDateLostOrFound">
+          {{#compare item.type "lost" operator="==="}}
+            When did you lose the item?
+          {{/compare}}
+          {{#compare item.type "found" operator="==="}}
+            When did you find the item?
+          {{/compare}}
+          <input
+            id="itemDateLostOrFound"
+            type="datetime-local"
+            name="dateLostOrFound"
+            placeholder="Approx date time..."
+            value="{{item.dateLostOrFound}}"
+            min="{{metaData.dateLostOrFound.min}}"
+            max="{{metaData.dateLostOrFound.max}}"
+            required
+          />
+        </label>
+      </div>
+
+      <div>
+        <label for="itemPicture">
+          <input
+            id="itemPicture"
+            type="file"
+            name="picture"
+            placeholder="Upload a picture..."
+            accept="image/jpeg, image/png, image/jpg"
+            value="{{item.picture}}"
+          />
+        </label>
+      </div>
+
+      <div id="itemDisplayPicture"></div>
+
+      {{!-- <input name="_method" value="PUT" hidden /> --}}
+
+      <button type="submit" formenctype="multipart/form-data">
+        Edit Item
+      </button>
+
+    <ul id="editItemErrors" class="hide">
+
+    </div>
+  </form>
+</article>
+<script src="/public/js/itemEdit.js" type="module"></script>
+<link rel="stylesheet" href="/public/css/item-form-styles.css" />

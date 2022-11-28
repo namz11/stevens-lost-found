@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node app.js",
     "devStart": "nodemon app.js",
+    "setup": "mkdir -p uploads",
     "prepare": "husky install"
   },
   "repository": {
@@ -31,7 +32,8 @@
     "node-localstorage": "^2.2.1",
     "nodemailer": "^6.8.0",
     "passport": "^0.6.0",
-    "passport-local": "^1.0.0"
+    "passport-local": "^1.0.0",
+    "multer": "^1.4.5-lts.1"
   },
   "devDependencies": {
     "husky": "^7.0.0",
