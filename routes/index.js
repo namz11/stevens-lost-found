@@ -13,6 +13,13 @@ const constructorMethod = (app) => {
   app.use("*", (req, res) => {
     res.status(404).sendFile(path.resolve("static/404.html"));
   });
+
+  app.use(() => (err, req, res, next) => {
+    console.log("narmit");
+    if (err instanceof multer.MulterError) {
+      return res.status(418).send(err.code);
+    }
+  });
 };
 
 module.exports = constructorMethod;

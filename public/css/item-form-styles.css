@@ -1,0 +1,18 @@
+#itemForm div,
+#editItemForm div {
+  padding: 15px 10px 0px;
+}
+
+#itemForm button,
+#editItemForm button {
+  margin: 20px 0px;
+  padding: 4px 10px;
+}
+
+#itemDisplayPicture {
+  width: 400px;
+  height: 225px;
+  border: 1px solid black;
+  background-position: center;
+  background-size: cover;
+}
