@@ -21,6 +21,7 @@ class Comment {
   serialize(comment) {
     return {
       ...comment,
+      _id: new ObjectId(comment?._id),
       createdBy: new ObjectId(comment?.createdBy),
     };
   }

@@ -2,8 +2,6 @@ const { ObjectId } = require("mongodb");
 const { helpers } = require("../utils/helpers");
 const { User } = require("./models/user.model");
 const { usersCollection } = require("../config/mongoCollections");
-const mongoCollections = require("../config/mongoCollections");
-const auth = mongoCollections.usersCollection;
 
 const getUserById = async (id) => {
   // TODO validations
@@ -37,7 +35,7 @@ const enterUser = async (firstName, lastName, email, phoneNumber, password) => {
     password: password,
   };
 
-  const authCollection = await auth();
+  const authCollection = await usersCollection();
   const inUser = await authCollection.insertOne(newUser);
   if (!inUser.acknowledged || !inUser.insertedId) {
     console.log("Cannot add User");
