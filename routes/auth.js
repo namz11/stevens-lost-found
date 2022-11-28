@@ -14,13 +14,9 @@ var localStorage = new LocalStorage("./scratch");
 const initializePassport = require("../utils/passport");
 const { usersCollection } = require("../config/mongoCollections");
 
-//
-//
 initializePassport(passport, (email) =>
   users.find((user) => user.email === email)
 );
-//
-//
 
 router.route("/").get(checkAuthenticated, async (req, res) => {
   try {
@@ -30,25 +26,6 @@ router.route("/").get(checkAuthenticated, async (req, res) => {
     console.log("Error");
   }
 });
-
-// router
-//     .route("/register")
-//     .get(async(req, res) => {
-//         // renders register page
-//     })
-//     .post(async(req, res) => {
-//         // create user
-//     });
-
-// router
-//     .route("/login")
-//     .get(async(req, res) => {
-//         // renders login page
-//     })
-//     .post(async(req, res) => {
-//         // login user
-//         // after successful login go to listings
-//     });
 
 router
   .route("/register")
@@ -103,10 +80,14 @@ router
 
 router
   .route("/verify")
-  .get(async (req, res) => {})
+  .get(async (req, res) => {
+    // renders page where user can enter otp
+    res.send("NOT IMPLEMENTED");
+  })
   .post(async (req, res) => {
     // verify user
     // redirect to listings
+    res.send("NOT IMPLEMENTED");
   });
 
 router.route("/verify-user").get(async (req, res) => {});
