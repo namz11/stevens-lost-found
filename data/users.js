@@ -1,23 +1,26 @@
 const { ObjectId } = require("mongodb");
-const { helpers } = require("../utils/helpers");
+const { helpers, checkId } = require("../utils/helpers");
 const { User } = require("./models/user.model");
 const { usersCollection } = require("../config/mongoCollections");
 
-const getUserById = async (id) => {
-  // TODO validations
+const getUserById = async (userId) => {
+  userId = checkId(userId, "User ID");
+
   const usersDB = await usersCollection();
-  const user = await usersDB.findOne({ _id: ObjectId(id) });
+  const user = await usersDB.findOne({ _id: ObjectId(userId) });
   if (user === null) throw new Error("No user with that id");
 
   return new User().deserialize(user);
 };
 
 const verifyUser = async (userId) => {
-  // TODO validations
+  userId = checkId(userId, "User ID");
+  const userById = await getUserById(userId); // this will throw error if no user found
+
   const usersDB = await usersCollection();
   const updatedInfo = await usersDB.updateOne(
     { _id: ObjectId(userId) },
-    { isVerified: true }
+    { $set: { isVerified: true } }
   );
   if (updatedInfo.modifiedCount === 0) {
     throw "Could not verify user successfully";
@@ -31,7 +34,7 @@ const enterUser = async (firstName, lastName, email, phoneNumber, password) => {
     firstName: firstName,
     lastName: lastName,
     email: email,
-    phoneNumber: phoneNumber,
+    phone: phoneNumber,
     password: password,
   };
 
@@ -41,7 +44,8 @@ const enterUser = async (firstName, lastName, email, phoneNumber, password) => {
     console.log("Cannot add User");
   }
 
-  return true;
+  // return true;
+  return await getUserById(inUser.insertedId.toString());
 };
 
 module.exports = {

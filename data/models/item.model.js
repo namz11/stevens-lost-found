@@ -7,7 +7,7 @@ class Item {
     this.type = helpers.sanitizeString(obj?.type);
     this.name = helpers.sanitizeString(obj?.name);
     this.description = helpers.sanitizeString(obj?.description);
-    this.picture = helpers.sanitizeString(obj?.picture); // TODO unsure for now
+    this.picture = helpers.sanitizeString(obj?.picture);
     this.dateLostOrFound = new Date(obj?.dateLostOrFound).valueOf();
     this.lostOrFoundLocation = helpers.sanitizeString(obj?.lostOrFoundLocation);
 

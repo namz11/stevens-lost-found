@@ -1,5 +1,6 @@
 const nodemailer = require("nodemailer");
 const _ = require("lodash");
+const bcrypt = require("bcryptjs");
 const {
   UserOTPVerification,
 } = require("../data/models/userOTPVerification.model");
@@ -19,7 +20,7 @@ transporter.verify((error, success) => {
   }
 });
 
-const sendOTPVerificationEmail = async ({ userId, email }, res) => {
+const sendOTPVerificationEmail = async ({ userId, email, redirect }, res) => {
   try {
     const otp = _.random(1000, 9999);
 
@@ -27,21 +28,30 @@ const sendOTPVerificationEmail = async ({ userId, email }, res) => {
       from: "narmitmashruwala@gmail.com",
       to: email || "nmashruw@stevens.edu",
       subject: "Verify Your Email",
-      html: `<p>Enter <strong>${otp}</strong> in the app to verify your email address and complete registration to start using the application.</p><p>Note: This otp is valid only for 24h hours.</p>`,
+      html: `<p>Enter <strong>${otp}</strong> in the <a href='http://localhost:3000/auth/verify'>app</a> to verify your email address and complete registration to start using the application.</p><p>Note: This otp is valid only for 24h hours.</p>`,
     };
 
-    // TODO encrypt otp before saving
-    let verifyObj = new UserOTPVerification(userId, otp);
-    verifyObj = await userVerificationDL.createUserVerification(verifyObj);
+    let verifyObj = await userVerificationDL.createUserVerification({
+      userId,
+      otp,
+    });
 
     await transporter.sendMail(mailOptions);
-    return "Verification otp sent";
 
-    // TODO send success to user
+    if (redirect) {
+      return res.redirect("/auth/verify");
+    } else {
+      return res.json({
+        success: true,
+        message: "OTP is sent to your email",
+      });
+    }
   } catch (error) {
-    // TODO send error to user
     console.log(error);
-    return error;
+    return res.status(500).json({
+      success: false,
+      message: "Some error occurred. Try again.",
+    });
   }
 };
 

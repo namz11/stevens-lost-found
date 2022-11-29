@@ -100,6 +100,7 @@ const validations = {
     return date >= min && date <= now;
   },
   isLocationValid: (str) => helpers.isStringValid(str, 2),
+  isOTPValid: (otp) => +otp >= 1000 && +otp <= 9999,
 };
 
 module.exports = { helpers, regexValidators, validations, checkId };
