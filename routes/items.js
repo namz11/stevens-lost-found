@@ -81,7 +81,7 @@ router
     // edit item page
     let itemId;
     try {
-      id = checkId(req.params.id);
+      id = checkId(req.params.id, "Item ID");
     } catch (e) {
       return res.status(400).send(new Error(e.message));
     }
@@ -141,7 +141,7 @@ router
       }
 
       try {
-        itemId = checkId(req.params.id, "ID URL Param");
+        itemId = checkId(req.params.id, "Item ID");
 
         if (!validations.isNameValid(itemObj?.name)) {
           throw new Error("Name field needs to have valid value");

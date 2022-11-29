@@ -6,13 +6,12 @@ const {
 } = require("../data/models/userOTPVerification.model");
 const { userVerificationDL, userDL } = require("../data");
 const { sendOTPVerificationEmail } = require("../utils/mailer");
-const dataFunctions = require("../data/users");
 const bcrypt = require("bcryptjs");
 const passport = require("passport");
 const LocalStorage = require("node-localstorage").LocalStorage;
 var localStorage = new LocalStorage("./scratch");
 const initializePassport = require("../utils/passport");
-const { usersCollection } = require("../config/mongoCollections");
+const { checkId } = require("../utils/helpers");
 
 initializePassport(passport, (email) =>
   users.find((user) => user.email === email)
@@ -38,7 +37,7 @@ router
     try {
       const hashedPassword = await bcrypt.hash(req.body.password, 10);
 
-      const result = await dataFunctions.enterUser(
+      const result = await userDL.enterUser(
         req.body.firstName,
         req.body.lastName,
         req.body.email,
@@ -46,9 +45,13 @@ router
         hashedPassword
       );
 
-      console.log(result);
-      res.redirect("/auth/login");
-    } catch {
+      return sendOTPVerificationEmail(
+        { userId: result?._id, email: result?.email, redirect: true },
+        res
+      );
+      // res.redirect("/auth/verify");
+    } catch (e) {
+      console.log(e);
       res.redirect("/auth/register");
     }
   });
@@ -78,50 +81,95 @@ router
     // redirect to login
   });
 
+//#region user verify
 router
   .route("/verify")
   .get(async (req, res) => {
     // renders page where user can enter otp
-    res.send("NOT IMPLEMENTED");
+    return res.render("auth/verifyUser", {
+      title: "Verify User",
+    });
   })
   .post(async (req, res) => {
-    // verify user
-    // redirect to listings
-    res.send("NOT IMPLEMENTED");
-  });
+    let { userId, otp } = req.body;
 
-router.route("/verify-user").get(async (req, res) => {});
+    try {
+      userId = checkId(userId, "User ID");
+    } catch (e) {
+      console.log(e);
+      return res.status(400).send(new Error(e.message));
+    }
 
-router.route("/verify-user").post(async (req, res) => {
-  try {
-    const { userId, otp } = req.body;
-    // TODO validations
-    const verifications = await userVerificationDL.getUserVerificationByUserId(
-      userId
-    );
-    if (verifications.length > 0) {
-      const verification = verifications[0];
-      if (verification.expiresAt < Date.now()) {
-        await userVerificationDL.deleteMany(userId);
-        throw "Code has expired. Try again";
-        // TODO send error to user
-      } else {
-        if (otp === verification.otp) {
-          const userObj = await userDL.verifyUser(userId);
-          // TODO store userObj in localstorage
-          await userVerificationDL.deleteMany(userId); // delete verification data after success
-          // TODO send success to user
+    try {
+      const userById = await userDL.getUserById(userId);
+    } catch (e) {
+      console.log(e);
+      return res.status(404).send(new Error("User not found"));
+    }
+
+    try {
+      const verification = await userVerificationDL.getUserVerificationByUserId(
+        userId
+      );
+
+      if (verification) {
+        if (verification.expiresAt < Date.now()) {
+          await userVerificationDL.deleteMany(userId);
+          res.status(403).json({
+            success: false,
+            message: "Code has expired. Try again",
+          });
         } else {
-          throw "Invalid code. Check your inbox";
-          // TODO send error to user
+          const compare = await bcrypt.compare(otp, verification.otp);
+          if (compare) {
+            const userObj = await userDL.verifyUser(userId);
+            await userVerificationDL.deleteMany(userId); // delete verification data after success
+            res.json({
+              success: true,
+              message: "User verified",
+              data: userObj,
+            });
+          } else {
+            res.status(403).json({
+              success: false,
+              message: "Invalid code. Check your inbox",
+            });
+          }
         }
       }
+    } catch (e) {
+      console.log(e);
+      res.status(500).send(e);
     }
-  } catch (error) {
-    // TODO send error to user
+  });
+
+router.route("/resend-otp").post(async (req, res) => {
+  let { userId, email } = req.body;
+
+  try {
+    userId = checkId(userId, "User ID");
+  } catch (e) {
+    console.log(e);
+    return res.status(400).send(new Error(e.message));
+  }
+
+  try {
+    const userById = await userDL.getUserById(userId);
+  } catch (e) {
+    console.log(e);
+    return res.status(404).send(new Error("User not found"));
+  }
+
+  try {
+    await userVerificationDL.deleteMany(userId);
+    return sendOTPVerificationEmail({ userId, email }, res);
+  } catch (e) {
+    console.log(e);
+    return res.status(500).send(e);
   }
 });
 
+//#endregion
 router.route("/logout").delete(async (req, res) => {
   req.logout(function (err) {
     if (err) {
@@ -130,17 +178,6 @@ router.route("/logout").delete(async (req, res) => {
     res.redirect("/auth/login");
     localStorage.clear();
   });
-});
-
-router.route("/resend-otp").post(async (req, res) => {
-  try {
-    const { userId, email } = req.body;
-    // TODO validations
-    await userVerificationDL.deleteMany(userId);
-    sendOTPVerificationEmail({ userId, email }, res);
-  } catch (error) {
-    // TODO send error to user
-  }
 });
 
 function checkAuthenticated(req, res, next) {
