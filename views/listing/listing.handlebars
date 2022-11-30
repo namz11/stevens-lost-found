@@ -1,0 +1,89 @@
+{{! TODO Add More Details to the outer Modals }}
+{{! TODO Add User Details to the inner Modals }}
+
+<button id="modal-btn" class="button">Found Item</button>
+
+<div id="claim-modal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <span class="close">&times;</span>
+      <h2>Item Title Here</h2>
+    </div>
+    <div class="modal-body">
+      <p>Are you sure you have found this item?</p>
+      <button id="confirm-yes-btn" class="button">Yes</button>
+      <button id="confirm-no-btn" class="button">No</button>
+
+      <p>Once you click yes, a confirmation email will be sent to the OP and the
+        contact details of the OP will be shown.</p>
+    </div>
+    <div class="modal-footer">
+      <h3>Found Modal</h3>
+    </div>
+  </div>
+</div>
+
+<div id="claim-modal-inner" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <span class="close" id="close-btn2">&times;</span>
+      <h2>Item Title Here</h2>
+    </div>
+    <div class="modal-body">
+      <p>This is the modal where details of the user will be displayed</p>
+      <button id="close-btn2-flat" class="button">Close</button>
+
+      <p>Like Name, Email and other details associated with the item that is
+        lost or found</p>
+
+    </div>
+    <div class="modal-footer">
+      <h3>Confirmation Sent</h3>
+    </div>
+  </div>
+</div>
+
+<button id="modal-btn2" class="button">Claim Item</button>
+
+<div id="found-modal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <span id="close2" class="close">&times;</span>
+      <h2>Item Title Here</h2>
+    </div>
+    <div class="modal-body">
+      <p>Are you sure this item is yours?</p>
+      <button id="confirm-yes-btn-2" class="button">Yes</button>
+      <button id="confirm-no-btn-2" class="button">No</button>
+
+      <p>Once you click yes, a confirmation email will be sent to the OP and the
+        contact details of the OP will be shown.</p>
+    </div>
+    <div class="modal-footer">
+      <h3>Claim Modal</h3>
+    </div>
+  </div>
+</div>
+
+<div id="found-modal-inner" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <span class="close" id="close-btn4">&times;</span>
+      <h2>Item Title Here</h2>
+    </div>
+    <div class="modal-body">
+      <p>This is the modal where details of the user will be displayed</p>
+      <button id="close-btn4-flat" class="button">Close</button>
+
+      <p>Like Name, Email and other details associated with the item that is
+        lost or found</p>
+
+    </div>
+    <div class="modal-footer">
+      <h3>Confirmation Sent</h3>
+    </div>
+  </div>
+</div>
+
+<script src="/public/js/listings.js" type="module"></script>
+<link rel="stylesheet" href="/public/css/modal-style.css" />
