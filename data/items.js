@@ -7,7 +7,17 @@ const { usersCollection } = require("../config/mongoCollections");
 const userFunctions = require("./users");
 
 const getItemById = async (id) => {
-  // TODO
+  id = checkId(id, "Item ID");
+
+  if (!ObjectId.isValid(id)) throw "Invalid Object ID";
+
+  const itemDB = await itemsCollection();
+
+  const theItem = await itemDB.findOne({ _id: ObjectId(id) });
+
+  if (theItem === null) throw "No Item Found With The Provided Id";
+
+  return { ...theItem, _id: theItem._id.toString() };
 };
 
 const createItem = async (itemObj) => {
