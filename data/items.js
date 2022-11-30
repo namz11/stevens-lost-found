@@ -1,7 +1,10 @@
 const { ObjectId } = require("mongodb");
-const { helpers, validations } = require("../utils/helpers");
+const { helpers, validations, checkId } = require("../utils/helpers");
 const { Item } = require("./models/item.model");
 const { itemsCollection } = require("../config/mongoCollections");
+const { User } = require("./models/user.model");
+const { usersCollection } = require("../config/mongoCollections");
+const userFunctions = require("./users");
 
 const getItemById = async (id) => {
   // TODO
@@ -30,6 +33,29 @@ const createItem = async (itemObj) => {
 
   const added = { ...newItem, _id: insertInfo.insertedId.toString() };
   return new Item().deserialize(added);
+};
+
+const getItemsByUserId = async (userId) => {
+  userId = checkId(userId, "User ID");
+  const theUser = await userFunctions.getUserById(userId);
+  if (!theUser) {
+    throw "User with the given Id does not exist";
+  }
+  const itemDB = await itemsCollection();
+
+  const theItems = await itemDB.find({}).toArray();
+
+  let foundItem = false;
+  let allItemsWithThatId = {};
+  for (let i = 0; i < theItems.length; i++) {
+    const currentItem = theItems[i];
+    if (currentItem.createdBy.toString() === userId) {
+      foundItem = true;
+      allItemsWithThatId = currentItem;
+    }
+  }
+  if (!foundItem) throw "No Items Found With That Id";
+  return allItemsWithThatId;
 };
 
 const updateItem = async (id, itemObj) => {
