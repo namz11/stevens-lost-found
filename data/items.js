@@ -55,6 +55,10 @@ const getItemsByUserId = async (userId) => {
 
   const theItems = await itemDB.find({}).toArray();
 
+  // const theItems = await itemDB
+  //   .find({}, { projection: { createdBy: ObjectId(userId) } })
+  //   .toArray();
+
   let foundItem = false;
   let allItemsWithThatId = {};
   for (let i = 0; i < theItems.length; i++) {
@@ -66,6 +70,7 @@ const getItemsByUserId = async (userId) => {
   }
   if (!foundItem) throw "No Items Found With That Id";
   return allItemsWithThatId;
+  // return theItems;
 };
 
 const updateItem = async (id, itemObj) => {

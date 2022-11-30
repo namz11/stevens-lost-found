@@ -56,7 +56,7 @@ const sendOTPVerificationEmail = async ({ userId, email, redirect }, res) => {
 };
 
 const sendListingUpdateEmail = async (
-  { user, userId, userItem, actor, actorId, action },
+  { user, userId, userItem, actor, actorId, actorNumber, action },
   res
 ) => {
   try {
@@ -69,6 +69,7 @@ const sendListingUpdateEmail = async (
       <ul>
       <li>Name: ${actor}</li>
       <li>Email: <a href = "mailto: ${actorId}">${actorId}</a></li>
+      <li>Number: ${actorNumber}</li>
       <li>Has: ${action}</li>
       </ul>`,
     };
