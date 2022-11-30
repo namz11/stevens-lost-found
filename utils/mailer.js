@@ -55,6 +55,35 @@ const sendOTPVerificationEmail = async ({ userId, email, redirect }, res) => {
   }
 };
 
+const sendListingUpdateEmail = async (
+  { user, userId, userItem, actor, actorId, action },
+  res
+) => {
+  try {
+    const mailOptions = {
+      from: "narmitmashruwala@gmail.com",
+      to: userId,
+      subject: `<strong>Update</strong>: ${actor} has ${action} your item`,
+      html: `<p>Hi <strong>${user}</strong>, your <em>${userItem}</em> has been <strong>${action}</strong> by <em>${actor}</em>.</p> <br> 
+      <p>Here are the contact details of <em>${actor}</em>:</p><br> 
+      <ul>
+      <li>Name: ${actor}</li>
+      <li>Email: <a href = "mailto: ${actorId}">${actorId}</a></li>
+      <li>Has: ${action}</li>
+      </ul>`,
+    };
+
+    await transporter.sendMail(mailOptions);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      success: false,
+      message: "Please Try Again",
+    });
+  }
+};
+
 module.exports = {
   sendOTPVerificationEmail,
+  sendListingUpdateEmail,
 };
