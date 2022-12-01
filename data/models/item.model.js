@@ -4,16 +4,12 @@ const { Comment } = require("./comment.model");
 class Item {
   constructor(obj) {
     // id will be automatically added by mongoDB
-    this.type = helpers.sanitizeString(obj.type);
-    this.name = helpers.sanitizeString(obj.name);
-    this.description = helpers.sanitizeString(obj.description);
-    this.picture = helpers.sanitizeString(obj.picture); // TODO unsure for now
-    this.dateLostOrFound = obj.dateLostOrFound;
-    this.lostOrFoundLocation = helpers.sanitizeString(obj.lostOrFoundLocation);
-
-    this.castMembers = (castMembers || []).map((cm) =>
-      helpers.sanitizeString(cm)
-    );
+    this.type = helpers.sanitizeString(obj?.type);
+    this.name = helpers.sanitizeString(obj?.name);
+    this.description = helpers.sanitizeString(obj?.description);
+    this.picture = helpers.sanitizeString(obj?.picture);
+    this.dateLostOrFound = new Date(obj?.dateLostOrFound).valueOf();
+    this.lostOrFoundLocation = helpers.sanitizeString(obj?.lostOrFoundLocation);
 
     // initialize other attributes
     this.comments = [];

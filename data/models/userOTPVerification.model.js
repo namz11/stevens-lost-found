@@ -5,8 +5,8 @@ const HOURS_24_IN_MS = 86400000; // 24hours in milliseconds
 
 class UserOTPVerification {
   constructor(userId, otp) {
-    this.userId = new ObjectId(helpers.sanitizeString(userId));
-    this.otp = helpers.sanitizeString(otp);
+    this.userId = userId ? new ObjectId(helpers.sanitizeString(userId)) : "";
+    this.otp = otp;
     this.createdAt = new Date().valueOf();
     this.expiresAt = new Date().valueOf() + HOURS_24_IN_MS;
   }

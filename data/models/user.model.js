@@ -3,12 +3,12 @@ const { helpers } = require("../../utils/helpers");
 
 class User {
   constructor(obj) {
-    this.firstName = helpers.sanitizeString(obj.firstName);
-    this.lastName = helpers.sanitizeString(obj.lastName);
-    this.email = helpers.sanitizeString(obj.email);
-    this.phone = helpers.sanitizeString(obj.phone);
-    this.password = obj.password; // TODO encrypt pwd
-    this.isVerified = obj.isVerified || false;
+    this.firstName = helpers.sanitizeString(obj?.firstName);
+    this.lastName = helpers.sanitizeString(obj?.lastName);
+    this.email = helpers.sanitizeString(obj?.email);
+    this.phone = helpers.sanitizeString(obj?.phone);
+    this.password = obj?.password;
+    this.isVerified = obj?.isVerified || false;
   }
 
   deserialize(user) {

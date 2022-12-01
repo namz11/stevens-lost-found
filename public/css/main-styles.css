@@ -18,3 +18,7 @@ body {
   --white-color: #f1f5f9;
   --bg-color: #e0f2fe;
 }
+
+.hide {
+  display: none;
+}

@@ -1,0 +1,28 @@
+form {
+  padding: 15px 10px;
+}
+
+form div {
+  margin-top: 10px;
+}
+
+form input {
+  margin-left: 5px;
+}
+
+form button {
+  margin: 20px 0px;
+  padding: 4px 10px;
+}
+
+#itemDisplayPicture {
+  width: 400px;
+  height: 225px;
+  border: 1px solid black;
+  background-position: center;
+  background-size: cover;
+}
+
+#btnResendOtp {
+  margin-left: 20px;
+}

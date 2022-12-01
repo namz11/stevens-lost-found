@@ -1,0 +1,99 @@
+<article>
+  <h1>
+    Create Item
+  </h1>
+
+  <form action="{{action}}" method="POST" id="itemForm">
+    What do you want to report?
+    <div>
+      <label for="itemTypeLost">
+        <input id="itemTypeLost" type="radio" name="type" value="lost" />
+        I lost an item
+      </label>
+      <label for="itemTypeFound">
+        <input id="itemTypeFound" type="radio" name="type" value="found" />
+        I found an item
+      </label>
+    </div>
+
+    <div id="secondaryItemForm" class="hide">
+      <div>
+        <label for="itemName">
+          Name
+          <input
+            id="itemName"
+            type="text"
+            name="name"
+            value="{{item.name}}"
+            placeholder="Name..."
+            required
+          />
+        </label>
+      </div>
+
+      <div>
+        <label for="itemDescription">
+          Description
+          <input
+            id="itemDescription"
+            type="text"
+            name="description"
+            placeholder="Describe the item..."
+            value="{{item.description}}"
+          />
+        </label>
+      </div>
+
+      <div>
+        <label for="itemLostOrFoundLocation">
+          <input
+            id="itemLostOrFoundLocation"
+            type="text"
+            name="lostOrFoundLocation"
+            placeholder="Location..."
+            value="{{item.lostOrFoundLocation}}"
+            required
+          />
+        </label>
+      </div>
+
+      <div>
+        <label for="itemDateLostOrFound">
+          <input
+            id="itemDateLostOrFound"
+            type="datetime-local"
+            name="dateLostOrFound"
+            placeholder="Approx date time..."
+            value="{{item.dateLostOrFound}}"
+            min="{{metaData.dateLostOrFound.min}}"
+            max="{{metaData.dateLostOrFound.max}}"
+            required
+          />
+        </label>
+      </div>
+
+      <div>
+        <label for="itemPicture">
+          <input
+            id="itemPicture"
+            type="file"
+            name="picture"
+            placeholder="Upload a picture..."
+            accept="image/jpeg, image/png, image/jpg"
+          />
+        </label>
+      </div>
+
+      <div id="itemDisplayPicture"></div>
+
+      <button type="submit" formenctype="multipart/form-data">
+        Create Item
+      </button>
+    </div>
+
+    <ul id="createItemErrors" class="hide">
+    </ul>
+  </form>
+</article>
+<script src="/public/js/itemCreate.js" type="module"></script>
+<link rel="stylesheet" href="/public/css/form-styles.css" />

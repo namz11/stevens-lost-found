@@ -1,15 +1,3 @@
-const { ObjectId } = require("mongodb");
-
-const checkId = (id, varName) => {
-  if (!id) throw `Error: You must provide a ${varName}`;
-  if (typeof id !== "string") throw `Error:${varName} must be a string`;
-  id = id.trim();
-  if (id.length === 0)
-    throw `Error: ${varName} cannot be an empty string or just spaces`;
-  if (!ObjectId.isValid(id)) throw `Error: ${varName} invalid object ID`;
-  return id;
-};
-
 const regexValidators = {
   alphanumericRegex: /^[0-9a-zA-Z ]+$/,
   alphabetRegex: /^[a-zA-Z ]+$/,
@@ -46,7 +34,6 @@ const helpers = {
     obj2 = { ...obj2 };
 
     delete obj1._id;
-    delete obj2.type;
     delete obj1.comments;
     delete obj1.isClaimed;
     delete obj1.createdAt;
@@ -55,7 +42,6 @@ const helpers = {
     delete obj1.updatedBy;
 
     delete obj2._id;
-    delete obj2.type;
     delete obj2.comments;
     delete obj2.isClaimed;
     delete obj2.createdAt;
@@ -86,7 +72,7 @@ const validations = {
     return str === "lost" || str === "found" ? str : false;
   },
   // isDescriptionValid: (str) => helpers.isStringValid(str, 10),
-  isPictureValid: (str) => helpers.isStringValid(str, 8),
+  // isPictureValid: (str) => helpers.isStringValid(str, 8),
   isDateValid: (dateStr) => {
     dateStr = helpers.sanitizeString(dateStr);
     if (!helpers.isValidJSDate(new Date(dateStr))) {
@@ -103,4 +89,4 @@ const validations = {
   isOTPValid: (otp) => +otp >= 1000 && +otp <= 9999,
 };
 
-module.exports = { helpers, regexValidators, validations, checkId };
+export { helpers, regexValidators, validations };
