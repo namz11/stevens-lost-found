@@ -1,6 +1,8 @@
 const express = require("express");
 const exphbs = require("express-handlebars");
-
+const mongoCollections = require("./config/mongoCollections");
+const data = mongoCollections.Group50_Project_CS546;
+const bodyParser = require("body-parser");
 const flash = require("express-flash");
 const session = require("express-session");
 const passport = require("passport");
