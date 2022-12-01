@@ -1,23 +1,45 @@
 {{! TODO Add More Details to the outer Modals }}
 {{! TODO Add User Details to the inner Modals }}
-
-
-<div class="container">
-  <div class="card-content">
-    <div class="card">
-      <div class="card-image"><img src="{{picture}}" alt=""></div> 
-      <div class="card-info">
-        <h3>Name : {{name}}</h3>
-        <p>Type : {{type}}</p>
-        <p>Description : {{}}</p>
-        <p>Date : {{dateLostOrFound}}</p>
-        <p>Created at : {{createdAt}}</p>
-        <p>Location : {{lostOrFoundLocation}}</p>
-        <p>Comments : {{comments}}</p>
-      </div> 
+{{#if lost}}
+<div class="lost">
+  <div class="container">
+    <div class="card-content">
+      <div class="card">
+        <div class="card-image"><img src="{{picture}}" alt=""></div> 
+        <div class="card-info">
+          <h3>Name : {{name}}</h3>
+          <p>Type : {{type}}</p>
+          <p>Description : {{}}</p>
+          <p>Date : {{dateLostOrFound}}</p>
+          <p>Created at : {{createdAt}}</p>
+          <p>Location : {{lostOrFoundLocation}}</p>
+          <p>Comments : {{comments}}</p>
+        </div> 
+      </div>
     </div>
   </div>
 </div>
+{{/lost}}
+{{#if found}}
+<div class="found">
+  <div class="container">
+    <div class="card-content">
+      <div class="card">
+        <div class="card-image"><img src="{{picture}}" alt=""></div> 
+        <div class="card-info">
+          <h3>Name : {{name}}</h3>
+          <p>Type : {{type}}</p>
+          <p>Description : {{}}</p>
+          <p>Date : {{dateLostOrFound}}</p>
+          <p>Created at : {{createdAt}}</p>
+          <p>Location : {{lostOrFoundLocation}}</p>
+          <p>Comments : {{comments}}</p>
+        </div> 
+      </div>
+    </div>
+  </div>
+</div>
+{{}}
 
 <button id="modal-btn" class="button">Found Item</button>
 
@@ -105,4 +127,4 @@
 
 <script src="/public/js/listings.js" type="module"></script>
 <link rel="stylesheet" href="/public/css/modal-style.css" />
-<link rel="stylesheet" href="/public/css/listing.css" />
+<link rel="stylesheet" href="/public/css/paginating.css" />
