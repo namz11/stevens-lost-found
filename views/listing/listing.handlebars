@@ -2,7 +2,7 @@
 {{! TODO Add User Details to the inner Modals }}
 {{!-- {{#if lost}}
 <div class="lost"> --}}
-  {{#for 0 data.length 1}}
+  {{#each data}}
   <div class="container">
     <div class="card-content">
       <div class="card">
@@ -19,7 +19,10 @@
       </div>
     </div>
   </div>
-  {{/for}}
+  {{/each}}
+
+
+  
 {{!-- </div>
 {{/lost}}
 {{#if found}}
@@ -42,6 +45,10 @@
   </div>
 </div>
 {{}} --}}
+{{#if pages}}
+
+{{/if}}
+
 
 <button id="modal-btn" class="button">Found Item</button>
 
