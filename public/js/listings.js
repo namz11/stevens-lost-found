@@ -1,5 +1,24 @@
 // TODO FOR MODALS
 
+// Listing
+Handlebars.registerHelper("ifEquals", function (arg1, arg2, options) {
+  return arg1 == arg2 ? options.fn(this) : options.inverse(this);
+});
+
+Handlebars.registerHelper("ifCond", function (v1, v2, options) {
+  if (v1 === v2) {
+    return options.fn(this);
+  }
+  return options.inverse(this);
+});
+
+Handlebars.registerHelper("ifNot", function (v1, v2, options) {
+  if (v1 !== v2) {
+    return options.fn(this);
+  }
+  return options.inverse(this);
+});
+
 // Get DOM Elements
 const modal = document.querySelector("#claim-modal");
 const modalBtn = document.querySelector("#modal-btn");
