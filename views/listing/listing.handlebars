@@ -1,24 +1,26 @@
 {{! TODO Add More Details to the outer Modals }}
 {{! TODO Add User Details to the inner Modals }}
-{{#if lost}}
-<div class="lost">
+{{!-- {{#if lost}}
+<div class="lost"> --}}
+  {{#for 0 data.length 1}}
   <div class="container">
     <div class="card-content">
       <div class="card">
-        <div class="card-image"><img src="{{picture}}" alt=""></div> 
+        <div class="card-image"><img src="{{data.picture}}" alt=""></div> 
         <div class="card-info">
-          <h3>Name : {{name}}</h3>
-          <p>Type : {{type}}</p>
-          <p>Description : {{}}</p>
-          <p>Date : {{dateLostOrFound}}</p>
-          <p>Created at : {{createdAt}}</p>
-          <p>Location : {{lostOrFoundLocation}}</p>
-          <p>Comments : {{comments}}</p>
+          <h3>Name : {{data.name}}</h3>
+          <p>Type : {{data.type}}</p>
+          <p>Description : {{data.description}}</p>
+          <p>Date : {{data.dateLostOrFound}}</p>
+          <p>Created at : {{data.createdAt}}</p>
+          <p>Location : {{data.lostOrFoundLocation}}</p>
+          <p>Comments : {{data.comments}}</p>
         </div> 
       </div>
     </div>
   </div>
-</div>
+  {{/for}}
+{{!-- </div>
 {{/lost}}
 {{#if found}}
 <div class="found">
@@ -39,7 +41,7 @@
     </div>
   </div>
 </div>
-{{}}
+{{}} --}}
 
 <button id="modal-btn" class="button">Found Item</button>
 
