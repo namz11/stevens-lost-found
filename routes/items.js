@@ -170,6 +170,8 @@ router
       //     .json({ error: "Please change atleast 1 value to update" });
       // }
 
+      // TODO check for user
+
       try {
         const updatedItem = await itemsDL.updateItem(itemId, itemObj);
         return res.json({
@@ -202,5 +204,24 @@ router
     // delete item
     return res.send("NOT IMPLEMENTED");
   });
+
+router.route("/:id/suggestions").get(async (req, res) => {
+  // TODO validations
+  let itemId;
+  try {
+    itemId = checkId(req.params.id, "Item ID");
+  } catch (e) {
+    return res.status(400).send(e);
+  }
+
+  try {
+    const suggestions = await itemsDL.getItemSuggestions(itemId);
+    return res.render("item/suggestions", {
+      suggestions,
+    });
+  } catch (e) {
+    return res.status(500).send(e);
+  }
+});
 
 module.exports = router;
