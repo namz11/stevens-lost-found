@@ -191,7 +191,57 @@ router.route("/:id/comment").post(async (req, res) => {
 });
 
 router.route("/:id/status").put(async (req, res) => {
+ // TODO (AMAN): Pass Actor Details Using Session
+
+  // get item details
+  theItem = itemFunctions.getItemById(req.body.itemId);
+
+  // get user details
+  theUser = userFunctions.getUserById(req.body.userId);
+
   // update isClaimed status
+  itIsClaimed = itemFunctions.updateIsClaimedStatus(itemId);
+
+  if (!itIsClaimed) throw "Failed to update the status";
+
+  // Send Email
+  try {
+    const toUser = sendListingUpdateEmail(
+      {
+        user: theUser.firstName,
+        userId: theUser.email,
+        userItem: theItem.name,
+        // TODO (AMAN): Pass Actor Details Using Session
+        actor: someone.something,
+        actorId: someone.something,
+        actorNumber: someone.something,
+        action: someone.something,
+      },
+      res
+    );
+
+    const toActor = sendListingUpdateEmailToActor(
+      {
+        user: theUser.firstName,
+        userId: theUser.email,
+        userItem: theItem.name,
+        // TODO (AMAN): Pass Actor Details Using Session
+        actor: someone.something,
+        actorId: someone.something,
+        actorNumber: someone.something,
+        action: someone.something,
+      },
+      res
+    );
+    // TODO (AMAN)
+    // res.redirect("");
+    // res.render("");
+  } catch (e) {
+    console.log(e);
+    // TODO (AMAN)
+    // res.redirect("");
+    // res.render("");
+  }
 });
 
 router
