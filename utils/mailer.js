@@ -64,7 +64,7 @@ const sendListingUpdateEmail = async (
       from: "narmitmashruwala@gmail.com",
       to: userId,
       subject: `<strong>Update</strong>: ${actor} has ${action} your item`,
-      html: `<p>Hi <strong>${user}</strong>, your <em>${userItem}</em> has been <strong>${action}</strong> by <em>${actor}</em>.</p> <br> 
+      html: `<p>Hi <strong>${user}</strong>, your <em>"${userItem}"</em> has been <strong>${action}</strong> by <em>${actor}</em>.</p> <br> 
       <p>Here are the contact details of <em>${actor}</em>:</p><br> 
       <ul>
       <li>Name: ${actor}</li>
@@ -72,6 +72,35 @@ const sendListingUpdateEmail = async (
       <li>Number: ${actorNumber}</li>
       <li>Has: ${action}</li>
       </ul>`,
+      // TODO (AMAN): Display an image of the item
+    };
+
+    await transporter.sendMail(mailOptions);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      success: false,
+      message: "Please Try Again",
+    });
+  }
+};
+
+const sendListingUpdateEmailToActor = async (
+  { user, userId, userItem, userNumber, actor, actorId, action },
+  res
+) => {
+  try {
+    const mailOptions = {
+      from: "narmitmashruwala@gmail.com",
+      to: actorId,
+      subject: `<strong>Update for ${action} item</strong>: Here are the contact details for <em>"${userItem}"</em>`,
+      html: `<p>Hi ${actor} Here are the contact details of <em>${user}</em>, who posted for <em>${userItem}</em>:</p><br> 
+      <ul>
+      <li>Name: ${user}</li>
+      <li>Email: <a href = "mailto: ${userId}">${userId}</a></li>
+      <li>Number: ${userNumber}</li>
+      </ul>`,
+      // TODO (AMAN): Display an image of the item
     };
 
     await transporter.sendMail(mailOptions);
@@ -87,4 +116,5 @@ const sendListingUpdateEmail = async (
 module.exports = {
   sendOTPVerificationEmail,
   sendListingUpdateEmail,
+  sendListingUpdateEmailToActor,
 };
