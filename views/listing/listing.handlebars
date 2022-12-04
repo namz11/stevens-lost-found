@@ -1,28 +1,56 @@
 {{! TODO Add More Details to the outer Modals }}
 {{! TODO Add User Details to the inner Modals }}
-{{!-- {{#if lost}}
-<div class="lost"> --}}
-  {{#each data}}
-  <div class="container">
-    <div class="card-content">
-      <div class="card">
-        <div class="card-image"><img src="{{data.picture}}" alt=""></div> 
-        <div class="card-info">
-          <h3>Name : {{data.name}}</h3>
-          <p>Type : {{data.type}}</p>
-          <p>Description : {{data.description}}</p>
-          <p>Date : {{data.dateLostOrFound}}</p>
-          <p>Created at : {{data.createdAt}}</p>
-          <p>Location : {{data.lostOrFoundLocation}}</p>
-          <p>Comments : {{data.comments}}</p>
-        </div> 
+{{#each data}}
+{{#if !this.isClaimed}}
+  {{#ifEquals this.type "lost"}}
+    <div class="lost">
+      <div class="container">
+        <div class="card-content">
+          <div class="card">
+            <div class="card-image"><img src="{{this.picture}}" alt=""></div> 
+            <div class="card-info">
+              <h3>Name : {{this.name}}</h3>
+              {{!-- <p>Type : {{this.type}}</p> --}}
+              <p>Description : {{this.description}}</p>
+              <p>Date : {{this.dateLostOrFound}}</p>
+              <p>Created at : {{this.createdAt}}</p>
+              <p>Location : {{this.lostOrFoundLocation}}</p>
+              <p>Comments : {{this.comments}}</p>
+            </div> 
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-  {{/each}}
+  {{/ifEquals}}
 
 
-  
+  {{#ifEquals this.type "found"}}
+    <div class="found">
+      <div class="container">
+        <div class="card-content">
+          <div class="card">
+            <div class="card-image"><img src="{{this.picture}}" alt=""></div> 
+            <div class="card-info">
+              <h3>Name : {{this.name}}</h3>
+              {{!-- <p>Type : {{this.type}}</p> --}}
+              <p>Description : {{this.description}}</p>
+              <p>Date : {{this.dateLostOrFound}}</p>
+              <p>Created at : {{this.createdAt}}</p>
+              <p>Location : {{this.lostOrFoundLocation}}</p>
+              <p>Comments : {{this.comments}}</p>
+            </div> 
+          </div>
+        </div>
+      </div>
+    </div>
+  {{/ifEquals}}
+
+
+{{/if}}
+{{/each}}
+
+
+
 {{!-- </div>
 {{/lost}}
 {{#if found}}
@@ -46,8 +74,60 @@
 </div>
 {{}} --}}
 {{#if pages}}
+<ul class="pagination text-center"> </ul>
+{{#ifCond current 1}}
+<li class="disabled"><a>First</a>
+{{else}}
+<li><a href="/products/1">First</a>
+{{/ifCond}}
+
+var i = (Number({{current}}) > 5 ? Number({{current}}) - 4 : 1)
+{{#ifNot i 1}}
+<li class="disabled"><a>...</a></li>
+{{/ifNot}}
+
+
+{{#ifCond current pages}}
+<li class="disabled"><a>Last</a></li>
+{{else}}
+ <li><a href="/products/{{pages}}">Last</a></li>
+{{/ifCond}}
 
 {{/if}}
+
+{{!-- <% if (pages > 0) { %>
+                <ul class="pagination text-center">
+                    <% if (current == 1) 
+                    { %>
+                        <li class="disabled"><a>First</a></li>
+                    <% } 
+                       else { %>
+                        <li><a href="/products/1">First</a></li>
+                    <% } %>
+
+                    <% var i = (Number(current) > 5 ? Number(current) - 4 : 1) %>
+                    <% if (i !== 1) 
+                    { %>
+                        <li class="disabled"><a>...</a></li>
+                    <% } %>
+                    <% for (; i <= (Number(current) + 4) && i <= pages; i++) { %>
+                        <% if (i == current) { %>
+                            <li class="active"><a><%= i %></a></li>
+                        <% } else { %>
+                            <li><a href="/products/<%= i %>"><%= i %></a></li>
+                        <% } %>
+                        <% if (i == Number(current) + 4 && i < pages) { %>
+                            <li class="disabled"><a>...</a></li>
+                        <% } %>
+                    <% } %>
+                    <% if (current == pages) { %>
+                        <li class="disabled"><a>Last</a></li>
+                    <% } else { %>
+                        <li><a href="/products/<%= pages %>">Last</a></li>
+                    <% } %>
+                </ul>
+            <% } %> --}}
+
 
 
 <button id="modal-btn" class="button">Found Item</button>
