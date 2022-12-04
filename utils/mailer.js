@@ -9,8 +9,8 @@ const { userVerificationDL } = require("../data");
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
-    user: "narmitmashruwala@gmail.com",
-    pass: "kcgxuhvcglbwngbd",
+    user: "stevenslostandfound@gmail.com",
+    pass: "nobxkeewzuecsyma",
   },
 });
 
@@ -25,7 +25,7 @@ const sendOTPVerificationEmail = async ({ userId, email, redirect }, res) => {
     const otp = _.random(1000, 9999);
 
     const mailOptions = {
-      from: "narmitmashruwala@gmail.com",
+      from: "stevenslostandfound@gmail.com",
       to: email || "nmashruw@stevens.edu",
       subject: "Verify Your Email",
       html: `<p>Enter <strong>${otp}</strong> in the <a href='http://localhost:3000/auth/verify'>app</a> to verify your email address and complete registration to start using the application.</p><p>Note: This otp is valid only for 24h hours.</p>`,
@@ -61,7 +61,7 @@ const sendListingUpdateEmail = async (
 ) => {
   try {
     const mailOptions = {
-      from: "narmitmashruwala@gmail.com",
+      from: "stevenslostandfound@gmail.com",
       to: userId,
       subject: `<strong>Update</strong>: ${actor} has ${action} your item`,
       html: `<p>Hi <strong>${user}</strong>, your <em>${userItem}</em> has been <strong>${action}</strong> by <em>${actor}</em>.</p> <br> 
