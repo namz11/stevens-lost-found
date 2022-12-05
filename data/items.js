@@ -144,9 +144,35 @@ const getLevenshteinScore = (obj1, obj2) => {
   return { ...obj2, score };
 };
 
+const updateIsClaimedStatus = async (itemId) => {
+  itemId = checkId(itemId, "Item ID");
+  const itemDB = await itemsCollection();
+  const theItem = await itemDB.findOne({ _id: ObjectId(itemId) });
+  if (!theItem) throw "No Item with the provided id exists";
+
+  let updatedItem = {
+    isClaimed: true,
+  };
+
+  const updatedInfo = await itemDB.updateOne(
+    { _id: ObjectId(itemId) },
+    { $set: updatedItem }
+  );
+
+  if (updatedInfo.modifiedCount === 0) {
+    throw " Could Not Update The Item";
+  }
+
+  return await getItemById(itemId);
+};
+
 module.exports = {
   getItemById,
   getItems,
   createItem,
   updateItem,
+  getItemSuggestions,
+  getItemsByUserId,
+  updateIsClaimedStatus,
+  getLevenshteinScore
 };
