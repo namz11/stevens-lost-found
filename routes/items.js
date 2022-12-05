@@ -3,15 +3,48 @@ const router = express.Router();
 const { itemsDL } = require("../data");
 const { checkId, helpers, validations } = require("../utils/helpers");
 const { itemImageUpload } = require("../utils/multer");
+const {
+  sendListingUpdateEmail,
+  sendListingUpdateEmailToActor,
+} = require("../utils/mailer");
+const itemFunctions = require("../data/items");
+const userFunctions = require("../data/users");
+const { itemsCollection } = require("../config/mongoCollections");
+const { User } = require("./models/user.model");
+const { usersCollection } = require("../config/mongoCollections");
+const userFunctions = require("../data/users");
 
 router.route("/listing").get(async (req, res) => {
   // item listing page - paginated
   return res.send("NOT IMPLEMENTED");
 });
 
-router.route("/my-listings").get(async (req, res) => {
-  // my listing page - paginated
-  return res.send("NOT IMPLEMENTED");
+router.route("/my-listings/:id").get(async (req, res) => {
+  // TODO (AMAN): Pagination
+  
+  let id = req.params.id;
+  try {
+    id = checkId(req.params.id, "Item ID");
+  } catch (e) {
+    console.log(e)
+    return res.status(400).render("error",{
+      class: "error",
+      message: "Error: Invalid ID or ID Not Provided",
+    });
+  }
+
+  try {
+    const d = await itemFunctions.getItemsByUserId(id);
+
+    res.render("/listing/userListings", {
+      itemsData: d,
+    });
+  } catch (e) {
+    return res.status(404).render("error", {
+      class: "error",
+      message: e,
+    });
+  }
 });
 
 router
