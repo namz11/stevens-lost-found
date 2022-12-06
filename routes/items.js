@@ -37,7 +37,7 @@ router.route("/my-listings/:id").get(async (req, res) => {
     const d = await itemFunctions.getItemsByUserId(id);
 
     res.render("/listing/userListings", {
-      itemsData: d,
+      itemsData: d, title: "My Listings"
     });
   } catch (e) {
     return res.status(404).render("error", {
@@ -285,7 +285,23 @@ router
   })
   .delete(async (req, res) => {
     // delete item
-    return res.send("NOT IMPLEMENTED");
+
+    id = checkId(req.params.id, "Item ID");
+
+    const theUser = await userFunctions.getUserByItemId(id)
+    const userId = theUser._id
+
+    const deletedItem = await itemFunctions.deleteItem(id);
+    if(!deletedItem) throw "Could Not Delete Item"
+    // res.status(200).json(deletedItem);
+
+    // Render The My Listings Page After Deletion
+    const d = await itemFunctions.getItemsByUserId(userId);
+
+    res.render("/listing/userListings", {
+      itemsData: d, title: "My Listings"
+    });
+   // TODO: Check with Professor If This Is a Good
   });
 
 router.route("/:id/suggestions").get(async (req, res) => {

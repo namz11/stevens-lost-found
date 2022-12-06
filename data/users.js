@@ -2,6 +2,8 @@ const { ObjectId } = require("mongodb");
 const { helpers, checkId } = require("../utils/helpers");
 const { User } = require("./models/user.model");
 const { usersCollection } = require("../config/mongoCollections");
+const { itemsCollection } = require("../config/mongoCollections");
+
 
 const getUserById = async (userId) => {
   userId = checkId(userId, "User ID");
@@ -48,8 +50,26 @@ const enterUser = async (firstName, lastName, email, phoneNumber, password) => {
   return await getUserById(inUser.insertedId.toString());
 };
 
+const getUserByItemId = async (itemId) => {
+
+  itemId = checkId(itemId, "Item ID");
+  if (!ObjectId.isValid(itemId)) throw "Invalid Object ID";
+  const itemDB = await itemsCollection();
+  const theItem = await itemDB.findOne({ _id: ObjectId(itemId) });
+
+
+  const userId = theItem.createdBy
+
+  const usersDB = await usersCollection();
+  const theUser = await usersDB.findOne({ _id: ObjectId(userId) });
+  if (theUser === null) throw new Error("No user with that id");
+
+  return new User().deserialize(theUser);
+};
+
 module.exports = {
   getUserById,
   verifyUser,
   enterUser,
+  getUserByItemId
 };

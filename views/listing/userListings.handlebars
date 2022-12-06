@@ -44,6 +44,7 @@
 
 
 
+
   <div class="card-info">
 
         <!-- Item Description -->
@@ -127,8 +128,9 @@
         </div>
       </div>
   
-      <button id="details-btn" class="button" data-button="{{this._id}}">Details</button>
-
+      <button id="details-btn" class="button" data-button="{{this._id}}" data-user="{{this.createdBy}}">Details</button>
+      <button id="edit-btn" class="button" data-button="{{this._id}}">Edit</button>
+      <button id="delete-btn" class="button" data-button="{{this._id}}">Delete</button>
     {{/each}}
 
   </div>

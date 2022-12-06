@@ -14,10 +14,27 @@ detailsButton.addEventListener('click', (event)=>{
 event.preventDefault()
 const buttonItemId = event.target.getAttribute("data-button");
 //TODO Check if this works properly
-const theUrl = `/items/${buttonItemId}` //TODO Little Changes To Open The Item Page
+const theUrl = `/${buttonItemId}` //TODO Little Changes To Open The Item Page
 window.open(theUrl,
 "_blank") || window.location.replace(theUrl); });
 
+// let editButton = document.querySelector('#edit-btn');
+// editButton.addEventListener('click', (event)=>{
+//   event.preventDefault()
+//   const editButtonItemId = event.target.getAttribute("data-button");
+//   //TODO Check if this works properly
+//   const theUrl = `/edit/${editButtonItemId}` //TODO Little Changes To Open The Item Page
+//     window.open(theUrl,
+//     "_blank") || window.location.replace(theUrl); });
+
+// let deleteButton = document.querySelector('#delete-btn');
+// deleteButton.addEventListener('click', (event)=>{
+//   event.preventDefault()
+//   const deleteButtonItemId = event.target.getAttribute("data-button");
+//   //TODO Check if this works properly
+//   const theUrl = `/${deleteButtonItemId}` //TODO Little Changes To Open The Item Page
+//   window.open(theUrl,
+//       "_blank") || window.location.replace(theUrl); });
 
 // Events
 modalBtn.addEventListener('click', openModal);
@@ -78,7 +95,7 @@ function outsideClick(e) {
             userId: theUserId
           }
 
-          fetch(`/items/${theItemId}/status`, {
+          fetch(`/${theItemId}/status`, {
             method: "POST",
             headers: {
               Accept: "application/json, text/plain, */*",
@@ -103,6 +120,93 @@ function outsideClick(e) {
     }
   });
 })();
+
+(function () {
+  document.addEventListener("DOMContentLoaded", function () {
+    // Handler when the DOM is fully loaded
+
+    let editButton = document.querySelector('#edit-btn');
+    debugger;
+    if (editButton) {
+      editButton.addEventListener("click", (event) => {
+          event.stopPropagation();
+          event.stopImmediatePropagation();
+
+          const theItemId = event.target.getAttribute("data-id");
+
+          data = {
+            itemId: theItemId,
+          }
+
+          fetch(`/edit/${theItemId}`, {
+            method: "GET", //Get Item Edit Page
+            headers: {
+              Accept: "application/json, text/plain, */*",
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+          })
+            .then((resp) => resp.json())
+            .then((res) => {
+              if (res.success) {
+                alert(res.message || "Item Claimed");
+                location.href = "/items/my-listing";
+              } else {
+                alert(res.message || "Something went wrong.");
+              }
+            })
+            .catch((error) => {
+              alert(error.message || "Something went wrong.");
+            });
+        });
+
+    }
+  });
+})();
+
+(function () {
+  document.addEventListener("DOMContentLoaded", function () {
+    // Handler when the DOM is fully loaded
+
+    let deleteButton = document.querySelector('#delete-btn');
+    debugger;
+    if (deleteButton) {
+      deleteButton.addEventListener("click", (event) => {
+          event.stopPropagation();
+          event.stopImmediatePropagation();
+
+          const theItemId = event.target.getAttribute("data-id");
+
+          data = {
+            itemId: theItemId,
+          }
+
+          fetch(`/items/${theItemId}`, {
+            method: "DELETE",
+            headers: {
+              Accept: "application/json, text/plain, */*",
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data), 
+          })
+            .then((resp) => resp.json())
+            .then((res) => {
+              if (res.success) {
+                alert(res.message || "Item Deleted");
+                location.href = "/items/my-listing";
+              } else {
+                alert(res.message || "Something went wrong.");
+              }
+            })
+            .catch((error) => {
+              alert(error.message || "Something went wrong.");
+            });
+        });
+
+    }
+  });
+})();
+
 
 Handlebars.registerHelper("ifEquals", function(arg1, arg2, options) {
     return (arg1 == arg2) ? options.fn(this) : options.inverse(this);
