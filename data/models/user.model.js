@@ -7,6 +7,7 @@ class User {
     this.lastName = helpers.sanitizeString(obj?.lastName);
     this.email = helpers.sanitizeString(obj?.email);
     this.phone = helpers.sanitizeString(obj?.phone);
+    this.dob = obj?.dob;
     this.password = obj?.password;
     this.isVerified = obj?.isVerified || false;
   }
