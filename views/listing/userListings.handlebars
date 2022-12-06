@@ -7,12 +7,44 @@
       <!-- Item Details -->
       <div class="item-listing">
 
-{{!-- <div class="card-content"> --}}
+{{!-- <div class="card-content">  --}}
   <div class="card">
-  <div class="card-image"><img src="{{this.picture}}" alt=""></div>
+  <div class="card-image"><img src="{{this.picture}}" alt="{{this.name}}"></div>
+  {{!-- Review the assigned "src" and "alt" values above--}}
+
+ <!-- The Image Modal -->
+    {{!-- <div id="myModal" class="img-modal">
+      <span class="close">&times;</span>
+      <img class="modal-content" id="img01">
+      <div id="caption"></div>
+    </div> --}}
+
+    {{!-- <script> //JS Script For Image Modal (Opens The Item Image On Click)  --}}
+      {{!-- // Get the modal
+     // var imgModal = document.getElementById("myModal");
+      
+      // Get the image and insert it inside the imgModal - use its "alt" text as a caption
+     // var img = document.getElementById("myImg");
+     // var modalImg = document.getElementById("img01");
+     // var captionText = document.getElementById("caption");
+     // img.onclick = function(){
+     // imgModal.style.display = "block";
+     // modalImg.src = this.src;
+     // captionText.innerHTML = this.alt;
+      }
+      
+      // Get the <span> element that closes the imgModal
+     // var span = document.getElementsByClassName("close")[0];
+      
+      // When the user clicks on <span> (x), close the imgModal
+     // span.onclick = function() { 
+      //    imgModal.style.display = "none";
+      } --}}
+      {{!-- </script> --}}
+
+
 
   <div class="card-info">
-
 
         <!-- Item Description -->
         <div class="item-description">
