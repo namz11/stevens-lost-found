@@ -57,76 +57,6 @@ function getPageList(totalPages, page, maxLength) {
   );
 }
 
-$(function () {
-  var numberOfItems = data.length;
-  var limitPerPage = 5;
-  var totalPages = Math.ceil(numberOfItems / limitPerPage);
-  var paginationSize = 5;
-  var currentPage;
-
-  function showPage(whichPage) {
-    if (whichPage < 1 || whichPage > totalPages) return false;
-
-    currentPage = whichPage;
-
-    $(".pagination li").slice(1, -1).remove();
-
-    getPageList(totalPages, currentPage, paginationSize).forEach((item) => {
-      $("<li>")
-        .addClass("page-item")
-        .addClass(item ? "current-page" : "dots")
-        .toggleClass("active", item === currentPage)
-        .append(
-          $("<a>")
-            .addClass("page-link")
-            .attr({ href: "javascript.void(0)" })
-            .text(item || "...")
-        )
-        .insertBefore(".next-page");
-    });
-    $(".previous-page").toggleClass("disable", currentPage === 1);
-    $(".next-page").toggleClass("disable", currentPage === totalPages);
-    return true;
-  }
-
-  $(".pagination").append(
-    $("<li>")
-      .addClass("page-item")
-      .addClass("previous-page")
-      .append(
-        $("<a>")
-          .addClass("page-link")
-          .attr({ href: "javascript:void(0)" })
-          .text("Prev")
-      ),
-    $("<li>")
-      .addClass("page-item")
-      .addClass("next-page")
-      .append(
-        $("<a>")
-          .addClass("page-link")
-          .attr({ href: "javascript:void(0)" })
-          .text("Next")
-      )
-  );
-  $(".card-content").show();
-  showPage(1);
-
-  $(document).on(
-    "click",
-    "pagination li.current-page:not(.active)",
-    function () {
-      return showPage(+$(this).text());
-    }
-  );
-  $(".previous-page").on("click", function () {
-    return showPage(currentPage - 1);
-  });
-  $(".next-page").on("click", function () {
-    return showPage(currentPage + 1);
-  });
-});
-
 let sortItem1 = "";
 let sortItem2 = "";
 
@@ -179,6 +109,79 @@ const fetchingLostData = async () => {
     .sort({ sortItem1: -1 })
     .slice((currentPage - 1) * limitPerPage, currentPage * limitPerPage)
     .exec();
+
+  $(function () {
+    var numberOfItems1 = Data1.length;
+    var limitPerPage1 = 5;
+    var totalPages1 = Math.ceil(numberOfItems1 / limitPerPage1);
+    var paginationSize1 = 5;
+    var currentPage1;
+
+    function showPage(whichPage1) {
+      if (whichPage1 < 1 || whichPage1 > totalPages1) return false;
+
+      currentPage1 = whichPage1;
+
+      $(".pagination1 li").slice(1, -1).remove();
+
+      getPageList(totalPages1, currentPage1, paginationSize1).forEach(
+        (item) => {
+          $("<li>")
+            .addClass("page-item")
+            .addClass(item ? "current-page" : "dots")
+            .toggleClass("active", item === currentPage1)
+            .append(
+              $("<a>")
+                .addClass("page-link")
+                .attr({ href: "javascript.void(0)" })
+                .text(item || "...")
+            )
+            .insertBefore(".next-page");
+        }
+      );
+      $(".previous-page").toggleClass("disable", currentPage1 === 1);
+      $(".next-page").toggleClass("disable", currentPage1 === totalPages1);
+      return true;
+    }
+
+    $(".pagination1").append(
+      $("<li>")
+        .addClass("page-item")
+        .addClass("previous-page")
+        .append(
+          $("<a>")
+            .addClass("page-link")
+            .attr({ href: "javascript:void(0)" })
+            .text("Prev")
+        ),
+      $("<li>")
+        .addClass("page-item")
+        .addClass("next-page")
+        .append(
+          $("<a>")
+            .addClass("page-link")
+            .attr({ href: "javascript:void(0)" })
+            .text("Next")
+        )
+    );
+    $(".card-content").show();
+    showPage(1);
+
+    $(document).on(
+      "click",
+      "pagination1 li.current-page:not(.active)",
+      function () {
+        return showPage(+$(this).text());
+      }
+    );
+    $(".previous-page").on("click", function () {
+      return showPage(currentPage1 - 1);
+    });
+    $(".next-page").on("click", function () {
+      return showPage(currentPage1 + 1);
+    });
+  });
+
   return Data1;
 };
 
@@ -195,6 +198,79 @@ const fetchingFoundData = async () => {
     .sort({ sortItem2: -1 })
     .slice((currentPage - 1) * limitPerPage, currentPage * limitPerPage)
     .exec();
+
+  $(function () {
+    var numberOfItems2 = Data2.length;
+    var limitPerPage2 = 5;
+    var totalPages2 = Math.ceil(numberOfItems2 / limitPerPage2);
+    var paginationSize2 = 5;
+    var currentPage1;
+
+    function showPage(whichPage2) {
+      if (whichPage2 < 1 || whichPage2 > totalPages2) return false;
+
+      currentPage2 = whichPage2;
+
+      $(".pagination2 li").slice(1, -1).remove();
+
+      getPageList(totalPages2, currentPage2, paginationSize2).forEach(
+        (item) => {
+          $("<li>")
+            .addClass("page-item")
+            .addClass(item ? "current-page" : "dots")
+            .toggleClass("active", item === currentPage2)
+            .append(
+              $("<a>")
+                .addClass("page-link")
+                .attr({ href: "javascript.void(0)" })
+                .text(item || "...")
+            )
+            .insertBefore(".next-page");
+        }
+      );
+      $(".previous-page").toggleClass("disable", currentPage2 === 1);
+      $(".next-page").toggleClass("disable", currentPage2 === totalPages2);
+      return true;
+    }
+
+    $(".pagination2").append(
+      $("<li>")
+        .addClass("page-item")
+        .addClass("previous-page")
+        .append(
+          $("<a>")
+            .addClass("page-link")
+            .attr({ href: "javascript:void(0)" })
+            .text("Prev")
+        ),
+      $("<li>")
+        .addClass("page-item")
+        .addClass("next-page")
+        .append(
+          $("<a>")
+            .addClass("page-link")
+            .attr({ href: "javascript:void(0)" })
+            .text("Next")
+        )
+    );
+    $(".card-content").show();
+    showPage(1);
+
+    $(document).on(
+      "click",
+      "pagination2 li.current-page:not(.active)",
+      function () {
+        return showPage(+$(this).text());
+      }
+    );
+    $(".previous-page").on("click", function () {
+      return showPage(currentPage1 - 1);
+    });
+    $(".next-page").on("click", function () {
+      return showPage(currentPage1 + 1);
+    });
+  });
+
   return Data2;
 };
 
