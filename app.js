@@ -39,30 +39,30 @@ app.engine(
 );
 app.set("view engine", "handlebars");
 
-app.get("/listing/:page", (req, res, next) => {
-  var perPage = 5;
-  //  const page = parseInt(req.query.page);
-  var page = req.params.page || 1;
+// app.get("/listing/:page", (req, res, next) => {
+//   var perPage = 5;
+//   //  const page = parseInt(req.query.page);
+//   var page = req.params.page || 1;
 
-  // const limit = parseInt(req.query.limit);
-  // const startIndex = (page - 1) * limit;
-  // const endIndex = page * limit;
+//   // const limit = parseInt(req.query.limit);
+//   // const startIndex = (page - 1) * limit;
+//   // const endIndex = page * limit;
 
-  data
-    .find({})
-    .skip(perPage * page - perPage)
-    .limit(perPage)
-    .exec(function (err, data) {
-      data.count().exec(function (err, count) {
-        if (err) return next(err);
-        res.render("listing/listing", {
-          data: data,
-          current: page,
-          pages: Math.ceil(count / perPage),
-        });
-      });
-    });
-});
+//    data
+//     .find({})
+//     .skip(perPage * page - perPage)
+//     .limit(perPage)
+//     .exec(function (err, data) {
+//       data.count().exec(function (err, count) {
+//         if (err) return next(err);
+//         res.render("listing/listing", {
+//           data: data,
+//           current: page,
+//           pages: Math.ceil(count / perPage),
+//         });
+//       });
+//     });
+// });
 
 configRoutes(app);
 
