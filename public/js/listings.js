@@ -31,7 +31,8 @@ const limit = 5;
 const startIndex = (page - 1) * limit;
 const endIndex = page * limit;
 
-const results = {};
+let sortItem1 = "";
+let sortItem2 = "";
 
 if (startIndex > 0) {
   previous = {
@@ -46,13 +47,24 @@ if (endIndex < data.countDocuments().exec()) {
   };
 }
 
-document.getElementsByName("option").forEach((radio) => {
+document.getElementsByName("option1").forEach((radio) => {
   if (radio.checked) {
     if (radio.value == "createdAt") {
-      sortBy("createdAt");
+      sortItem1 = "createdAt";
     }
     if (radio.value == "dateLostOrFound") {
-      sortBy("dateLostOrFound");
+      sortItem1 = "dateLostOrFound";
+    }
+  }
+});
+
+document.getElementsByName("option2").forEach((radio) => {
+  if (radio.checked) {
+    if (radio.value == "createdAt") {
+      sortItem2 = "createdAt";
+    }
+    if (radio.value == "dateLostOrFound") {
+      sortItem2 = "dateLostOrFound";
     }
   }
 });
@@ -62,13 +74,25 @@ const fetchingData = async () => {
   let Data1 = [];
   let Data2 = [];
   for (let i = 0; i < data.length; i++) {
-    if (data[i].type == "lost" || data[i].type == "Lost") {
-      Data1.push(data[i]);
-    }
-    if (data[i].type == "found" || data[i].type == "Found") {
-      Data2.push(data[i]);
+    if (data[i].isClaimed == false) {
+      if (data[i].type == "lost" || data[i].type == "Lost") {
+        Data1.push(data[i]);
+      }
+      if (data[i].type == "found" || data[i].type == "Found") {
+        Data2.push(data[i]);
+      }
     }
   }
+  Data1 = Data1.find()
+    .sort({ sortItem1: -1 })
+    .limit(limit)
+    .skip(startIndex)
+    .exec();
+  Data2 = Data2.find()
+    .sort({ sortItem2: -1 })
+    .limit(limit)
+    .skip(startIndex)
+    .exec();
   return Data1, Data2;
 };
 
