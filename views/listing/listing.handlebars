@@ -53,7 +53,21 @@
 {{/if}}
 {{/each}}
 
+<div class = "pagination">
+<li class = "page-item previous-page"><a class="page-link" href="#">Prev</a></li>
+<li class = "page-item current-page"><a class="page-link" href="#">1</a></li>
+<li class = "page-item dots"><a class="page-link" href="#">...</a></li>
+<li class = "page-item current-page"><a class="page-link" href="#">5</a></li>
+<li class = "page-item current-page"><a class="page-link" href="#">6</a></li>
+<li class = "page-item dots"><a class="page-link" href="#">...</a></li>
+<li class = "page-item current-page"><a class="page-link" href="#">10</a></li>
+<li class = "page-item next-page"><a class="page-link" href="#">Next</a></li>
 
+
+<Ii class-"page-item current-page"›‹a class-"page-link" href-"#"›1</a></li>
+<Ii class-"page-item dots"›<a class-"page-link" href="#"›...</a>‹/li>
+<Ii class-"page-item current-page"›‹a class-"page-link" href-"#"›5‹/a></li> <li class="page-item current-page"›‹a class="page-link" href="#"›6</a>‹/li> ‹li class= "page-item current-page"›‹a class="page-link" href=*#"›10</a>‹/li> ‹li class="page-item next-page"›<a class="page-link" href="#"›Next</a>‹/li> </div>
+</div>
 
 
 
@@ -79,7 +93,7 @@
   </div>
 </div>
 {{}} --}}
-{{#if pages}}
+{{!-- {{#if pages}}
 <ul class="pagination text-center"> </ul>
 {{#ifCond current 1}}
 <li class="disabled"><a>First</a>
@@ -99,7 +113,7 @@ var i = (Number({{current}}) > 5 ? Number({{current}}) - 4 : 1)
  <li><a href="/products/{{pages}}">Last</a></li>
 {{/ifCond}}
 
-{{/if}}
+{{/if}} --}}
 
 {{!-- <% if (pages > 0) { %>
                 <ul class="pagination text-center">
