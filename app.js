@@ -18,6 +18,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(flash());
 app.use(
   session({
+    name: "AuthCookie",
     secret: "secret",
     resave: false,
     saveUninitialized: false,

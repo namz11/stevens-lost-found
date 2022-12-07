@@ -1,8 +1,7 @@
 const { ObjectId } = require("mongodb");
-const { helpers, checkId } = require("../utils/helpers");
+const { helpers, checkId, authHelpers } = require("../utils/helpers");
 const { User } = require("./models/user.model");
 const { usersCollection } = require("../config/mongoCollections");
-const { itemsCollection } = require("../config/mongoCollections");
 
 const getUserById = async (userId) => {
   userId = checkId(userId, "User ID");
@@ -10,6 +9,15 @@ const getUserById = async (userId) => {
   const usersDB = await usersCollection();
   const user = await usersDB.findOne({ _id: ObjectId(userId) });
   if (user === null) throw new Error("No user with that id");
+
+  return new User().deserialize(user);
+};
+
+const getUserByEmail = async (userEmail) => {
+  email = authHelpers.checkEmail(userEmail);
+  const usersDB = await usersCollection();
+  const user = await usersDB.findOne({ email: email });
+  if (user === null) throw new Error("No user with that email");
 
   return new User().deserialize(user);
 };
@@ -30,22 +38,42 @@ const verifyUser = async (userId) => {
   return await getUserById(userId);
 };
 
-const enterUser = async (firstName, lastName, email, phoneNumber, password) => {
+const enterUser = async (
+  firstName,
+  lastName,
+  email,
+  phoneNumber,
+  dob,
+  password
+) => {
+  userEmail = authHelpers.checkEmail(email);
+  userFirstName = authHelpers.checkName(firstName, "First Name");
+  userLastName = authHelpers.checkName(lastName, "Last Name");
+  userPhoneNumber = authHelpers.checkPhoneNumber(phoneNumber);
+
+  userDOB = authHelpers.checkDOB(dob);
+
+  const authCollection = await usersCollection();
+  const userExists = await authCollection.findOne({ email: userEmail });
+  if (userExists) {
+    throw new Error("There is already a user with that email.");
+  }
+
   newUser = {
-    firstName: firstName,
-    lastName: lastName,
-    email: email,
-    phone: phoneNumber,
+    firstName: userFirstName,
+    lastName: userLastName,
+    email: userEmail,
+    phone: userPhoneNumber,
+    dob: userDOB,
     password: password,
   };
 
-  const authCollection = await usersCollection();
-  const inUser = await authCollection.insertOne(newUser);
+  const userToBeInserted = new User(newUser);
+  const inUser = await authCollection.insertOne(userToBeInserted);
   if (!inUser.acknowledged || !inUser.insertedId) {
-    console.log("Cannot add User");
+    throw new Error("Cannot add User");
   }
 
-  // return true;
   return await getUserById(inUser.insertedId.toString());
 };
 
@@ -71,10 +99,37 @@ const getAllUsers = async (userId) => {
   return users.map((user) => new User().deserialize(user));
 };
 
+const updatePassword = async (userId, password) => {
+  userId = checkId(userId, "User ID");
+  userPassword = authHelpers.checkPassword(password);
+
+  const usersDB = await usersCollection();
+  const userById = await usersDB.findOne({ _id: ObjectId(userId) });
+  if (!userById) {
+    throw new Error(
+      "The user whose password you are attempting to update does not exist."
+    );
+  }
+  if (await bcrypt.compare(userPassword, userById.password)) {
+    throw new Error("It is already the current password");
+  }
+
+  const hashedPassword = await bcrypt.hash(userPassword, saltRounds);
+  let updatedPassword = {
+    password: hashedPassword,
+  };
+
+  const user = await usersDB.updateOne(
+    { _id: ObjectId(userId) },
+    { $set: updatedPassword }
+  );
+  if (user === null) throw new Error("Cannot Update Password");
+
+  return new User().deserialize(user);
+};
+
 module.exports = {
   getUserById,
   verifyUser,
   enterUser,
-  getUserByItemId,
-  getAllUsers,
 };

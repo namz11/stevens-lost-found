@@ -1,0 +1,191 @@
+body {
+  font-family: "Poppins";
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #dde5f4;
+  height: 100vh;
+}
+
+.reg {
+  background: #f1f7fe;
+  padding: 2em;
+  display: flex;
+  flex-direction: column;
+  border-radius: 30px;
+  box-shadow: 0 0 2em #e6e9f9;
+  gap: 1.2em;
+  width: 650px;
+}
+
+.reg h1 {
+  font-weight: 500;
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.reg .inp {
+  background: white;
+  box-shadow: 0 0 2em #e6e9f9;
+  padding: 1em;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+  border-radius: 20px;
+  color: #4d4d4d;
+}
+
+.reg .inp input {
+  outline: none;
+  border: none;
+  width: 80%;
+}
+
+.reg .inp input::-moz-placeholder {
+  /* color: black; */
+  font-size: 0.9em;
+  color: rgb(113, 113, 113);
+}
+
+.reg .inp input:-ms-input-placeholder {
+  color: rgb(113, 113, 113);
+  font-size: 0.9em;
+}
+
+.reg .inp input::placeholder {
+  /* color: black; */
+  color: rgb(113, 113, 113);
+  font-size: 0.9em;
+}
+
+.reg .inp ion-icon {
+  color: #4d4d4d;
+  margin-bottom: -0.2em;
+}
+
+.reg .password {
+  background: white;
+  box-shadow: 0 0 2em #e6e9f9;
+  padding: 1em;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+  border-radius: 20px;
+  color: #4d4d4d;
+}
+
+.reg .password input {
+  outline: none;
+  border: none;
+  width: 80%;
+}
+
+.reg .password input::-moz-placeholder {
+  /* color: black; */
+  color: rgb(113, 113, 113);
+  font-size: 0.9em;
+}
+
+.reg .password input:-ms-input-placeholder {
+  /* color: black; */
+  color: rgb(113, 113, 113);
+  font-size: 0.9em;
+}
+
+.reg .password input::placeholder {
+  /* color: black; */
+  color: rgb(113, 113, 113);
+  font-size: 0.9em;
+}
+
+.reg .password ion-icon {
+  color: #4d4d4d;
+  margin-bottom: -0.2em;
+}
+
+.reg .login {
+  padding: 1em;
+  background: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 30px;
+  font-weight: 600;
+}
+
+.reg .footer {
+  display: flex;
+  justify-content: space-between;
+  font-size: 1rem;
+  color: #5e5e5e;
+  gap: 14em;
+  padding-bottom: 2em;
+}
+
+.reg .footer a {
+  text-decoration: none;
+  color: #ef4444;
+  cursor: pointer;
+  padding-left: 0.5em;
+  padding-right: 0.5em;
+}
+
+.reg .error {
+  color: #8e0404;
+  padding-left: 1em;
+}
+
+button {
+  cursor: pointer;
+}
+
+.reg .dob {
+  background: white;
+  box-shadow: 0 0 2em #e6e9f9;
+  padding: 1em;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+  border-radius: 20px;
+  color: #4d4d4d;
+}
+
+.reg .dob input {
+  outline: none;
+  border: none;
+  width: 20%;
+  color: rgb(113, 113, 113);
+}
+
+.reg .dob input::-moz-placeholder {
+  /* color: black; */
+  font-size: 0.9em;
+  color: rgb(113, 113, 113);
+}
+
+.reg .dob input:-ms-input-placeholder {
+  color: rgb(113, 113, 113);
+  font-size: 0.9em;
+}
+
+.reg .dob input::placeholder {
+  /* color: black; */
+  color: rgb(113, 113, 113);
+  font-size: 0.9em;
+}
+
+.reg .dob ion-icon {
+  color: #4d4d4d;
+  margin-bottom: -0.2em;
+}
+
+.reg .pass {
+  color: rgb(113, 113, 113);
+  font-size: 0.8em;
+  padding-left: 1em;
+  margin-top: -1em;
+  margin-bottom: 0.4em;
+}

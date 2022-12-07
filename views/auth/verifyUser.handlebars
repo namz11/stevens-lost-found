@@ -1,33 +1,41 @@
-<section>
-  <h1>
-    Verify User
-  </h1>
-
-  <form id="verifyUserForm">
-    <div>
+<form id="verifyUserForm">
+  <div class="verifyScreen">
+    <h1>
+      Verify User
+    </h1>
+    <div class="inp">
       <label for="otp">
-        Name
+        OTP
+      </label>
+      <div class="sec-2">
+        <ion-icon name="lock-closed-outline"></ion-icon>
         <input
           id="otp"
           type="text"
           name="otp"
-          placeholder="enter otp..."
+          placeholder="Enter OTP..."
           required
         />
-      </label>
+      </div>
     </div>
-
-    <button type="submit">
+    <button type="submit" class="btn">
       Verify
     </button>
-
-    <button type="button" id="btnResendOtp">
+    <button type="button" id="btnResendOtp" class="btn {">
       Resend OTP
     </button>
+    <ul id="verifyErrors" class="hide"></ul>
+    <br />
+  </div>
+</form>
 
-    <ul id="verifyErrors" class="hide">
-    </ul>
-  </form>
-</section>
 <script src="/public/js/auth/verifyUser.js" type="module"></script>
-<link rel="stylesheet" href="/public/css/form-styles.css" />
+<script
+  type="module"
+  src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"
+></script>
+<link
+  rel="stylesheet"
+  href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap"
+/>
+<link rel="stylesheet" href="/public/css/verify-style.css" />

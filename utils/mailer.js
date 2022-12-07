@@ -113,8 +113,39 @@ const sendListingUpdateEmailToActor = async (
   }
 };
 
+const sendForgotPasswordLinkEmail = async ({ id, email, redirect }, res) => {
+  try {
+    const url = `http://localhost:3000/auth/reset-password/${id}`;
+
+    const mailOptions = {
+      from: "stevenslostandfound@gmail.com",
+      to: email || "stevenslostandfound@gmail.com",
+      subject: "Reset Your Password",
+      html: `<p><a href='${url}'>Click here to reset your password</a></p> <p>Reset your password and start using the application.</p>`,
+    };
+
+    await transporter.sendMail(mailOptions);
+
+    if (redirect) {
+      return res.redirect("/auth/login");
+    } else {
+      return res.json({
+        success: true,
+        message: "Link has been sent to your email",
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      success: false,
+      message: "Some error occurred. Try again.",
+    });
+  }
+};
+
 module.exports = {
   sendOTPVerificationEmail,
   sendListingUpdateEmail,
+  sendForgotPasswordLinkEmail,
   sendListingUpdateEmailToActor,
 };
