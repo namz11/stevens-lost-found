@@ -5,14 +5,7 @@ const { checkId, helpers, validations } = require("../utils/helpers");
 const { itemImageUpload } = require("../utils/multer");
 const data = require("../public/js/");
 const listingData = data.listing;
-const {
-  sendListingUpdateEmail,
-  sendListingUpdateEmailToActor,
-} = require("../utils/mailer");
-const { itemsDL, userDL } = require("../data");
-const { User } = require("./models/user.model");
-
-router.route("/listing").get(async (req, res) => {
+router.route("/listing/").get(async (req, res) => {
   // item listing page - paginated
   let data1 = await listingData.fetchingLostData();
   let data2 = await listingData.fetchingFoundData();
@@ -28,33 +21,9 @@ router.route("/listing").get(async (req, res) => {
   return res.render("listing", { data1: data1, data2: data2 });
 });
 
-router.route("/my-listings/:id").get(async (req, res) => {
-  // TODO (AMAN): Pagination
-
-  let id = req.params.id;
-  try {
-    id = checkId(req.params.id, "Item ID");
-  } catch (e) {
-    console.log(e);
-    return res.status(400).render("error", {
-      class: "error",
-      message: "Error: Invalid ID or ID Not Provided",
-    });
-  }
-
-  try {
-    const d = await itemsDL.getItemsByUserId(id);
-
-    res.render("/listing/userListings", {
-      itemsData: d,
-      title: "My Listings",
-    });
-  } catch (e) {
-    return res.status(404).render("error", {
-      class: "error",
-      message: e,
-    });
-  }
+router.route("/my-listings").get(async (req, res) => {
+  // my listing page - paginated
+  return res.send("NOT IMPLEMENTED");
 });
 
 router
@@ -213,8 +182,6 @@ router
       //     .json({ error: "Please change atleast 1 value to update" });
       // }
 
-      // TODO check for user
-
       try {
         const updatedItem = await itemsDL.updateItem(itemId, itemObj);
         return res.json({
@@ -234,57 +201,7 @@ router.route("/:id/comment").post(async (req, res) => {
 });
 
 router.route("/:id/status").put(async (req, res) => {
-  // TODO (AMAN): Pass Actor Details Using Session
-
-  // get item details
-  theItem = itemsDL.getItemById(req.body.itemId);
-
-  // get user details
-  theUser = userDL.getUserById(req.body.userId);
-
   // update isClaimed status
-  itIsClaimed = itemsDL.updateIsClaimedStatus(itemId);
-
-  if (!itIsClaimed) throw "Failed to update the status";
-
-  // Send Email
-  try {
-    const toUser = sendListingUpdateEmail(
-      {
-        user: theUser.firstName,
-        userId: theUser.email,
-        userItem: theItem.name,
-        // TODO (AMAN): Pass Actor Details Using Session
-        actor: someone.something,
-        actorId: someone.something,
-        actorNumber: someone.something,
-        action: someone.something,
-      },
-      res
-    );
-
-    const toActor = sendListingUpdateEmailToActor(
-      {
-        user: theUser.firstName,
-        userId: theUser.email,
-        userItem: theItem.name,
-        // TODO (AMAN): Pass Actor Details Using Session
-        actor: someone.something,
-        actorId: someone.something,
-        actorNumber: someone.something,
-        action: someone.something,
-      },
-      res
-    );
-    // TODO (AMAN)
-    // res.redirect("");
-    // res.render("");
-  } catch (e) {
-    console.log(e);
-    // TODO (AMAN)
-    // res.redirect("");
-    // res.render("");
-  }
 });
 
 router
@@ -295,43 +212,7 @@ router
   })
   .delete(async (req, res) => {
     // delete item
-
-    id = checkId(req.params.id, "Item ID");
-
-    const theUser = await userDL.getUserByItemId(id);
-    const userId = theUser._id;
-
-    const deletedItem = await itemsDL.deleteItem(id);
-    if (!deletedItem) throw "Could Not Delete Item";
-    // res.status(200).json(deletedItem);
-
-    // Render The My Listings Page After Deletion
-    const d = await itemsDL.getItemsByUserId(userId);
-
-    res.render("/listing/userListings", {
-      itemsData: d,
-      title: "My Listings",
-    });
-    // TODO: Check with Professor If This Is a Good
+    return res.send("NOT IMPLEMENTED");
   });
-
-router.route("/:id/suggestions").get(async (req, res) => {
-  // TODO validations
-  let itemId;
-  try {
-    itemId = checkId(req.params.id, "Item ID");
-  } catch (e) {
-    return res.status(400).send(e);
-  }
-
-  try {
-    const suggestions = await itemsDL.getItemSuggestions(itemId);
-    return res.render("item/suggestions", {
-      suggestions,
-    });
-  } catch (e) {
-    return res.status(500).send(e);
-  }
-});
 
 module.exports = router;

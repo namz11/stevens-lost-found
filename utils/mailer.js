@@ -9,8 +9,8 @@ const { userVerificationDL } = require("../data");
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
-    user: "stevenslostandfound@gmail.com",
-    pass: "nobxkeewzuecsyma",
+    user: "narmitmashruwala@gmail.com",
+    pass: "kcgxuhvcglbwngbd",
   },
 });
 
@@ -25,7 +25,7 @@ const sendOTPVerificationEmail = async ({ userId, email, redirect }, res) => {
     const otp = _.random(1000, 9999);
 
     const mailOptions = {
-      from: "stevenslostandfound@gmail.com",
+      from: "narmitmashruwala@gmail.com",
       to: email || "nmashruw@stevens.edu",
       subject: "Verify Your Email",
       html: `<p>Enter <strong>${otp}</strong> in the <a href='http://localhost:3000/auth/verify'>app</a> to verify your email address and complete registration to start using the application.</p><p>Note: This otp is valid only for 24h hours.</p>`,
@@ -61,10 +61,10 @@ const sendListingUpdateEmail = async (
 ) => {
   try {
     const mailOptions = {
-      from: "stevenslostandfound@gmail.com",
+      from: "narmitmashruwala@gmail.com",
       to: userId,
       subject: `<strong>Update</strong>: ${actor} has ${action} your item`,
-      html: `<p>Hi <strong>${user}</strong>, your <em>"${userItem}"</em> has been <strong>${action}</strong> by <em>${actor}</em>.</p> <br> 
+      html: `<p>Hi <strong>${user}</strong>, your <em>${userItem}</em> has been <strong>${action}</strong> by <em>${actor}</em>.</p> <br> 
       <p>Here are the contact details of <em>${actor}</em>:</p><br> 
       <ul>
       <li>Name: ${actor}</li>
@@ -72,35 +72,6 @@ const sendListingUpdateEmail = async (
       <li>Number: ${actorNumber}</li>
       <li>Has: ${action}</li>
       </ul>`,
-      // TODO (AMAN): Display an image of the item
-    };
-
-    await transporter.sendMail(mailOptions);
-  } catch (error) {
-    console.log(error);
-    return res.status(500).json({
-      success: false,
-      message: "Please Try Again",
-    });
-  }
-};
-
-const sendListingUpdateEmailToActor = async (
-  { user, userId, userItem, userNumber, actor, actorId, action },
-  res
-) => {
-  try {
-    const mailOptions = {
-      from: "narmitmashruwala@gmail.com",
-      to: actorId,
-      subject: `<strong>Update for ${action} item</strong>: Here are the contact details for <em>"${userItem}"</em>`,
-      html: `<p>Hi ${actor} Here are the contact details of <em>${user}</em>, who posted for <em>${userItem}</em>:</p><br> 
-      <ul>
-      <li>Name: ${user}</li>
-      <li>Email: <a href = "mailto: ${userId}">${userId}</a></li>
-      <li>Number: ${userNumber}</li>
-      </ul>`,
-      // TODO (AMAN): Display an image of the item
     };
 
     await transporter.sendMail(mailOptions);
@@ -116,5 +87,4 @@ const sendListingUpdateEmailToActor = async (
 module.exports = {
   sendOTPVerificationEmail,
   sendListingUpdateEmail,
-  sendListingUpdateEmailToActor,
 };

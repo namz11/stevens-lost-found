@@ -34,8 +34,7 @@ app.engine(
   "handlebars",
   exphbs.create({
     helpers: require("./utils/handlebars").helpers,
-    defaultLayout: "home",
-    partialsDir: __dirname + "/views/templates/",
+    defaultLayout: "main",
   }).engine
 );
 app.set("view engine", "handlebars");

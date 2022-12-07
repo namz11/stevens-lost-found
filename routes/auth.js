@@ -30,7 +30,7 @@ router
   .route("/register")
   .get(checkNotAuthenticated, async (req, res) => {
     // renders register page
-    res.render("auth/register", { title: "Register", layout: "main" });
+    res.render("templates/register", { title: "Register" });
   })
   .post(checkNotAuthenticated, async (req, res) => {
     // create user
@@ -59,7 +59,7 @@ router
 router
   .route("/login")
   .get(checkNotAuthenticated, async (req, res) => {
-    res.render("auth/login", { title: "Login", layout: "main" });
+    res.render("templates/login", { title: "Login" });
   })
   .post(
     checkNotAuthenticated,
@@ -74,10 +74,7 @@ router
   .route("/forgot-password")
   .get(checkNotAuthenticated, async (req, res) => {
     // renders page where user can set new pwd
-    res.render("auth/forgotPwd", {
-      title: "Forgot Password",
-      layout: "main",
-    });
+    res.render("templates/forgotPwd", { title: "Forgot Password" });
   })
   .post(checkNotAuthenticated, async (req, res) => {
     // post new pwd to DB
@@ -91,7 +88,6 @@ router
     // renders page where user can enter otp
     return res.render("auth/verifyUser", {
       title: "Verify User",
-      layout: "main",
     });
   })
   .post(async (req, res) => {
@@ -179,7 +175,8 @@ router.route("/logout").delete(async (req, res) => {
     if (err) {
       return next(err);
     }
-    return res.json({ logout: true });
+    res.redirect("/auth/login");
+    localStorage.clear();
   });
 });
 
