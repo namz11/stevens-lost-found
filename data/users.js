@@ -4,7 +4,6 @@ const { User } = require("./models/user.model");
 const { usersCollection } = require("../config/mongoCollections");
 const { itemsCollection } = require("../config/mongoCollections");
 
-
 const getUserById = async (userId) => {
   userId = checkId(userId, "User ID");
 
@@ -51,14 +50,12 @@ const enterUser = async (firstName, lastName, email, phoneNumber, password) => {
 };
 
 const getUserByItemId = async (itemId) => {
-
   itemId = checkId(itemId, "Item ID");
   if (!ObjectId.isValid(itemId)) throw "Invalid Object ID";
   const itemDB = await itemsCollection();
   const theItem = await itemDB.findOne({ _id: ObjectId(itemId) });
 
-
-  const userId = theItem.createdBy
+  const userId = theItem.createdBy;
 
   const usersDB = await usersCollection();
   const theUser = await usersDB.findOne({ _id: ObjectId(userId) });
@@ -67,9 +64,17 @@ const getUserByItemId = async (itemId) => {
   return new User().deserialize(theUser);
 };
 
+const getAllUsers = async (userId) => {
+  const usersDB = await usersCollection();
+  const users = await usersDB.find().toArray();
+  if (!users) throw "no users error";
+  return users.map((user) => new User().deserialize(user));
+};
+
 module.exports = {
   getUserById,
   verifyUser,
   enterUser,
-  getUserByItemId
+  getUserByItemId,
+  getAllUsers,
 };
