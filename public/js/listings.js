@@ -57,29 +57,75 @@ function getPageList(totalPages, page, maxLength) {
   );
 }
 
-$(function () {});
+$(function () {
+  var numberOfItems = data.length;
+  var limitPerPage = 5;
+  var totalPages = Math.ceil(numberOfItems / limitPerPage);
+  var paginationSize = 5;
+  var currentPage;
 
-let page = 1;
-const limit = 5;
+  function showPage(whichPage) {
+    if (whichPage < 1 || whichPage > totalPages) return false;
 
-const startIndex = (page - 1) * limit;
-const endIndex = page * limit;
+    currentPage = whichPage;
+
+    $(".pagination li").slice(1, -1).remove();
+
+    getPageList(totalPages, currentPage, paginationSize).forEach((item) => {
+      $("<li>")
+        .addClass("page-item")
+        .addClass(item ? "current-page" : "dots")
+        .toggleClass("active", item === currentPage)
+        .append(
+          $("<a>")
+            .addClass("page-link")
+            .attr({ href: "javascript.void(0)" })
+            .text(item || "...")
+        )
+        .insertBefore(".next-page");
+    });
+    $(".previous-page").toggleClass("disable", currentPage === 1);
+    $(".next-page").toggleClass("disable", currentPage === totalPages);
+    return true;
+  }
+
+  $(".pagination").append(
+    $("<li>")
+      .addClass("page-item")
+      .addClass("previous-page")
+      .append(
+        $("<a>")
+          .addClass("page-link")
+          .attr({ href: "javascript:void(0)" })
+          .text("Prev")
+      ),
+    $("<li>")
+      .addClass("page-item")
+      .addClass("next-page")
+      .append(
+        $("<a>")
+          .addClass("page-link")
+          .attr({ href: "javascript:void(0)" })
+          .text("Next")
+      )
+  );
+});
 
 let sortItem1 = "";
 let sortItem2 = "";
 
-if (startIndex > 0) {
-  previous = {
-    page: page - 1,
-    limit: limit,
-  };
-}
-if (endIndex < data.countDocuments().exec()) {
-  next = {
-    page: page + 1,
-    limit: limit,
-  };
-}
+// if (startIndex > 0) {
+//   previous = {
+//     page: page - 1,
+//     limit: limit,
+//   };
+// }
+// if (endIndex < data.countDocuments().exec()) {
+//   next = {
+//     page: page + 1,
+//     limit: limit,
+//   };
+// }
 
 document.getElementsByName("option1").forEach((radio) => {
   if (radio.checked) {
@@ -115,8 +161,7 @@ const fetchingLostData = async () => {
   }
   Data1 = Data1.find()
     .sort({ sortItem1: -1 })
-    .limit(limit)
-    .skip(startIndex)
+    .slice((currentPage - 1) * limitPerPage, currentPage * limitPerPage)
     .exec();
   return Data1;
 };
@@ -132,8 +177,7 @@ const fetchingFoundData = async () => {
   }
   Data2 = Data2.find()
     .sort({ sortItem2: -1 })
-    .limit(limit)
-    .skip(startIndex)
+    .slice((currentPage - 1) * limitPerPage, currentPage * limitPerPage)
     .exec();
   return Data2;
 };
