@@ -1,76 +1,114 @@
-{{!-- TODO: Add Picture --}}
-{{!-- TODO: Rushabh can try to adjust his code in this template so the UI can stay uniform--}}
+{{! TODO: Add Picture }}
+{{! TODO: Rushabh can try to adjust his code in this template so the UI can stay uniform}}
 
 <div class="listing-wrapper">
-    {{#each itemsData}}
-      <!-- Item Details -->
-      <div class="item-listing">
+  {{#each itemsData}}
+    <!-- Item Details -->
+    <div class="item-listing">
+      <!-- Item Description -->
+      <div class="item-description">
+        <span>
+          {{this.type}}
+        </span>
+        <h1>
+          {{this.name}}
+        </h1>
+        <p>
+          {{this.description}}
+        </p>
+      </div>
 
-        <!-- Item Description -->
-        <div class="item-description">
-          <span>{{this.type}}</span>
-          <h1>{{this.name}}</h1>
-          <p>{{this.description}}</p>
+      <!-- Dates -->
+      <div class="item-dates">
+        <p>
+          {{this.createdAt}}
+        </p>
+        <p>
+          {{this.dateLostOrFound}}
+        </p>
+      </div>
+
+      <!-- Item Location -->
+      <div class="item-location">
+        <p>
+          {{this.type}} Location: {{this.lostOrFoundLocation}}
+        </p>
+      </div>
+    </div>
+
+    <button id="modal-btn" class="button">
+      {{itemAction}}
+    </button>
+    <!-- define item action in js -->
+
+    <div id="modal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <span class="close">
+            &times;
+          </span>
+          <h2>
+            {{this.name}}
+          </h2>
         </div>
-  
-        <!-- Dates -->
-        <div class="item-dates">
-          <p>{{this.createdAt}}</p>
-          <p>{{this.dateLostOrFound}}</p>
-  
+        <div class="modal-body">
+          <p>
+            Are you sure {{itemAction-String}}
+          </p>
+          <!-- define item action string in js -->
+
+          <button
+            id="confirm-yes-btn"
+            data-id="{{this._id}}"
+            data-user="{{this.createdBy}}"
+            class="button"
+          >
+            Yes
+          </button>
+          <button id="confirm-no-btn" class="button">
+            No
+          </button>
+
+          <p>
+            Once you proceed with a yes, a confirmation email will be sent to
+              the OP and the contact details of the OP will be shown.
+          </p>
         </div>
-  
-        <!-- Item Location -->
-        <div class="item-location">
-          <p>{{this.type}} Location: {{this.lostOrFoundLocation}}</p>
+        <div class="modal-footer">
+          <h3>
+            {{this.type}} Item
+          </h3>
         </div>
       </div>
-  
-      <button id="modal-btn" class="button">{{itemAction}}</button> 
-      <!-- define item action in js -->
-  
-      <div id="modal" class="modal">
-        <div class="modal-content">
-          <div class="modal-header">
-            <span class="close">&times;</span>
-            <h2>{{this.name}}</h2>
-          </div>
-          <div class="modal-body">
-            <p>Are you sure {{itemAction-String}}</p>
-              <!-- define item action string in js -->
+    </div>
 
-            <button id="confirm-yes-btn" data-id="{{this._id}}" data-user="{{this.createdBy}}" class="button">Yes</button>
-            <button id="confirm-no-btn" class="button">No</button>
-  
-            <p>Once you proceed with a yes, a confirmation email will be sent to
-              the OP and the contact details of the OP will be shown.</p>
-          </div>
-          <div class="modal-footer">
-            <h3>{{this.type}} Item</h3>
-          </div>
+    <div id="modal-inner" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <span class="close" id="close-btn-inner">
+            &times;
+          </span>
+          <h2>
+            {{this.name}}
+          </h2>
+        </div>
+        <div class="modal-body">
+          <button id="close-btn-inner-flat" class="button">
+            Close
+          </button>
+        </div>
+        <div class="modal-footer">
+          <h3>
+            An email to the OP has been sent for confirmation!
+          </h3>
         </div>
       </div>
-  
-      <div id="modal-inner" class="modal">
-        <div class="modal-content">
-          <div class="modal-header">
-            <span class="close" id="close-btn-inner">&times;</span>
-            <h2>{{this.name}}</h2>
-          </div>
-          <div class="modal-body">
-            <button id="close-btn-inner-flat" class="button">Close</button>
+    </div>
 
-          </div>
-          <div class="modal-footer">
-            <h3>An email to the OP has been sent for confirmation!</h3>
-          </div>
-        </div>
-      </div>
-  
-      <button id="details-btn" class="button" data-button="{{this._id}}">Details</button>
-
-    {{/each}}
-
-  </div>
-<script src="/public/js/listings.js" type="module"></script>
+    <button id="details-btn" class="button" data-button="{{this._id}}">
+      Details
+    </button>
+  {{/each}}
+</div>
+<script src="/public/js/listing/listings.js" type="module"></script>
 <link rel="stylesheet" href="/public/css/modal-styles.css" />

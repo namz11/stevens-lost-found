@@ -36,7 +36,7 @@ import { helpers, validations } from "/public/js/helpers.js";
             errorContainer.appendChild(errorItem);
           });
         } else {
-          const user = JSON.parse(localStorage.getItem("user"));
+          const user = JSON.parse(sessionStorage.getItem("user"));
 
           fetch("/auth/verify", {
             method: "POST",
@@ -53,7 +53,7 @@ import { helpers, validations } from "/public/js/helpers.js";
             .then((res) => {
               if (res.success) {
                 alert(res.message || "User verified");
-                localStorage.setItem("user", JSON.stringify(res.data));
+                sessionStorage.setItem("user", JSON.stringify(res.data));
                 this.location.replace("/items/listing");
               } else {
                 alert(res.message || "Something went wrong.");
@@ -72,7 +72,7 @@ import { helpers, validations } from "/public/js/helpers.js";
         event.stopPropagation();
         event.stopImmediatePropagation();
 
-        const user = JSON.parse(localStorage.getItem("user"));
+        const user = JSON.parse(sessionStorage.getItem("user"));
 
         fetch("/auth/resend-otp", {
           method: "POST",
