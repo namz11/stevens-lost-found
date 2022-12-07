@@ -3,10 +3,44 @@ const router = express.Router();
 const { itemsDL } = require("../data");
 const { checkId, helpers, validations } = require("../utils/helpers");
 const { itemImageUpload } = require("../utils/multer");
+const mongoCollections = require("./config/mongoCollections");
+const Group50_Project_CS546 = mongoCollections.itemsCollection;
 
-router.route("/listing").get(async (req, res) => {
+router.route("/listing/").get(async (req, res) => {
   // item listing page - paginated
-  return res.send("NOT IMPLEMENTED");
+  const data = await Group50_Project_CS546();
+  try {
+    if (!data) {
+      return new Error("Data not found");
+    }
+  } catch (e) {
+    console.log(e);
+    return res.status(500).send(new Error(e.message));
+  }
+
+  const page = parseInt(req.query.page) || 1;
+  const limit = 5;
+
+  const startIndex = (page - 1) * limit;
+  const endIndex = page * limit;
+
+  const results = {};
+
+  if (startIndex > 0) {
+    results.previous = {
+      page: page - 1,
+      limit: limit,
+    };
+  }
+  if (endIndex < data.countDocuments().exec()) {
+    results.next = {
+      page: page + 1,
+      limit: limit,
+    };
+  }
+  results.results = await data.find().limit(limit).skip(startIndex).exec();
+
+  return res.render("listing", { results: results });
 });
 
 router.route("/my-listings").get(async (req, res) => {
