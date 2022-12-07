@@ -8,7 +8,13 @@ body {
 }
 
 body {
-  font-family: Georgia, Cambria, "Times New Roman", Times, serif;
+  font-family: "Poppins";
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+
+  background: #dde5f4;
 }
 
 :root {
@@ -18,20 +24,18 @@ body {
   --white-color: #f1f5f9;
   --bg-color: #e0f2fe;
   --grey: #808080;
+  --modal-duration: 1s;
+  --modal-color: #428bca;
 }
 
 .hide {
   display: none;
 }
 
-.comment {
-  margin-bottom: 14px;
-  border: 1px solid;
-  border-color: var(--black-color);
-  padding: 6px;
-}
-.user {
-  font-size: 12px;
-  color: var(--black-color);
-  font-style: italic;
+.body-wrapper {
+  height: 100vh;
+  overflow-y: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }

@@ -132,4 +132,7 @@ module.exports = {
   getUserById,
   verifyUser,
   enterUser,
+  getAllUsers,
+  updatePassword,
+  getUserByEmail,
 };
