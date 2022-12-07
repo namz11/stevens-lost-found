@@ -144,18 +144,6 @@ const getLevenshteinScore = (obj1, obj2) => {
   return { ...obj2, score };
 };
 
-const deleteItem = async (id) => {
-  var itemId = checkId(id, "invalid item id");
-
-  var items = await itemsCollection();
-  var deletionInfo = await items.deleteOne({ _id: ObjectId(itemId) });
-
-  if (deletionInfo.deletedCount === 0) {
-    throw new Error("error in delete");
-  }
-  return true;
-};
-
 const updateIsClaimedStatus = async (itemId) => {
   itemId = checkId(itemId, "Item ID");
   const itemDB = await itemsCollection();
@@ -178,48 +166,86 @@ const updateIsClaimedStatus = async (itemId) => {
   return await getItemById(itemId);
 };
 
-
-const searchHelper = async (itemsData, searchString) =>{
+const searchHelper = async (itemsData, searchString) => {
   try {
-    if(!itemsData) throw "No Data Provided"
-    if(!searchString) throw "No Search String Provided"
+    if (!itemsData) throw "No Data Provided";
+    if (!searchString) throw "No Search String Provided";
 
     let score1, score2, score3;
-    let count = 0
+    let count = 0;
     const matchedEntries = [];
     searchString = searchString.toLowerCase();
     for (let i = 0; i < itemsData.length; i++) {
-
       if (
         itemsData[i].name.toLowerCase().includes(searchString) ||
-        itemsData[i].lostOrFoundLocation.toLowerCase().includes(searchString) || itemsData[i].description.toLowerCase().includes(searchString)
+        itemsData[i].lostOrFoundLocation.toLowerCase().includes(searchString) ||
+        itemsData[i].description.toLowerCase().includes(searchString)
       ) {
-        score1 = levenshtein(itemsData[i].name.toLowerCase(), searchString)
-        score2 = levenshtein(itemsData[i].lostOrFoundLocation.toLowerCase(), searchString)
-        score3 = levenshtein(itemsData[i].description.toLowerCase(), searchString)
+        score1 = levenshtein(itemsData[i].name.toLowerCase(), searchString);
+        score2 = levenshtein(
+          itemsData[i].lostOrFoundLocation.toLowerCase(),
+          searchString
+        );
+        score3 = levenshtein(
+          itemsData[i].description.toLowerCase(),
+          searchString
+        );
 
-        let scores = []
-        scores.push(score1)
-        scores.push(score2)
-        scores.push(score3)
+        let scores = [];
+        scores.push(score1);
+        scores.push(score2);
+        scores.push(score3);
 
-        scores.sort((a, b) => a - b)
-        count+=1
-        itemsData[i].score = scores[0]
+        scores.sort((a, b) => a - b);
+        count += 1;
+        itemsData[i].score = scores[0];
         matchedEntries.push(itemsData[i]);
       }
-    } 
-    matchedEntries.sort((a, b) => a.score - b.score);
-    for (let i=0;i<matchedEntries.length;i++){
-      delete matchedEntries[i].score
     }
-    return matchedEntries
-
-  }catch (e) {
+    matchedEntries.sort((a, b) => a.score - b.score);
+    for (let i = 0; i < matchedEntries.length; i++) {
+      delete matchedEntries[i].score;
+    }
+    return matchedEntries;
+  } catch (e) {
     console.log(e);
   }
-}
+};
 
+const deleteItem = async (id) => {
+  var itemId = checkId(id, "invalid item id");
+
+  var items = await itemsCollection();
+  var deletionInfo = await items.deleteOne({ _id: ObjectId(itemId) });
+
+  if (deletionInfo.deletedCount === 0) {
+    throw new Error("error in delete");
+  }
+  return true;
+};
+
+const createComment = async (comment, id) => {
+  id = checkId(id, "ID");
+  const item = await getItemById(id);
+
+  if (!helpers.isStringValid(comment)) {
+    throw new Error("comment field needs to have valid value");
+  }
+
+  let obj = new Comment(comment);
+  item.comments.push(obj);
+
+  const items = await itemsCollection();
+  const updateInfo = await items.updateOne(
+    { _id: ObjectId(id) },
+    { $set: { comments: item.comments } }
+  );
+
+  if (!updateInfo.matchedCount && !updateInfo.modifiedCount)
+    throw "Update failed";
+
+  return await getItemById(id);
+};
 
 module.exports = {
   getItemById,
@@ -231,5 +257,6 @@ module.exports = {
   updateIsClaimedStatus,
   getLevenshteinScore,
   deleteItem,
-  searchHelper
+  searchHelper,
+  createComment,
 };

@@ -1,0 +1,83 @@
+<div>
+  <div>
+    <strong>
+      Type :
+    </strong>
+    {{item.type}}
+  </div>
+  <div>
+    <strong>
+      Name :
+    </strong>
+    {{item.name}}
+  </div>
+  <div>
+    <strong>
+      Description :
+    </strong>
+    {{item.description}}
+  </div>
+  <div>
+    <strong>
+      Date {{item.type}} :
+    </strong>
+    {{date}}
+  </div>
+  <div>
+    <strong>
+      Location {{item.type}} :
+    </strong>
+    {{item.lostOrFoundLocation}}
+  </div>
+  <div>
+    <strong>
+      Is claimed :
+    </strong>
+    {{item.isClaimed}}
+  </div>
+  <div>
+    <strong>
+      Created By :
+    </strong>
+    {{user.firstName}} {{user.lastName}}
+  </div>
+</div>
+
+<section>
+  <h2>
+    Comments
+  </h2>
+  {{#each item.comments}}
+    <div class="comment">
+      <div>
+        {{{this.comment}}}
+      </div>
+      <div class="user">
+        by {{this.userInfo.firstName}} {{this.userInfo.lastName}} at {{
+          this.createdAt
+        }}
+      </div>
+    </div>
+  {{/each}}
+
+  <div>
+    <form id="comment-form" action="{{action}}" method="post">
+      <label for="comment">
+        Add new comment
+        <br />
+        <textarea
+          id="comment"
+          name="comment"
+          rows="4"
+          cols="50"
+          placeholder="enter comment..."
+        >
+        </textarea>
+      </label>
+      <br />
+      <button type="submit" value="Submit">
+        add
+      </button>
+    </form>
+  </div>
+</section>

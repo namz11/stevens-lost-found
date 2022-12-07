@@ -9,10 +9,6 @@ const {
 } = require("../utils/mailer");
 const itemFunctions = require("../data/items");
 const userFunctions = require("../data/users");
-const { itemsCollection } = require("../config/mongoCollections");
-const { User } = require("./models/user.model");
-const { usersCollection } = require("../config/mongoCollections");
-const userFunctions = require("../data/users");
 
 router.route("/listing").get(async (req, res) => {
   // item listing page - paginated
@@ -21,13 +17,13 @@ router.route("/listing").get(async (req, res) => {
 
 router.route("/my-listings/:id").get(async (req, res) => {
   // TODO (AMAN): Pagination
-  
+
   let id = req.params.id;
   try {
     id = checkId(req.params.id, "Item ID");
   } catch (e) {
-    console.log(e)
-    return res.status(400).render("error",{
+    console.log(e);
+    return res.status(400).render("error", {
       class: "error",
       message: "Error: Invalid ID or ID Not Provided",
     });
@@ -37,7 +33,8 @@ router.route("/my-listings/:id").get(async (req, res) => {
     const d = await itemFunctions.getItemsByUserId(id);
 
     res.render("/listing/userListings", {
-      itemsData: d, title: "My Listings"
+      itemsData: d,
+      title: "My Listings",
     });
   } catch (e) {
     return res.status(404).render("error", {
@@ -219,12 +216,24 @@ router
   );
 
 router.route("/:id/comment").post(async (req, res) => {
-  // add comment
-  return res.send("NOT IMPLEMENTED");
+  let id = req.params.id;
+  let comment = req.body.comment;
+  try {
+    id = checkId(id, "Item ID");
+  } catch (e) {
+    return res.status(400).send(new Error(e.message));
+  }
+  try {
+    let item = await itemsDL.createComment(comment, id);
+    return res.redirect("/items/" + id);
+  } catch (e) {
+    console.log(e);
+    return res.status(500).send(new Error(e.message));
+  }
 });
 
 router.route("/:id/status").put(async (req, res) => {
- // TODO (AMAN): Pass Actor Details Using Session
+  // TODO (AMAN): Pass Actor Details Using Session
 
   // get item details
   theItem = itemFunctions.getItemById(req.body.itemId);
@@ -281,27 +290,64 @@ router
   .route("/:id")
   .get(async (req, res) => {
     // item page
-    return res.send("NOT IMPLEMENTED");
+    let id = req.params.id;
+    let user;
+    try {
+      id = checkId(id, "Item ID");
+    } catch (e) {
+      return res.status(400).send(new Error(e.message));
+    }
+
+    let item;
+    try {
+      item = await itemsDL.getItemById(id);
+      let allUsers = await userDL.getAllUsers();
+      item.comments = item.comments.map((c) => {
+        for (u of allUsers) {
+          if (u._id === c.createdBy.toString()) {
+            c = { ...c, userInfo: u };
+            break;
+          }
+        }
+        return { ...c, createdAt: new Date(c.createdAt).toUTCString() };
+      });
+
+      let userId = item.createdBy.toString();
+      userId = checkId(userId, "User ID");
+      user = await userDL.getUserById(userId);
+    } catch (e) {
+      console.log(e);
+      return res.status(500).send("Internal Server Error");
+    }
+
+    return res.render("item/view", {
+      title: "Item Page",
+      item: item,
+      user: user,
+      date: new Date(item.dateLostOrFound),
+      action: `/items/${id}/comment`,
+    });
   })
   .delete(async (req, res) => {
     // delete item
+    let id = req.params.id;
+    try {
+      id = checkId(id, "Item ID");
+    } catch (e) {
+      return res.status(400).send(new Error(e.message));
+    }
+    try {
+      let item = await itemsDL.getItemById(id);
+    } catch (e) {
+      return res.status(404).send("item not found");
+    }
 
-    id = checkId(req.params.id, "Item ID");
-
-    const theUser = await userFunctions.getUserByItemId(id)
-    const userId = theUser._id
-
-    const deletedItem = await itemFunctions.deleteItem(id);
-    if(!deletedItem) throw "Could Not Delete Item"
-    // res.status(200).json(deletedItem);
-
-    // Render The My Listings Page After Deletion
-    const d = await itemFunctions.getItemsByUserId(userId);
-
-    res.render("/listing/userListings", {
-      itemsData: d, title: "My Listings"
-    });
-   // TODO: Check with Professor If This Is a Good
+    try {
+      let item = await itemsDL.deleteItem(id);
+      return res.send(item);
+    } catch (e) {
+      return res.status(500).send("Internal server errror");
+    }
   });
 
 router.route("/:id/suggestions").get(async (req, res) => {
