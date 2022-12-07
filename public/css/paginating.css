@@ -81,6 +81,13 @@
   width: 80px;
   border-radius: 45px;
   cursor: pointer;
+  transition: 0.3s ease;
+}
+.previous-page:hover {
+  transform: translate(-5px);
+}
+.next-page:hover {
+  transform: translate(5px);
 }
 .current-page,
 .dots {
@@ -88,4 +95,10 @@
   width: 45px;
   border-radius: 50%;
   cursor: pointer;
+}
+.active {
+  background: #0ab1ce;
+}
+.disabled {
+  background: #ccc;
 }
