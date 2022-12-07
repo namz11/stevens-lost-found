@@ -8,8 +8,6 @@ const { userVerificationDL, userDL } = require("../data");
 const { sendOTPVerificationEmail } = require("../utils/mailer");
 const bcrypt = require("bcryptjs");
 const passport = require("passport");
-const LocalStorage = require("node-localstorage").LocalStorage;
-var localStorage = new LocalStorage("./scratch");
 const initializePassport = require("../utils/passport");
 const { checkId } = require("../utils/helpers");
 
@@ -19,7 +17,6 @@ initializePassport(passport, (email) =>
 
 router.route("/").get(checkAuthenticated, async (req, res) => {
   try {
-    const user = localStorage.getItem("user");
     res.sendFile(path.join(__dirname, "../static/index.html"));
   } catch {
     console.log("Error");
