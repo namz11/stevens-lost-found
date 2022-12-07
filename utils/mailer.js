@@ -76,6 +76,7 @@ const sendListingUpdateEmail = async (
     };
 
     await transporter.sendMail(mailOptions);
+    return true
   } catch (error) {
     console.log(error);
     return res.status(500).json({
@@ -104,6 +105,7 @@ const sendListingUpdateEmailToActor = async (
     };
 
     await transporter.sendMail(mailOptions);
+    return true
   } catch (error) {
     console.log(error);
     return res.status(500).json({

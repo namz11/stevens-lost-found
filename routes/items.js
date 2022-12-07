@@ -1,3 +1,5 @@
+// TODO: Deal With Sessions
+
 const express = require("express");
 const router = express.Router();
 const { itemsDL } = require("../data");
@@ -232,6 +234,11 @@ router.route("/:id/status").put(async (req, res) => {
   // get user details
   theUser = userFunctions.getUserById(req.body.userId);
 
+  if(theItem.type == "lost"){
+    action = "Found"
+  } else if(theItem.type == "found"){
+    action = "Claim"
+  }
   // update isClaimed status
   itIsClaimed = itemFunctions.updateIsClaimedStatus(itemId);
 
@@ -245,10 +252,10 @@ router.route("/:id/status").put(async (req, res) => {
         userId: theUser.email,
         userItem: theItem.name,
         // TODO (AMAN): Pass Actor Details Using Session
-        actor: someone.something,
-        actorId: someone.something,
-        actorNumber: someone.something,
-        action: someone.something,
+        actor: req.session.passport.firstName,
+        actorId: req.session.passport.email,
+        actorNumber: req.session.passport.phone,
+        action: action,
       },
       res
     );
@@ -259,13 +266,17 @@ router.route("/:id/status").put(async (req, res) => {
         userId: theUser.email,
         userItem: theItem.name,
         // TODO (AMAN): Pass Actor Details Using Session
-        actor: someone.something,
-        actorId: someone.something,
-        actorNumber: someone.something,
-        action: someone.something,
+        actor: req.session.passport.firstName,
+        actorId: req.session.passport.email,
+        actorNumber: req.session.passport.phone,
+        action: action,
       },
       res
     );
+
+    if(!toUser) throw "Oops! Something Went Wrong: Failed to send email to user"
+    if(!toActor) throw "Oops! Something Went Wrong: Failed to send email"
+
     // TODO (AMAN)
     // res.redirect("");
     // res.render("");
@@ -284,7 +295,7 @@ router
     return res.send("NOT IMPLEMENTED");
   })
   .delete(async (req, res) => {
-    // delete item
+    //  item
 
     id = checkId(req.params.id, "Item ID");
 
@@ -299,7 +310,7 @@ router
     const d = await itemFunctions.getItemsByUserId(userId);
 
     res.render("/listing/userListings", {
-      itemsData: d, title: "My Listings"
+      itemsData: d, title: "My Listings", itemDeleted: deletedItem
     });
    // TODO: Check with Professor If This Is a Good
   });

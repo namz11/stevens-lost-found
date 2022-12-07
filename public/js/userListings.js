@@ -18,24 +18,6 @@ const theUrl = `/${buttonItemId}` //TODO Little Changes To Open The Item Page
 window.open(theUrl,
 "_blank") || window.location.replace(theUrl); });
 
-// let editButton = document.querySelector('#edit-btn');
-// editButton.addEventListener('click', (event)=>{
-//   event.preventDefault()
-//   const editButtonItemId = event.target.getAttribute("data-button");
-//   //TODO Check if this works properly
-//   const theUrl = `/edit/${editButtonItemId}` //TODO Little Changes To Open The Item Page
-//     window.open(theUrl,
-//     "_blank") || window.location.replace(theUrl); });
-
-// let deleteButton = document.querySelector('#delete-btn');
-// deleteButton.addEventListener('click', (event)=>{
-//   event.preventDefault()
-//   const deleteButtonItemId = event.target.getAttribute("data-button");
-//   //TODO Check if this works properly
-//   const theUrl = `/${deleteButtonItemId}` //TODO Little Changes To Open The Item Page
-//   window.open(theUrl,
-//       "_blank") || window.location.replace(theUrl); });
-
 // Events
 modalBtn.addEventListener('click', openModal);
 closeBtn.addEventListener('click', closeModal);
