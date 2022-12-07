@@ -1,0 +1,11 @@
+.comment {
+  margin-bottom: 14px;
+  border: 1px solid;
+  border-color: var(--black-color);
+  padding: 6px;
+}
+.user {
+  font-size: 12px;
+  color: var(--black-color);
+  font-style: italic;
+}
