@@ -1,53 +1,64 @@
 {{! TODO Add More Details to the outer Modals }}
 {{! TODO Add User Details to the inner Modals }}
+
+{{if data.length}}
 {{#each data}}
-{{#if !this.isClaimed}}
-  {{#ifEquals this.type "lost"}}
+{{#if !isClaimed}}
+  <div class="sort-by">
+    <input id="rd1" type="radio" name="option" value="createdAt" checked="checked">Date Added</input>
+    <input id="rd2" type="radio" name="option" value="dateLostOrFound">Date Lost/Found</input>
+  </div>
+  {{#ifEquals type "lost"}}
     <div class="lost">
       <div class="container">
         <div class="card-content">
           <div class="card">
-            <div class="card-image"><img src="{{this.picture}}" alt=""></div> 
+            <div class="card-image"><img src="{{picture}}" alt=""></div> 
             <div class="card-info">
-              <h3>Name : {{this.name}}</h3>
-              {{!-- <p>Type : {{this.type}}</p> --}}
-              <p>Description : {{this.description}}</p>
-              <p>Date : {{this.dateLostOrFound}}</p>
-              <p>Created at : {{this.createdAt}}</p>
-              <p>Location : {{this.lostOrFoundLocation}}</p>
-              <p>Comments : {{this.comments}}</p>
+              <h3>Name : {{name}}</h3>
+              {{!-- <p>Type : {{type}}</p> --}}
+              <p>Description : {{description}}</p>
+              <p>Date : {{dateLostOrFound}}</p>
+              <p>Created at : {{createdAt}}</p>
+              <p>Location : {{lostOrFoundLocation}}</p>
+              {{!-- <p>Comments : {{comments}}</p> --}}
             </div> 
           </div>
         </div>
       </div>
     </div>
+
+
   {{/ifEquals}}
 
 
-  {{#ifEquals this.type "found"}}
+  {{#ifEquals type "found"}}
     <div class="found">
       <div class="container">
         <div class="card-content">
           <div class="card">
-            <div class="card-image"><img src="{{this.picture}}" alt=""></div> 
+            <div class="card-image"><img src="{{picture}}" alt=""></div> 
             <div class="card-info">
-              <h3>Name : {{this.name}}</h3>
-              {{!-- <p>Type : {{this.type}}</p> --}}
-              <p>Description : {{this.description}}</p>
-              <p>Date : {{this.dateLostOrFound}}</p>
-              <p>Created at : {{this.createdAt}}</p>
-              <p>Location : {{this.lostOrFoundLocation}}</p>
-              <p>Comments : {{this.comments}}</p>
-            </div> 
-          </div>
+              <h3>Name : {{name}}</h3>
+              {{!-- <p>Type : {{type}}</p> --}}
+              <p>Description : {{description}}</p>
+              <p>Date : {{dateLostOrFound}}</p>
+              <p>Created at : {{createdAt}}</p>
+              <p>Location : {{lostOrFoundLocation}}</p>
+              {{!-- <p>Comments : {{comments}}</p> --}}
+            </div>
         </div>
       </div>
     </div>
+
+
   {{/ifEquals}}
 
 
 {{/if}}
+
 {{/each}}
+{{/if}}
 
 
 
