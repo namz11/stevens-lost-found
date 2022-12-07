@@ -3,6 +3,7 @@ const { helpers, validations, checkId } = require("../utils/helpers");
 const { Item } = require("./models/item.model");
 const { itemsCollection } = require("../config/mongoCollections");
 const levenshtein = require("js-levenshtein");
+const { Comment } = require("./models/comment.model");
 
 const getItemById = async (id) => {
   id = checkId(id, "Item ID");

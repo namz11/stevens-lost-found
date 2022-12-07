@@ -1,6 +1,5 @@
 const express = require("express");
 const router = express.Router();
-const { itemsDL } = require("../data");
 const { checkId, helpers, validations } = require("../utils/helpers");
 const { itemImageUpload } = require("../utils/multer");
 const {
