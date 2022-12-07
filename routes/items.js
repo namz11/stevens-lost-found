@@ -1,17 +1,45 @@
 const express = require("express");
 const router = express.Router();
-const { itemsDL } = require("../data");
 const { checkId, helpers, validations } = require("../utils/helpers");
 const { itemImageUpload } = require("../utils/multer");
+const {
+  sendListingUpdateEmail,
+  sendListingUpdateEmailToActor,
+} = require("../utils/mailer");
+const { itemsDL, userDL } = require("../data");
 
 router.route("/listing").get(async (req, res) => {
   // item listing page - paginated
   return res.send("NOT IMPLEMENTED");
 });
 
-router.route("/my-listings").get(async (req, res) => {
-  // my listing page - paginated
-  return res.send("NOT IMPLEMENTED");
+router.route("/my-listings/:id").get(async (req, res) => {
+  // TODO (AMAN): Pagination
+
+  let id = req.params.id;
+  try {
+    id = checkId(req.params.id, "Item ID");
+  } catch (e) {
+    console.log(e);
+    return res.status(400).render("error", {
+      class: "error",
+      message: "Error: Invalid ID or ID Not Provided",
+    });
+  }
+
+  try {
+    const d = await itemsDL.getItemsByUserId(id);
+
+    res.render("/listing/userListings", {
+      itemsData: d,
+      title: "My Listings",
+    });
+  } catch (e) {
+    return res.status(404).render("error", {
+      class: "error",
+      message: e,
+    });
+  }
 });
 
 router
@@ -186,23 +214,141 @@ router
   );
 
 router.route("/:id/comment").post(async (req, res) => {
-  // add comment
-  return res.send("NOT IMPLEMENTED");
+  let id = req.params.id;
+  let comment = req.body.comment;
+  try {
+    id = checkId(id, "Item ID");
+  } catch (e) {
+    return res.status(400).send(new Error(e.message));
+  }
+  try {
+    let item = await itemsDL.createComment(comment, id);
+    return res.redirect("/items/" + id);
+  } catch (e) {
+    console.log(e);
+    return res.status(500).send(new Error(e.message));
+  }
 });
 
 router.route("/:id/status").put(async (req, res) => {
+  // TODO (AMAN): Pass Actor Details Using Session
+
+  // get item details
+  theItem = itemsDL.getItemById(req.body.itemId);
+
+  // get user details
+  theUser = userDL.getUserById(req.body.userId);
+
   // update isClaimed status
+  itIsClaimed = itemsDL.updateIsClaimedStatus(itemId);
+
+  if (!itIsClaimed) throw "Failed to update the status";
+
+  // Send Email
+  try {
+    const toUser = sendListingUpdateEmail(
+      {
+        user: theUser.firstName,
+        userId: theUser.email,
+        userItem: theItem.name,
+        // TODO (AMAN): Pass Actor Details Using Session
+        actor: someone.something,
+        actorId: someone.something,
+        actorNumber: someone.something,
+        action: someone.something,
+      },
+      res
+    );
+
+    const toActor = sendListingUpdateEmailToActor(
+      {
+        user: theUser.firstName,
+        userId: theUser.email,
+        userItem: theItem.name,
+        // TODO (AMAN): Pass Actor Details Using Session
+        actor: someone.something,
+        actorId: someone.something,
+        actorNumber: someone.something,
+        action: someone.something,
+      },
+      res
+    );
+    // TODO (AMAN)
+    // res.redirect("");
+    // res.render("");
+  } catch (e) {
+    console.log(e);
+    // TODO (AMAN)
+    // res.redirect("");
+    // res.render("");
+  }
 });
 
 router
   .route("/:id")
   .get(async (req, res) => {
     // item page
-    return res.send("NOT IMPLEMENTED");
+    let id = req.params.id;
+    let user;
+    try {
+      id = checkId(id, "Item ID");
+    } catch (e) {
+      return res.status(400).send(new Error(e.message));
+    }
+
+    let item;
+    try {
+      item = await itemsDL.getItemById(id);
+      let allUsers = await userDL.getAllUsers();
+      item.comments = item.comments.map((c) => {
+        for (u of allUsers) {
+          if (u._id === c.createdBy.toString()) {
+            c = { ...c, userInfo: u };
+            break;
+          }
+        }
+        return { ...c, createdAt: new Date(c.createdAt).toUTCString() };
+      });
+
+      let userId = item.createdBy.toString();
+      userId = checkId(userId, "User ID");
+      user = await userDL.getUserById(userId);
+    } catch (e) {
+      console.log(e);
+      return res.status(500).send("Internal Server Error");
+    }
+
+    return res.render("item/view", {
+      title: "Item Page",
+      item: item,
+      user: user,
+      date: new Date(item.dateLostOrFound),
+      action: `/items/${id}/comment`,
+    });
   })
   .delete(async (req, res) => {
     // delete item
-    return res.send("NOT IMPLEMENTED");
+    let id = req.params.id;
+    try {
+      id = checkId(id, "Item ID");
+    } catch (e) {
+      return res.status(400).send(new Error(e.message));
+    }
+    try {
+      let item = await itemsDL.getItemById(id);
+    } catch (e) {
+      return res.status(404).send("item not found");
+    }
+
+    try {
+      let item = await itemsDL.deleteItem(id);
+      return res.json({
+        success: true,
+        message: "Item deleted!",
+      });
+    } catch (e) {
+      return res.status(500).send("Internal server errror");
+    }
   });
 
 router.route("/:id/suggestions").get(async (req, res) => {

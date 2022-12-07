@@ -2,9 +2,6 @@ const { ObjectId } = require("mongodb");
 const { helpers, checkId, authHelpers } = require("../utils/helpers");
 const { User } = require("./models/user.model");
 const { usersCollection } = require("../config/mongoCollections");
-const bcrypt = require("bcryptjs");
-
-const saltRounds = 10;
 
 const getUserById = async (userId) => {
   userId = checkId(userId, "User ID");
@@ -80,6 +77,28 @@ const enterUser = async (
   return await getUserById(inUser.insertedId.toString());
 };
 
+const getUserByItemId = async (itemId) => {
+  itemId = checkId(itemId, "Item ID");
+  if (!ObjectId.isValid(itemId)) throw "Invalid Object ID";
+  const itemDB = await itemsCollection();
+  const theItem = await itemDB.findOne({ _id: ObjectId(itemId) });
+
+  const userId = theItem.createdBy;
+
+  const usersDB = await usersCollection();
+  const theUser = await usersDB.findOne({ _id: ObjectId(userId) });
+  if (theUser === null) throw new Error("No user with that id");
+
+  return new User().deserialize(theUser);
+};
+
+const getAllUsers = async (userId) => {
+  const usersDB = await usersCollection();
+  const users = await usersDB.find().toArray();
+  if (!users) throw "no users error";
+  return users.map((user) => new User().deserialize(user));
+};
+
 const updatePassword = async (userId, password) => {
   userId = checkId(userId, "User ID");
   userPassword = authHelpers.checkPassword(password);
@@ -113,6 +132,4 @@ module.exports = {
   getUserById,
   verifyUser,
   enterUser,
-  getUserByEmail,
-  updatePassword,
 };
