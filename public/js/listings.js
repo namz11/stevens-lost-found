@@ -1,7 +1,7 @@
 const mongoCollections = require("./config/mongoCollections");
 const Group50_Project_CS546 = mongoCollections.itemsCollection;
 
-const data = await Group50_Project_CS546();
+// const data = await Group50_Project_CS546();
 // TODO FOR MODALS
 
 const { sortBy, create, max } = require("lodash");
@@ -97,6 +97,7 @@ document.getElementsByName("option2").forEach((radio) => {
 
 //getting Data
 const fetchingLostData = async () => {
+  const data = await Group50_Project_CS546();
   let Data1 = [];
   for (let i = 0; i < data.length; i++) {
     if (data[i].isClaimed == false) {
@@ -186,6 +187,7 @@ const fetchingLostData = async () => {
 };
 
 const fetchingFoundData = async () => {
+  const data = await Group50_Project_CS546();
   let Data2 = [];
   for (let i = 0; i < data.length; i++) {
     if (data[i].isClaimed == false) {
