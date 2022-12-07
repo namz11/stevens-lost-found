@@ -8,8 +8,6 @@ const { userVerificationDL, userDL } = require("../data");
 const { sendOTPVerificationEmail } = require("../utils/mailer");
 const bcrypt = require("bcryptjs");
 const passport = require("passport");
-const LocalStorage = require("node-localstorage").LocalStorage;
-var localStorage = new LocalStorage("./scratch");
 const initializePassport = require("../utils/passport");
 const { checkId } = require("../utils/helpers");
 
@@ -19,7 +17,6 @@ initializePassport(passport, (email) =>
 
 router.route("/").get(checkAuthenticated, async (req, res) => {
   try {
-    const user = localStorage.getItem("user");
     res.sendFile(path.join(__dirname, "../static/index.html"));
   } catch {
     console.log("Error");
@@ -30,7 +27,7 @@ router
   .route("/register")
   .get(checkNotAuthenticated, async (req, res) => {
     // renders register page
-    res.render("templates/register", { title: "Register" });
+    res.render("auth/register", { title: "Register", layout: "main" });
   })
   .post(checkNotAuthenticated, async (req, res) => {
     // create user
@@ -59,7 +56,7 @@ router
 router
   .route("/login")
   .get(checkNotAuthenticated, async (req, res) => {
-    res.render("templates/login", { title: "Login" });
+    res.render("auth/login", { title: "Login", layout: "main" });
   })
   .post(
     checkNotAuthenticated,
@@ -74,7 +71,10 @@ router
   .route("/forgot-password")
   .get(checkNotAuthenticated, async (req, res) => {
     // renders page where user can set new pwd
-    res.render("templates/forgotPwd", { title: "Forgot Password" });
+    res.render("auth/forgotPwd", {
+      title: "Forgot Password",
+      layout: "main",
+    });
   })
   .post(checkNotAuthenticated, async (req, res) => {
     // post new pwd to DB
@@ -88,6 +88,7 @@ router
     // renders page where user can enter otp
     return res.render("auth/verifyUser", {
       title: "Verify User",
+      layout: "main",
     });
   })
   .post(async (req, res) => {
@@ -175,8 +176,7 @@ router.route("/logout").delete(async (req, res) => {
     if (err) {
       return next(err);
     }
-    res.redirect("/auth/login");
-    localStorage.clear();
+    return res.json({ logout: true });
   });
 });
 

@@ -276,27 +276,26 @@ const fetchingFoundData = async () => {
   return Data2;
 };
 
-// Get DOM Elements
-const modal = document.querySelector("#claim-modal");
+// TODO (RUSHABH): Rushabh can try to make some changes on this using similar Class Names and IDs so that it works in a similar fashion to user lisitngs
+
+const modal = document.querySelector("#modal");
 const modalBtn = document.querySelector("#modal-btn");
 const closeBtn = document.querySelector(".close");
-const modal2 = document.querySelector("#claim-modal-inner");
+const innerModal = document.querySelector("#modal-inner");
 const confirmNoBtn = document.querySelector("#confirm-no-btn");
 const confirmYesBtn = document.querySelector("#confirm-yes-btn");
-const closeBtn2 = document.querySelector("#close-btn2");
-const closeBtn2flat = document.querySelector("#close-btn2-flat");
+const closeBtnInner = document.querySelector("#close-btn-inner");
+const closeBtnInnerFlat = document.querySelector("#close-btn-inner-flat");
 
-const modalBtn2 = document.querySelector("#modal-btn2");
-const modal3 = document.querySelector("#found-modal");
-const confirmNoBtn2 = document.querySelector("#confirm-no-btn-2");
-const confirmYesBtn2 = document.querySelector("#confirm-yes-btn-2");
-const closeBtn3 = document.querySelector("#close2");
-const closeBtn3flat = document.querySelector("#close-btn3-flat");
-const modal4 = document.querySelector("#found-modal-inner");
-const closeBtn4 = document.querySelector("#close-btn4");
-const closeBtn4flat = document.querySelector("#close-btn4-flat");
-
-//TODO: Find Some Way to Activate The Next Modal only if both are triggered
+// To Open Individual Item Listing when
+let detailsButton = document.querySelector("#details-btn");
+detailsButton.addEventListener("click", (event) => {
+  event.preventDefault();
+  const buttonItemId = event.target.getAttribute("data-button");
+  //TODO Check if this works properly
+  const theUrl = `/items/${buttonItemId}`; //TODO Little Changes To Open The Item Page
+  window.open(theUrl, "_blank") || window.location.replace(theUrl);
+});
 
 // Events
 modalBtn.addEventListener("click", openModal);
@@ -306,17 +305,8 @@ window.addEventListener("click", outsideClick);
 confirmNoBtn.addEventListener("click", closeModal);
 confirmYesBtn.addEventListener("click", openModal2);
 
-closeBtn2.addEventListener("click", closeModal2);
-closeBtn2flat.addEventListener("click", closeModal2);
-
-modalBtn2.addEventListener("click", openModal3);
-closeBtn3.addEventListener("click", closeModal3);
-window.addEventListener("click", outsideClick);
-
-confirmNoBtn2.addEventListener("click", closeModal3);
-confirmYesBtn2.addEventListener("click", openModal4);
-closeBtn4.addEventListener("click", closeModal4);
-closeBtn4flat.addEventListener("click", closeModal4);
+closeBtnInner.addEventListener("click", closeModal2);
+closeBtnInnerFlat.addEventListener("click", closeModal2);
 
 // Open Main Model
 function openModal() {
@@ -325,19 +315,8 @@ function openModal() {
 
 // Open Model 2s (It will close Main Modal and Open Modal 2)
 function openModal2() {
-  modal2.style.display = "block";
+  innerModal.style.display = "block";
   modal.style.display = "none";
-}
-
-// Open Model 3
-function openModal3() {
-  modal3.style.display = "block";
-}
-
-// Open Model 4 (It will close Modal 3 and Open Modal 4)
-function openModal4() {
-  modal4.style.display = "block";
-  modal3.style.display = "none";
 }
 
 // Close Main Modal
@@ -345,19 +324,9 @@ function closeModal() {
   modal.style.display = "none";
 }
 
-// Close Modal 2 (which will close modal2)
+// Close Modal 2 (which will close innerModal)
 function closeModal2() {
-  modal2.style.display = "none";
-}
-
-// Close Modal 3 (which will close modal3)
-function closeModal3() {
-  modal3.style.display = "none";
-}
-
-// Close Modal 4 (which will close modal4)
-function closeModal4() {
-  modal4.style.display = "none";
+  innerModal.style.display = "none";
 }
 
 // Close If Outside Click
@@ -366,5 +335,48 @@ function outsideClick(e) {
     modal.style.display = "none";
   }
 }
+
+(function () {
+  document.addEventListener("DOMContentLoaded", function () {
+    // Handler when the DOM is fully loaded
+
+    const confirmButton = document.querySelector("#confirm-yes-btn");
+    if (confirmButton) {
+      confirmButton.addEventListener("click", (event) => {
+        event.stopPropagation();
+        event.stopImmediatePropagation();
+
+        const theItemId = event.target.getAttribute("data-id");
+        const theUserId = event.target.getAttribute("data-user");
+
+        data = {
+          itemId: theItemId,
+          userId: theUserId,
+        };
+
+        fetch(`/items/${theItemId}/status`, {
+          method: "POST",
+          headers: {
+            Accept: "application/json, text/plain, */*",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        })
+          .then((resp) => resp.json())
+          .then((res) => {
+            if (res.success) {
+              alert(res.message || "Item Claimed");
+              location.href = "/items/my-listing";
+            } else {
+              alert(res.message || "Something went wrong.");
+            }
+          })
+          .catch((error) => {
+            alert(error.message || "Something went wrong.");
+          });
+      });
+    }
+  });
+})();
 
 module.exports = { fetchingFoundData, fetchingLostData };
