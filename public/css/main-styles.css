@@ -17,8 +17,57 @@ body {
   --black-color: #18181b;
   --white-color: #f1f5f9;
   --bg-color: #e0f2fe;
+  --grey: #808080;
 }
 
 .hide {
   display: none;
+}
+
+.suggestion {
+  border: 1px solid var(--black-color);
+  border-radius: 7px;
+  margin-bottom: 15px;
+  display: flex;
+  flex-direction: row;
+}
+.content {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  padding: 10px;
+  background-color: var(--white-color);
+  border-radius: 7px;
+}
+.action {
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  width: 180px;
+  background-color: var(--bg-color);
+  border-radius: 7px;
+}
+.name {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--black-color);
+  padding-bottom: 3px;
+}
+.dates {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--grey);
+}
+.description {
+  font-size: 14px;
+  font-weight: normal;
+  color: var(--black-color);
+}
+.claim-btn {
+  margin: 10px 0px;
+  color: var(--white-color);
+  background-color: var(--primary-color);
+  border-radius: 10px;
+  border-color: var(--primary-color);
+  padding: 5px;
 }
