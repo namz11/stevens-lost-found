@@ -12,14 +12,7 @@ const {
 const bcrypt = require("bcryptjs");
 const passport = require("passport");
 const initializePassport = require("../utils/passport");
-const {
-  checkId,
-  checkPassword,
-  checkEmail,
-  checkName,
-  checkPhoneNumber,
-  checkDOB,
-} = require("../utils/helpers");
+const { checkId, authHelpers } = require("../utils/helpers");
 
 const saltRounds = 10;
 
@@ -46,12 +39,12 @@ router
   .post(checkNotAuthenticated, async (req, res) => {
     // create user
     try {
-      userEmail = checkEmail(req.body.email);
-      userPassword = checkPassword(req.body.password);
-      userFirstName = checkName(req.body.firstName, "First Name");
-      userLastName = checkName(req.body.lastName, "Last Name");
-      userPhoneNumber = checkPhoneNumber(req.body.phoneNumber);
-      userDOB = checkDOB(req.body.dateOfBirth);
+      userEmail = authHelpers.checkEmail(req.body.email);
+      userPassword = authHelpers.checkPassword(req.body.password);
+      userFirstName = authHelpers.checkName(req.body.firstName, "First Name");
+      userLastName = authHelpers.checkName(req.body.lastName, "Last Name");
+      userPhoneNumber = authHelpers.checkPhoneNumber(req.body.phoneNumber);
+      userDOB = authHelpers.checkDOB(req.body.dateOfBirth);
       const hashedPassword = await bcrypt.hash(req.body.password, saltRounds);
 
       const result = await userDL.enterUser(
@@ -68,8 +61,7 @@ router
         res
       );
     } catch (e) {
-      console.log(e);
-      res.render("auth/register", {
+      res.status(400).render("auth/register", {
         layout: "main",
         title: "Register",
         firstName: req.body.firstName,
@@ -112,14 +104,14 @@ router
     // redirect to login
 
     try {
-      userEmail = checkEmail(req.body.email);
+      userEmail = authHelpers.checkEmail(req.body.email);
       const userByEmail = await userDL.getUserByEmail(userEmail);
       sendForgotPasswordLinkEmail(
         { id: userByEmail._id, email: userByEmail.email, redirect: true },
         res
       );
     } catch (e) {
-      return res.render("auth/forgotPassword", {
+      return res.status(400).render("auth/forgotPassword", {
         layout: "main",
         title: "Forgot Password",
         error: e,
@@ -138,14 +130,14 @@ router
   })
   .post(checkNotAuthenticated, async (req, res) => {
     try {
-      userPassword = checkPassword(req.body.newPassword);
+      userPassword = authHelpers.checkPassword(req.body.newPassword);
       const userPasswordUpdate = await userDL.updatePassword(
         req.params.id,
         req.body.newPassword
       );
       res.redirect("/auth/login");
     } catch (e) {
-      return res.render("auth/resetPassword", {
+      return res.status(400).render("auth/resetPassword", {
         layout: "main",
         title: "Reset Password",
         id: req.params.id,
@@ -249,8 +241,7 @@ router.route("/logout").delete(async (req, res) => {
     if (err) {
       return next(err);
     }
-    res.redirect("/auth/login");
-    // return res.json({ logout: true });
+    return res.json({ logout: true });
   });
 });
 
@@ -270,8 +261,8 @@ function checkNotAuthenticated(req, res, next) {
 
 async function takingInUser(req, res, next) {
   try {
-    userEmail = checkEmail(req.body.email);
-    userPassword = checkPassword(req.body.password);
+    userEmail = authHelpers.checkEmail(req.body.email);
+    userPassword = authHelpers.checkPassword(req.body.password);
     next();
   } catch (e) {
     return res.render("auth/login", {

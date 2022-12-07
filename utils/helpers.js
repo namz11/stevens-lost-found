@@ -18,94 +18,91 @@ const regexValidators = {
     /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/,
 };
 
-const checkEmail = (str) => {
-  str = str.trim();
-  if (!str) {
-    throw "Enter a email";
-  }
+const authHelpers = {
+  checkEmail: (str) => {
+    str = str.trim();
+    if (!str) {
+      throw "Enter a email";
+    }
 
-  const stevensEmailRegex = /^[a-zA-Z0-9_.+-]+@stevens.edu$/;
-  if (!stevensEmailRegex.test(str)) {
-    throw "Enter an email address from Stevens Institute of Technology";
-  }
-  return str;
-};
+    const stevensEmailRegex = /^[a-zA-Z0-9_.+-]+@stevens.edu$/;
+    if (!stevensEmailRegex.test(str)) {
+      throw "Enter an email address from Stevens Institute of Technology";
+    }
+    return str;
+  },
+  checkPassword: (str) => {
+    if (!str) {
+      throw "Enter a password";
+    }
 
-const checkPassword = (str) => {
-  if (!str) {
-    throw "Enter a password";
-  }
+    const reg =
+      /^(?=.*[A-Z])(?=.*[a-z])(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?])(?=.*\d)[a-zA-Z!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?\d]{6,}$/g;
+    if (!reg.test(str)) {
+      throw "Enter a valid password";
+    }
+    return str;
+  },
+  checkName: (str, varName) => {
+    str = str.trim();
+    if (!str) {
+      throw "Enter Name";
+    }
 
-  const reg =
-    /^(?=.*[A-Z])(?=.*[a-z])(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?])(?=.*\d)[a-zA-Z!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?\d]{6,}$/g;
-  if (!reg.test(str)) {
-    throw "Enter a valid password";
-  }
-  return str;
-};
+    const reg = /^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$/g;
+    if (!reg.test(str)) {
+      throw `Enter a valid ${varName}`;
+    }
 
-const checkName = (str, varName) => {
-  str = str.trim();
-  if (!str) {
-    throw "Enter Name";
-  }
+    return str;
+  },
+  checkDOB: (date) => {
+    const reg = /^\d\d\d\d-(0?[1-9]|1[0-2])-(0?[1-9]|[12][0-9]|3[01])$/g;
 
-  const reg = /^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$/g;
-  if (!reg.test(str)) {
-    throw `Enter a valid ${varName}`;
-  }
+    const regDate = new RegExp(
+      "((0[13578]|1[02])[/.]31[/.](19|20)[0-9]{2})|((01|0[3-9]|1[1-2])[/.](29|30)[/.](19|20)[0-9]{2})|((0[1-9]|1[0-2])[/.](0[1-9]|1[0-9]|2[0-8])[/.](19|20|18)[0-9]{2})|((02)[/.]29[/.](((19|20)(04|08|[2468][048]|[13579][26]))|2000))"
+    );
 
-  return str;
-};
+    date = date.trim();
 
-const checkDOB = (date) => {
-  const reg = /^\d\d\d\d-(0?[1-9]|1[0-2])-(0?[1-9]|[12][0-9]|3[01])$/g;
+    if (!reg.test(date)) {
+      throw "Enter a Valid Date";
+    }
 
-  const regDate = new RegExp(
-    "((0[13578]|1[02])[/.]31[/.](19|20)[0-9]{2})|((01|0[3-9]|1[1-2])[/.](29|30)[/.](19|20)[0-9]{2})|((0[1-9]|1[0-2])[/.](0[1-9]|1[0-9]|2[0-8])[/.](19|20|18)[0-9]{2})|((02)[/.]29[/.](((19|20)(04|08|[2468][048]|[13579][26]))|2000))"
-  );
+    d = date.split("-");
+    mainDateChecker = `${d[1]}/${d[2]}/${d[0]}`;
 
-  date = date.trim();
+    var todaysDate = new Date();
+    yyyy = todaysDate.getFullYear() - 13;
+    mm = todaysDate.getMonth() + 1;
+    dd = todaysDate.getDate();
 
-  if (!reg.test(date)) {
-    throw "Enter a Valid Date";
-  }
+    tDate = `${mm}/${dd}/${yyyy}`;
 
-  d = date.split("-");
-  mainDateChecker = `${d[1]}/${d[2]}/${d[0]}`;
+    const x = new Date(mainDateChecker);
+    const y = new Date(tDate);
+    if (!(+x <= +y)) {
+      throw "You need to be older than 13 Years";
+    }
 
-  var todaysDate = new Date();
-  yyyy = todaysDate.getFullYear() - 13;
-  mm = todaysDate.getMonth() + 1;
-  dd = todaysDate.getDate();
+    if (!regDate.test(mainDateChecker)) {
+      throw "Enter a Valid Date";
+    }
 
-  tDate = `${mm}/${dd}/${yyyy}`;
+    return date;
+  },
+  checkPhoneNumber: (str) => {
+    str = str.trim();
+    if (!str) {
+      throw "Enter Name";
+    }
 
-  const x = new Date(mainDateChecker);
-  const y = new Date(tDate);
-
-  if (!(+x <= +y)) {
-    throw "You need to be older than 13 Years";
-  }
-
-  if (!regDate.test(mainDateChecker)) {
-    throw "Enter a Valid Date";
-  }
-
-  return date;
-};
-
-const checkPhoneNumber = (str) => {
-  str = str.trim();
-  if (!str) {
-    throw "Enter Name";
-  }
-
-  const reg = /^[0-9]{10,10}$/g;
-  if (!reg.test(str)) {
-    throw "Enter a valid Phone Number";
-  }
-  return str;
+    const reg = /^[0-9]{10,10}$/g;
+    if (!reg.test(str)) {
+      throw "Enter a valid Phone Number";
+    }
+    return str;
+  },
 };
 
 const helpers = {
@@ -198,9 +195,5 @@ module.exports = {
   regexValidators,
   validations,
   checkId,
-  checkEmail,
-  checkPassword,
-  checkName,
-  checkPhoneNumber,
-  checkDOB,
+  authHelpers,
 };

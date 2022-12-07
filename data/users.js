@@ -1,13 +1,5 @@
 const { ObjectId } = require("mongodb");
-const {
-  helpers,
-  checkId,
-  checkEmail,
-  checkName,
-  checkPassword,
-  checkPhoneNumber,
-  checkDOB,
-} = require("../utils/helpers");
+const { helpers, checkId, authHelpers } = require("../utils/helpers");
 const { User } = require("./models/user.model");
 const { usersCollection } = require("../config/mongoCollections");
 const bcrypt = require("bcryptjs");
@@ -25,7 +17,7 @@ const getUserById = async (userId) => {
 };
 
 const getUserByEmail = async (userEmail) => {
-  email = checkEmail(userEmail);
+  email = authHelpers.checkEmail(userEmail);
   const usersDB = await usersCollection();
   const user = await usersDB.findOne({ email: email });
   if (user === null) throw new Error("No user with that email");
@@ -57,12 +49,12 @@ const enterUser = async (
   dob,
   password
 ) => {
-  userEmail = checkEmail(email);
-  userFirstName = checkName(firstName, "First Name");
-  userLastName = checkName(lastName, "Last Name");
-  userPhoneNumber = checkPhoneNumber(phoneNumber);
+  userEmail = authHelpers.checkEmail(email);
+  userFirstName = authHelpers.checkName(firstName, "First Name");
+  userLastName = authHelpers.checkName(lastName, "Last Name");
+  userPhoneNumber = authHelpers.checkPhoneNumber(phoneNumber);
 
-  userDOB = checkDOB(dob);
+  userDOB = authHelpers.checkDOB(dob);
 
   const authCollection = await usersCollection();
   const userExists = await authCollection.findOne({ email: userEmail });
@@ -90,7 +82,7 @@ const enterUser = async (
 
 const updatePassword = async (userId, password) => {
   userId = checkId(userId, "User ID");
-  userPassword = checkPassword(password);
+  userPassword = authHelpers.checkPassword(password);
 
   const usersDB = await usersCollection();
   const userById = await usersDB.findOne({ _id: ObjectId(userId) });

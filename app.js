@@ -18,7 +18,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(flash());
 app.use(
   session({
-    name: "Group50",
+    name: "AuthCookie",
     secret: "secret",
     resave: false,
     saveUninitialized: false,
@@ -28,13 +28,7 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(methodOverride("_method"));
-app.use(async (req, res, next) => {
-  if (req.session.passport) {
-    console.log(req.session.passport.user.email);
-  }
 
-  next();
-});
 app.engine(
   "handlebars",
   exphbs.create({
