@@ -109,6 +109,22 @@ $(function () {
           .text("Next")
       )
   );
+  $(".card-content").show();
+  showPage(1);
+
+  $(document).on(
+    "click",
+    "pagination li.current-page:not(.active)",
+    function () {
+      return showPage(+$(this).text());
+    }
+  );
+  $(".previous-page").on("click", function () {
+    return showPage(currentPage - 1);
+  });
+  $(".next-page").on("click", function () {
+    return showPage(currentPage + 1);
+  });
 });
 
 let sortItem1 = "";
