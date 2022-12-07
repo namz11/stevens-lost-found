@@ -19,13 +19,17 @@
   </div>
   <div>
     <strong>
-      Date {{item.type}} :
+      Date
+      {{item.type}}
+      :
     </strong>
     {{date}}
   </div>
   <div>
     <strong>
-      Location {{item.type}} :
+      Location
+      {{item.type}}
+      :
     </strong>
     {{item.lostOrFoundLocation}}
   </div>
@@ -39,7 +43,13 @@
     <strong>
       Created By :
     </strong>
-    {{user.firstName}} {{user.lastName}}
+    {{user.firstName}}
+    {{user.lastName}}
+  </div>
+  <div>
+    <button id="delete" type="button">
+      DELETE
+    </button>
   </div>
 </div>
 
@@ -53,9 +63,11 @@
         {{{this.comment}}}
       </div>
       <div class="user">
-        by {{this.userInfo.firstName}} {{this.userInfo.lastName}} at {{
-          this.createdAt
-        }}
+        by
+        {{this.userInfo.firstName}}
+        {{this.userInfo.lastName}}
+        at
+        {{this.createdAt}}
       </div>
     </div>
   {{/each}}
@@ -81,3 +93,4 @@
     </form>
   </div>
 </section>
+<script src="/public/js/item/view.js" type="module"></script>

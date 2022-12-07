@@ -342,7 +342,10 @@ router
 
     try {
       let item = await itemsDL.deleteItem(id);
-      return res.send(item);
+      return res.json({
+        success: true,
+        message: "Item deleted!",
+      });
     } catch (e) {
       return res.status(500).send("Internal server errror");
     }
