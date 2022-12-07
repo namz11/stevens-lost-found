@@ -5,6 +5,7 @@ const { checkId, helpers, validations } = require("../utils/helpers");
 const { itemImageUpload } = require("../utils/multer");
 const data = require("../public/js/");
 const listingData = data.listing;
+
 router.route("/listing/").get(async (req, res) => {
   // item listing page - paginated
   let data1 = await listingData.fetchingLostData();
