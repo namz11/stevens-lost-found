@@ -3,15 +3,48 @@ const router = express.Router();
 const { itemsDL } = require("../data");
 const { checkId, helpers, validations } = require("../utils/helpers");
 const { itemImageUpload } = require("../utils/multer");
+const {
+  sendListingUpdateEmail,
+  sendListingUpdateEmailToActor,
+} = require("../utils/mailer");
+const itemFunctions = require("../data/items");
+const userFunctions = require("../data/users");
+const { itemsCollection } = require("../config/mongoCollections");
+const { User } = require("./models/user.model");
+const { usersCollection } = require("../config/mongoCollections");
+const userFunctions = require("../data/users");
 
 router.route("/listing").get(async (req, res) => {
   // item listing page - paginated
   return res.send("NOT IMPLEMENTED");
 });
 
-router.route("/my-listings").get(async (req, res) => {
-  // my listing page - paginated
-  return res.send("NOT IMPLEMENTED");
+router.route("/my-listings/:id").get(async (req, res) => {
+  // TODO (AMAN): Pagination
+  
+  let id = req.params.id;
+  try {
+    id = checkId(req.params.id, "Item ID");
+  } catch (e) {
+    console.log(e)
+    return res.status(400).render("error",{
+      class: "error",
+      message: "Error: Invalid ID or ID Not Provided",
+    });
+  }
+
+  try {
+    const d = await itemFunctions.getItemsByUserId(id);
+
+    res.render("/listing/userListings", {
+      itemsData: d, title: "My Listings"
+    });
+  } catch (e) {
+    return res.status(404).render("error", {
+      class: "error",
+      message: e,
+    });
+  }
 });
 
 router
@@ -191,7 +224,57 @@ router.route("/:id/comment").post(async (req, res) => {
 });
 
 router.route("/:id/status").put(async (req, res) => {
+ // TODO (AMAN): Pass Actor Details Using Session
+
+  // get item details
+  theItem = itemFunctions.getItemById(req.body.itemId);
+
+  // get user details
+  theUser = userFunctions.getUserById(req.body.userId);
+
   // update isClaimed status
+  itIsClaimed = itemFunctions.updateIsClaimedStatus(itemId);
+
+  if (!itIsClaimed) throw "Failed to update the status";
+
+  // Send Email
+  try {
+    const toUser = sendListingUpdateEmail(
+      {
+        user: theUser.firstName,
+        userId: theUser.email,
+        userItem: theItem.name,
+        // TODO (AMAN): Pass Actor Details Using Session
+        actor: someone.something,
+        actorId: someone.something,
+        actorNumber: someone.something,
+        action: someone.something,
+      },
+      res
+    );
+
+    const toActor = sendListingUpdateEmailToActor(
+      {
+        user: theUser.firstName,
+        userId: theUser.email,
+        userItem: theItem.name,
+        // TODO (AMAN): Pass Actor Details Using Session
+        actor: someone.something,
+        actorId: someone.something,
+        actorNumber: someone.something,
+        action: someone.something,
+      },
+      res
+    );
+    // TODO (AMAN)
+    // res.redirect("");
+    // res.render("");
+  } catch (e) {
+    console.log(e);
+    // TODO (AMAN)
+    // res.redirect("");
+    // res.render("");
+  }
 });
 
 router
@@ -202,7 +285,23 @@ router
   })
   .delete(async (req, res) => {
     // delete item
-    return res.send("NOT IMPLEMENTED");
+
+    id = checkId(req.params.id, "Item ID");
+
+    const theUser = await userFunctions.getUserByItemId(id)
+    const userId = theUser._id
+
+    const deletedItem = await itemFunctions.deleteItem(id);
+    if(!deletedItem) throw "Could Not Delete Item"
+    // res.status(200).json(deletedItem);
+
+    // Render The My Listings Page After Deletion
+    const d = await itemFunctions.getItemsByUserId(userId);
+
+    res.render("/listing/userListings", {
+      itemsData: d, title: "My Listings"
+    });
+   // TODO: Check with Professor If This Is a Good
   });
 
 router.route("/:id/suggestions").get(async (req, res) => {
