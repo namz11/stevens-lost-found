@@ -1,15 +1,13 @@
 {{! TODO Add More Details to the outer Modals }}
 {{! TODO Add User Details to the inner Modals }}
 
-{{if data.length}}
-{{#each data}}
-{{#if !isClaimed}}
+{{#if data1.length}}
+{{#each data1}}
+<div class="lost">
   <div class="sort-by">
-    <input id="rd1" type="radio" name="option" value="createdAt" checked="checked">Date Added</input>
-    <input id="rd2" type="radio" name="option" value="dateLostOrFound">Date Lost/Found</input>
+    <input id="rd11" type="radio" name="option1" value="createdAt" checked="checked">Date Added</input>
+    <input id="rd21" type="radio" name="option1" value="dateLostOrFound">Date Lost/Found</input>
   </div>
-  {{#ifEquals type "lost"}}
-    <div class="lost">
       <div class="container">
         <div class="card-content">
           <div class="card">
@@ -26,14 +24,16 @@
           </div>
         </div>
       </div>
-    </div>
-
-
-  {{/ifEquals}}
-
-
-  {{#ifEquals type "found"}}
+</div>
+{{/each}}
+{{/if}}
+{{#if data2.length}}
+{{#each data2}}
     <div class="found">
+        <div class="sort-by">
+          <input id="rd12" type="radio" name="option2" value="createdAt" checked="checked">Date Added</input>
+          <input id="rd22" type="radio" name="option2" value="dateLostOrFound">Date Lost/Found</input>
+        </div>
       <div class="container">
         <div class="card-content">
           <div class="card">
@@ -50,15 +50,10 @@
         </div>
       </div>
     </div>
-
-
-  {{/ifEquals}}
-
-
 {{/if}}
-
 {{/each}}
-{{/if}}
+
+
 
 
 
