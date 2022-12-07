@@ -70,16 +70,12 @@ document.getElementsByName("option2").forEach((radio) => {
 });
 
 //getting Data
-const fetchingData = async () => {
+const fetchingLostData = async () => {
   let Data1 = [];
-  let Data2 = [];
   for (let i = 0; i < data.length; i++) {
     if (data[i].isClaimed == false) {
       if (data[i].type == "lost" || data[i].type == "Lost") {
         Data1.push(data[i]);
-      }
-      if (data[i].type == "found" || data[i].type == "Found") {
-        Data2.push(data[i]);
       }
     }
   }
@@ -88,12 +84,24 @@ const fetchingData = async () => {
     .limit(limit)
     .skip(startIndex)
     .exec();
+  return Data1;
+};
+
+const fetchingFoundData = async () => {
+  let Data2 = [];
+  for (let i = 0; i < data.length; i++) {
+    if (data[i].isClaimed == false) {
+      if (data[i].type == "found" || data[i].type == "Found") {
+        Data2.push(data[i]);
+      }
+    }
+  }
   Data2 = Data2.find()
     .sort({ sortItem2: -1 })
     .limit(limit)
     .skip(startIndex)
     .exec();
-  return Data1, Data2;
+  return Data2;
 };
 
 // Get DOM Elements
@@ -187,4 +195,4 @@ function outsideClick(e) {
   }
 }
 
-module.exports = { fetchingData };
+module.exports = { fetchingFoundData, fetchingLostData };
