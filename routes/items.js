@@ -7,8 +7,7 @@ const {
   sendListingUpdateEmail,
   sendListingUpdateEmailToActor,
 } = require("../utils/mailer");
-const itemFunctions = require("../data/items");
-const userFunctions = require("../data/users");
+const { itemsDL, userDL } = require("../data");
 
 router.route("/listing").get(async (req, res) => {
   // item listing page - paginated
@@ -30,7 +29,7 @@ router.route("/my-listings/:id").get(async (req, res) => {
   }
 
   try {
-    const d = await itemFunctions.getItemsByUserId(id);
+    const d = await itemsDL.getItemsByUserId(id);
 
     res.render("/listing/userListings", {
       itemsData: d,
@@ -236,13 +235,13 @@ router.route("/:id/status").put(async (req, res) => {
   // TODO (AMAN): Pass Actor Details Using Session
 
   // get item details
-  theItem = itemFunctions.getItemById(req.body.itemId);
+  theItem = itemsDL.getItemById(req.body.itemId);
 
   // get user details
-  theUser = userFunctions.getUserById(req.body.userId);
+  theUser = userDL.getUserById(req.body.userId);
 
   // update isClaimed status
-  itIsClaimed = itemFunctions.updateIsClaimedStatus(itemId);
+  itIsClaimed = itemsDL.updateIsClaimedStatus(itemId);
 
   if (!itIsClaimed) throw "Failed to update the status";
 
