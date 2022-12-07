@@ -1,23 +1,76 @@
+const mongoCollections = require("./config/mongoCollections");
+const Group50_Project_CS546 = mongoCollections.itemsCollection;
+
+const data = await Group50_Project_CS546();
 // TODO FOR MODALS
 
+const { sortBy, create } = require("lodash");
+
 // Listing
-Handlebars.registerHelper("ifEquals", function (arg1, arg2, options) {
-  return arg1 == arg2 ? options.fn(this) : options.inverse(this);
+// Handlebars.registerHelper("ifEquals", function(arg1, arg2, options) {
+//   return (arg1 == arg2) ? options.fn(this) : options.inverse(this);
+// });
+
+// Handlebars.registerHelper("ifCond", function(v1, v2, options) {
+//   if(v1 === v2) {
+//     return options.fn(this);
+//   }
+//   return options.inverse(this);
+// });
+
+// Handlebars.registerHelper("ifNot", function(v1, v2, options) {
+//   if(v1 !== v2) {
+//     return options.fn(this);
+//   }
+//   return options.inverse(this);
+// });
+
+let page = 1;
+const limit = 5;
+
+const startIndex = (page - 1) * limit;
+const endIndex = page * limit;
+
+const results = {};
+
+if (startIndex > 0) {
+  previous = {
+    page: page - 1,
+    limit: limit,
+  };
+}
+if (endIndex < data.countDocuments().exec()) {
+  next = {
+    page: page + 1,
+    limit: limit,
+  };
+}
+
+document.getElementsByName("option").forEach((radio) => {
+  if (radio.checked) {
+    if (radio.value == "createdAt") {
+      sortBy("createdAt");
+    }
+    if (radio.value == "dateLostOrFound") {
+      sortBy("dateLostOrFound");
+    }
+  }
 });
 
-Handlebars.registerHelper("ifCond", function (v1, v2, options) {
-  if (v1 === v2) {
-    return options.fn(this);
+//getting Data
+const fetchingData = async () => {
+  let Data1 = [];
+  let Data2 = [];
+  for (let i = 0; i < data.length; i++) {
+    if (data[i].type == "lost" || data[i].type == "Lost") {
+      Data1.push(data[i]);
+    }
+    if (data[i].type == "found" || data[i].type == "Found") {
+      Data2.push(data[i]);
+    }
   }
-  return options.inverse(this);
-});
-
-Handlebars.registerHelper("ifNot", function (v1, v2, options) {
-  if (v1 !== v2) {
-    return options.fn(this);
-  }
-  return options.inverse(this);
-});
+  return Data1, Data2;
+};
 
 // Get DOM Elements
 const modal = document.querySelector("#claim-modal");
@@ -109,3 +162,5 @@ function outsideClick(e) {
     modal.style.display = "none";
   }
 }
+
+module.exports = { fetchingData };
