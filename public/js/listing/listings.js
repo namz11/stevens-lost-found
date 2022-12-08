@@ -106,10 +106,6 @@ const fetchingLostData = async () => {
       }
     }
   }
-  Data1 = Data1.find()
-    .sort({ sortItem1: -1 })
-    .slice((currentPage - 1) * limitPerPage, currentPage * limitPerPage)
-    .exec();
 
   $(function () {
     var numberOfItems1 = Data1.length;
@@ -183,6 +179,11 @@ const fetchingLostData = async () => {
     });
   });
 
+  Data1 = Data1.find()
+    .sort({ sortItem1: -1 })
+    .slice((currentPage1 - 1) * limitPerPage1, currentPage1 * limitPerPage1)
+    .exec();
+
   return Data1;
 };
 
@@ -196,17 +197,12 @@ const fetchingFoundData = async () => {
       }
     }
   }
-  Data2 = Data2.find()
-    .sort({ sortItem2: -1 })
-    .slice((currentPage - 1) * limitPerPage, currentPage * limitPerPage)
-    .exec();
-
   $(function () {
     var numberOfItems2 = Data2.length;
     var limitPerPage2 = 5;
     var totalPages2 = Math.ceil(numberOfItems2 / limitPerPage2);
     var paginationSize2 = 5;
-    var currentPage1;
+    var currentPage2;
 
     function showPage(whichPage2) {
       if (whichPage2 < 1 || whichPage2 > totalPages2) return false;
@@ -266,12 +262,16 @@ const fetchingFoundData = async () => {
       }
     );
     $(".previous-page").on("click", function () {
-      return showPage(currentPage1 - 1);
+      return showPage(currentPage2 - 1);
     });
     $(".next-page").on("click", function () {
-      return showPage(currentPage1 + 1);
+      return showPage(currentPage2 + 1);
     });
   });
+  Data2 = Data2.find()
+    .sort({ sortItem2: -1 })
+    .slice((currentPage2 - 1) * limitPerPage2, currentPage2 * limitPerPage2)
+    .exec();
 
   return Data2;
 };
