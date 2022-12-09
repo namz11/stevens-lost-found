@@ -29,7 +29,7 @@ const createUserVerification = async (verifyObj) => {
   const userVerificationDB = await userVerificationCollection();
   const insertInfo = await userVerificationDB.insertOne(newObj);
   if (!insertInfo.acknowledged || !insertInfo.insertedId)
-    throw "Could not create user verification entry";
+    throw new Error("Could not create user verification entry");
 
   const added = { ...verifyObj, _id: insertInfo.insertedId.toString() };
   return new UserOTPVerification().deserialize(added);
