@@ -2,6 +2,7 @@ const { ObjectId } = require("mongodb");
 const { helpers, checkId, authHelpers } = require("../utils/helpers");
 const { User } = require("./models/user.model");
 const { usersCollection } = require("../config/mongoCollections");
+const { itemsCollection } = require("../config/mongoCollections");
 
 const getUserById = async (userId) => {
   userId = checkId(userId, "User ID");
@@ -32,7 +33,7 @@ const verifyUser = async (userId) => {
     { $set: { isVerified: true } }
   );
   if (updatedInfo.modifiedCount === 0) {
-    throw "Could not verify user successfully";
+    throw new Error("Could not verify user successfully");
   }
 
   return await getUserById(userId);
@@ -79,7 +80,6 @@ const enterUser = async (
 
 const getUserByItemId = async (itemId) => {
   itemId = checkId(itemId, "Item ID");
-  if (!ObjectId.isValid(itemId)) throw "Invalid Object ID";
   const itemDB = await itemsCollection();
   const theItem = await itemDB.findOne({ _id: ObjectId(itemId) });
 
@@ -95,7 +95,7 @@ const getUserByItemId = async (itemId) => {
 const getAllUsers = async (userId) => {
   const usersDB = await usersCollection();
   const users = await usersDB.find().toArray();
-  if (!users) throw "no users error";
+  if (!users) throw new Error("no users error");
   return users.map((user) => new User().deserialize(user));
 };
 
@@ -135,4 +135,5 @@ module.exports = {
   getAllUsers,
   updatePassword,
   getUserByEmail,
+  getUserByItemId,
 };

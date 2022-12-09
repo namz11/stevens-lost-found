@@ -58,7 +58,7 @@ const helpers = {
       let strDate = date.toISOString().split(":");
       return `${strDate[0]}:${strDate[1]}`;
     } else {
-      throw "Invalid Date";
+      throw new Error("Invalid Date");
     }
   },
 };

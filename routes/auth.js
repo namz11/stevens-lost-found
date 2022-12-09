@@ -1,9 +1,5 @@
 const express = require("express");
 const router = express.Router();
-const path = require("path"); // can you for static files if needed
-const {
-  UserOTPVerification,
-} = require("../data/models/userOTPVerification.model");
 const { userVerificationDL, userDL } = require("../data");
 const {
   sendOTPVerificationEmail,
@@ -20,23 +16,41 @@ initializePassport(passport, (email) =>
   users.find((user) => user.email === email)
 );
 
-router.route("/").get(checkAuthenticated, async (req, res) => {
-  try {
-    res.sendFile(path.join(__dirname, "../static/index.html"));
-    //Change the above route to go to user account.
-    //you can find user (whose is logged in), details at req.session.passport
-  } catch {
-    console.log("Error");
+function isUserAuthenticated(req, res, next) {
+  if (req.isAuthenticated()) {
+    res.redirect("/");
+  } else {
+    if (req?.session?.passport?.user?.isVerified) {
+      return res.redirect("/auth/verify");
+    } else {
+      next();
+    }
   }
+}
+
+const isUserVerified = (req, res, next) => {
+  if (req.isAuthenticated()) {
+    if (req?.session?.passport?.user?.isVerified) {
+      return res.redirect("/");
+    } else {
+      next();
+    }
+  } else {
+    return res.redirect("/auth");
+  }
+};
+
+router.get("/", (req, res) => {
+  return res.redirect("/auth/login");
 });
 
 router
   .route("/register")
-  .get(checkNotAuthenticated, async (req, res) => {
+  .get(isUserAuthenticated, async (req, res) => {
     // renders register page
-    res.render("auth/register", { title: "Register", layout: "main" });
+    return res.render("auth/register", { title: "Register", layout: "main" });
   })
-  .post(checkNotAuthenticated, async (req, res) => {
+  .post(isUserAuthenticated, async (req, res) => {
     // create user
     try {
       userEmail = authHelpers.checkEmail(req.body.email);
@@ -70,36 +84,32 @@ router
         phoneNumber: req.body.phoneNumber,
         password: req.body.password,
         dateOfBirth: req.body.dateOfBirth,
-        error: e,
+        error: e.message,
       });
     }
   });
 
 router
   .route("/login")
-  .get(checkNotAuthenticated, async (req, res) => {
-    res.render("auth/login", { title: "Login", layout: "main" });
+  .get(isUserAuthenticated, async (req, res) => {
+    return res.render("auth/login", { title: "Login", layout: "main" });
   })
-  .post(
-    checkNotAuthenticated,
-    takingInUser,
-    passport.authenticate("local", {
-      successRedirect: "/auth/",
-      failureRedirect: "/auth/login",
-      failureFlash: true,
-    })
-  );
+  .post(takingInUser, async (req, res, next) => {
+    passport.authenticate("local", {})(req, res, function (err, use, info) {
+      return res.json({ success: true, data: req?.session?.passport?.user });
+    });
+  });
 
 router
   .route("/forgot-password")
-  .get(checkNotAuthenticated, async (req, res) => {
+  .get(async (req, res) => {
     // renders page where user can set new pwd
     res.render("auth/forgotPassword", {
       title: "Forgot Password",
       layout: "main",
     });
   })
-  .post(checkNotAuthenticated, async (req, res) => {
+  .post(async (req, res) => {
     // post new pwd to DB
     // redirect to login
 
@@ -121,14 +131,14 @@ router
 
 router
   .route("/reset-password/:id")
-  .get(checkNotAuthenticated, async (req, res) => {
+  .get(async (req, res) => {
     return res.render("auth/resetPassword", {
       layout: "main",
       title: "Reset Password",
       id: req.params.id,
     });
   })
-  .post(checkNotAuthenticated, async (req, res) => {
+  .post(async (req, res) => {
     try {
       userPassword = authHelpers.checkPassword(req.body.newPassword);
       const userPasswordUpdate = await userDL.updatePassword(
@@ -149,7 +159,7 @@ router
 //#region user verify
 router
   .route("/verify")
-  .get(async (req, res) => {
+  .get(isUserVerified, async (req, res) => {
     // renders page where user can enter otp
     return res.render("auth/verifyUser", {
       title: "Verify User",
@@ -190,6 +200,10 @@ router
           if (compare) {
             const userObj = await userDL.verifyUser(userId);
             await userVerificationDL.deleteMany(userId); // delete verification data after success
+
+            // update the session obj
+            req.session.passport.user.isVerified = true;
+
             res.json({
               success: true,
               message: "User verified",
@@ -234,30 +248,16 @@ router.route("/resend-otp").post(async (req, res) => {
     return res.status(500).send(e);
   }
 });
-
 //#endregion
+
 router.route("/logout").delete(async (req, res) => {
   req.session.destroy(function (err) {
     if (err) {
-      return next(err);
+      next(err);
     }
     return res.json({ logout: true });
   });
 });
-
-function checkAuthenticated(req, res, next) {
-  if (req.isAuthenticated()) {
-    return next();
-  }
-  res.redirect("/auth/login");
-}
-
-function checkNotAuthenticated(req, res, next) {
-  if (req.isAuthenticated()) {
-    return res.redirect("/auth/");
-  }
-  next();
-}
 
 async function takingInUser(req, res, next) {
   try {
@@ -265,13 +265,7 @@ async function takingInUser(req, res, next) {
     userPassword = authHelpers.checkPassword(req.body.password);
     next();
   } catch (e) {
-    return res.render("auth/login", {
-      layout: "main",
-      title: "Login",
-      error: e,
-      emailEntered: req.body.email,
-      passEntered: req.body.password,
-    });
+    return res.status(400).json({ success: false, message: e.message });
   }
 }
 

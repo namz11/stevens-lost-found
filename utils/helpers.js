@@ -22,36 +22,38 @@ const authHelpers = {
   checkEmail: (str) => {
     str = str.trim();
     if (!str) {
-      throw "Enter a email";
+      throw new Error("Enter a email");
     }
 
     const stevensEmailRegex = /^[a-zA-Z0-9_.+-]+@stevens.edu$/;
     if (!stevensEmailRegex.test(str)) {
-      throw "Enter an email address from Stevens Institute of Technology";
+      throw new Error(
+        "Enter an email address from Stevens Institute of Technology"
+      );
     }
     return str;
   },
   checkPassword: (str) => {
     if (!str) {
-      throw "Enter a password";
+      throw new Error("Enter a password");
     }
 
     const reg =
       /^(?=.*[A-Z])(?=.*[a-z])(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?])(?=.*\d)[a-zA-Z!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?\d]{6,}$/g;
     if (!reg.test(str)) {
-      throw "Enter a valid password";
+      throw new Error("Enter a valid password");
     }
     return str;
   },
   checkName: (str, varName) => {
     str = str.trim();
     if (!str) {
-      throw "Enter Name";
+      throw new Error("Enter Name");
     }
 
     const reg = /^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$/g;
     if (!reg.test(str)) {
-      throw `Enter a valid ${varName}`;
+      throw new Error(`Enter a valid ${varName}`);
     }
 
     return str;
@@ -66,7 +68,7 @@ const authHelpers = {
     date = date.trim();
 
     if (!reg.test(date)) {
-      throw "Enter a Valid Date";
+      throw new Error("Enter a Valid Date");
     }
 
     d = date.split("-");
@@ -82,11 +84,11 @@ const authHelpers = {
     const x = new Date(mainDateChecker);
     const y = new Date(tDate);
     if (!(+x <= +y)) {
-      throw "You need to be older than 13 Years";
+      throw new Error("You need to be older than 13 Years");
     }
 
     if (!regDate.test(mainDateChecker)) {
-      throw "Enter a Valid Date";
+      throw new Error("Enter a Valid Date");
     }
 
     return date;
@@ -94,12 +96,12 @@ const authHelpers = {
   checkPhoneNumber: (str) => {
     str = str.trim();
     if (!str) {
-      throw "Enter Name";
+      throw new Error("Enter Name");
     }
 
     const reg = /^[0-9]{10,10}$/g;
     if (!reg.test(str)) {
-      throw "Enter a valid Phone Number";
+      throw new Error("Enter a valid Phone Number");
     }
     return str;
   },
@@ -159,7 +161,7 @@ const helpers = {
       let strDate = date.toISOString().split(":");
       return `${strDate[0]}:${strDate[1]}`;
     } else {
-      throw "Invalid Date";
+      throw new Error("Invalid Date");
     }
   },
 };
