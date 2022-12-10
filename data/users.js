@@ -95,7 +95,7 @@ const getUserByItemId = async (itemId) => {
 const getAllUsers = async (userId) => {
   const usersDB = await usersCollection();
   const users = await usersDB.find().toArray();
-  if (!users) throw new Error("no users error");
+  if (!users) throw new Error("No users found");
   return users.map((user) => new User().deserialize(user));
 };
 

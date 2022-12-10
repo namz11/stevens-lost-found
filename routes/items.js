@@ -1,4 +1,5 @@
 const express = require("express");
+const { ObjectId } = require("mongodb");
 const router = express.Router();
 const { checkId, helpers, validations } = require("../utils/helpers");
 const { itemImageUpload } = require("../utils/multer");
@@ -7,6 +8,10 @@ const {
   sendListingUpdateEmailToActor,
 } = require("../utils/mailer");
 const { itemsDL, userDL } = require("../data");
+
+router.get("/", (req, res) => {
+  return res.redirect("/items/listing");
+});
 
 router.route("/listing").get(async (req, res) => {
   // item listing page - paginated
@@ -30,7 +35,7 @@ router.route("/my-listings/:id").get(async (req, res) => {
   try {
     const d = await itemsDL.getItemsByUserId(id);
 
-    res.render("/listing/userListings", {
+    res.render("/listing/myListings", {
       itemsData: d,
       title: "My Listings",
     });
@@ -46,6 +51,7 @@ router
   .route("/add")
   .get(async (req, res) => {
     // create item page
+
     return res.render("item/create", {
       action: `/items/add`,
       metaData: {
@@ -67,7 +73,19 @@ router
         itemObj.picture = req?.file?.path;
       } catch (e) {
         console.log(e);
-        return res.status(500).send(new Error(e.message));
+        return res.status(500).json({
+          success: false,
+          message: e.message || "Something went wrong",
+        });
+      }
+
+      try {
+        itemObj.createdBy = checkId(req.headers["x-user-id"], "User ID");
+      } catch (e) {
+        return res.status(400).json({
+          success: false,
+          message: "You don't have authorization to do this action",
+        });
       }
 
       try {
@@ -85,8 +103,10 @@ router
           throw new Error("Location field needs to have valid value");
         }
       } catch (e) {
-        console.log(e);
-        return res.status(400).send(new Error(e.message));
+        return res.status(400).json({
+          success: false,
+          message: e.message || "Something went wrong",
+        });
       }
 
       try {
@@ -97,8 +117,10 @@ router
           data: newItem,
         });
       } catch (e) {
-        console.log(e);
-        return res.status(500).send(new Error(e.message));
+        return res.status(500).json({
+          success: false,
+          message: e.message || "Something went wrong",
+        });
       }
     }
   );
@@ -109,32 +131,23 @@ router
     // edit item page
     let itemId;
     try {
-      id = checkId(req.params.id, "Item ID");
+      itemId = checkId(req.params.id, "Item ID");
     } catch (e) {
-      return res.status(400).send(new Error(e.message));
+      return res.status(400).json({
+        success: false,
+        message: e.message || "Something went wrong",
+      });
     }
 
     try {
-      // TODO replace dummy
-      // let item = await itemsDL.getItemById(itemId);
-      let item = {
-        type: "found",
-        name: "Pear Dao",
-        description: "abcd",
-        picture: "uploads/1669571684253_ReadyPlayerMe-Avatar.png",
-        dateLostOrFound: helpers.getDate(new Date(1667580840000)),
-        lostOrFoundLocation: "babio",
-        comments: [],
-        isClaimed: false,
-        createdAt: 1669571707850,
-        createdBy: "",
-        updatedAt: 1669571707850,
-        updatedBy: "",
-      };
+      let item = await itemsDL.getItemById(itemId);
 
       return res.render("item/edit", {
         action: `/items/edit/${itemId}`,
-        item,
+        item: {
+          ...item,
+          dateLostOrFound: helpers.getDate(new Date(item.dateLostOrFound)),
+        },
         metaData: {
           dateLostOrFound: {
             max: helpers.getDate(new Date()),
@@ -145,7 +158,10 @@ router
         },
       });
     } catch (e) {
-      res.status(404).json({ error: "Item not found" });
+      return res.status(404).json({
+        success: false,
+        message: "Item not found",
+      });
     }
   })
   .put(
@@ -153,19 +169,19 @@ router
     async (req, res) => {
       itemImageUpload(req, res, function (err) {
         if (err) {
-          console.log("cs " + err);
           return;
         }
       });
 
-      let itemId, itemObj;
-
+      let itemId, itemObj, itemById;
       try {
         itemObj = req.body;
         itemObj.picture = req?.file?.path;
       } catch (e) {
-        console.log(e);
-        return res.status(500).send(new Error(e.message));
+        return res.status(500).json({
+          success: false,
+          message: e.message || "Something went wrong",
+        });
       }
 
       try {
@@ -181,24 +197,46 @@ router
           throw new Error("Location field needs to have valid value");
         }
       } catch (e) {
-        console.log(e);
-        return res.status(400).send(new Error(e.message));
+        return res.status(400).json({
+          success: false,
+          message: e.message || "Something went wrong",
+        });
       }
 
       try {
-        itemById = await itemsDL.getMovieById(movieId);
+        itemById = await itemsDL.getItemById(itemId);
       } catch (e) {
-        return res.status(404).json({ error: "Item not found" });
+        return res.status(404).json({
+          success: false,
+          message: "Item not found",
+        });
       }
 
-      // TODO uncomment
-      // if (helpers.compareItemObjects(itemById, itemObj)) {
-      //   return res
-      //     .status(400)
-      //     .json({ error: "Please change atleast 1 value to update" });
-      // }
+      if (item.isClaimed) {
+        return res.status(400).json({
+          success: false,
+          message: "Item has been claimed. Action unavailable.",
+        });
+      }
 
-      // TODO check for user
+      if (helpers.compareItemObjects(itemById, itemObj)) {
+        return res.status(400).json({
+          success: false,
+          message: "Please change atleast 1 value to update",
+        });
+      }
+
+      try {
+        itemObj.updatedBy = checkId(req.headers["x-user-id"], "User ID");
+        if (ObjectId(itemObj.updatedBy) !== ObjectId(itemById.createdBy)) {
+          throw new Error("You don't have authorization to do this action");
+        }
+      } catch (e) {
+        return res.status(401).json({
+          success: false,
+          message: "You don't have authorization to do this action",
+        });
+      }
 
       try {
         const updatedItem = await itemsDL.updateItem(itemId, itemObj);
@@ -208,25 +246,34 @@ router
           data: updatedItem,
         });
       } catch (e) {
-        return res.status(500).send(new Error(e.message));
+        return res.status(500).json({
+          success: false,
+          message: e.message || "Something went wrong",
+        });
       }
     }
   );
 
 router.route("/:id/comment").post(async (req, res) => {
   let id = req.params.id;
-  let comment = req.body.comment;
+  const { comment } = req.body;
+  let authenticatedUserId = req?.session?.passport?.user?._id;
+
   try {
     id = checkId(id, "Item ID");
+    authenticatedUserId = checkId(authenticatedUserId, "User ID");
+    if (!helpers.isStringValid(comment)) {
+      throw new Error("Cannot have empty comment");
+    }
   } catch (e) {
-    return res.status(400).send(new Error(e.message));
+    return res.status(400).send(e);
   }
+
   try {
-    let item = await itemsDL.createComment(comment, id);
+    let item = await itemsDL.createComment(comment, authenticatedUserId, id);
     return res.redirect("/items/" + id);
   } catch (e) {
-    console.log(e);
-    return res.status(500).send(new Error(e.message));
+    return res.status(500).send(e);
   }
 });
 
@@ -242,7 +289,7 @@ router.route("/:id/status").put(async (req, res) => {
   // update isClaimed status
   itIsClaimed = itemsDL.updateIsClaimedStatus(itemId);
 
-  if (!itIsClaimed) throw "Failed to update the status";
+  if (!itIsClaimed) throw new Error("Failed to update the status");
 
   // Send Email
   try {
@@ -287,42 +334,49 @@ router.route("/:id/status").put(async (req, res) => {
 router
   .route("/:id")
   .get(async (req, res) => {
-    // item page
     let id = req.params.id;
-    let user;
+    let user, item, authenticatedUserId;
     try {
       id = checkId(id, "Item ID");
     } catch (e) {
-      return res.status(400).send(new Error(e.message));
+      return res.status(400).send(e);
     }
 
-    let item;
     try {
       item = await itemsDL.getItemById(id);
+      item = {
+        ...item,
+        dateLostOrFound: helpers.getDate(new Date(item.dateLostOrFound)),
+        createdAt: helpers.getDate(new Date(item.createdAt)),
+      };
+    } catch (e) {
+      return res.status(404).send("Item not found");
+    }
+
+    try {
       let allUsers = await userDL.getAllUsers();
       item.comments = item.comments.map((c) => {
         for (u of allUsers) {
-          if (u._id === c.createdBy.toString()) {
+          if (ObjectId(u._id).equals(c.createdBy)) {
             c = { ...c, userInfo: u };
             break;
           }
         }
-        return { ...c, createdAt: new Date(c.createdAt).toUTCString() };
+        return { ...c, createdAt: helpers.getDate(c.createdAt) };
       });
-
-      let userId = item.createdBy.toString();
-      userId = checkId(userId, "User ID");
+      let userId = checkId(item.createdBy, "User ID");
       user = await userDL.getUserById(userId);
+      authenticatedUserId = req?.session?.passport?.user?._id;
     } catch (e) {
-      console.log(e);
       return res.status(500).send("Internal Server Error");
     }
-
+    const allowActions =
+      ObjectId(user._id).equals(authenticatedUserId) && !item.isClaimed;
     return res.render("item/view", {
       title: "Item Page",
-      item: item,
-      user: user,
-      date: new Date(item.dateLostOrFound),
+      item,
+      user,
+      allowActions,
       action: `/items/${id}/comment`,
     });
   })
@@ -332,7 +386,7 @@ router
     try {
       id = checkId(id, "Item ID");
     } catch (e) {
-      return res.status(400).send(new Error(e.message));
+      return res.status(400).send(e);
     }
     try {
       let item = await itemsDL.getItemById(id);
@@ -357,7 +411,10 @@ router.route("/:id/suggestions").get(async (req, res) => {
   try {
     itemId = checkId(req.params.id, "Item ID");
   } catch (e) {
-    return res.status(400).send(e);
+    return res.status(400).json({
+      success: false,
+      message: e.message || "Something went wrong",
+    });
   }
 
   try {
@@ -366,7 +423,10 @@ router.route("/:id/suggestions").get(async (req, res) => {
       suggestions,
     });
   } catch (e) {
-    return res.status(500).send(e);
+    return res.status(500).json({
+      success: false,
+      message: e.message || "Something went wrong",
+    });
   }
 });
 

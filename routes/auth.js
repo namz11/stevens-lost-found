@@ -173,7 +173,7 @@ router
       userId = checkId(userId, "User ID");
     } catch (e) {
       console.log(e);
-      return res.status(400).send(new Error(e.message));
+      return res.status(400).send(e);
     }
 
     try {
@@ -230,7 +230,7 @@ router.route("/resend-otp").post(async (req, res) => {
     userId = checkId(userId, "User ID");
   } catch (e) {
     console.log(e);
-    return res.status(400).send(new Error(e.message));
+    return res.status(400).send(e);
   }
 
   try {

@@ -21,7 +21,7 @@
           .then((res) => {
             if (res.success) {
               alert(res.message || "Item deleted!");
-              history.back();
+              this.location.href = "/items/my-listing";
             } else {
               alert(res.message || "Something went wrong.");
             }
@@ -31,5 +31,7 @@
           });
       });
     }
+
+    // TODO delete & claim functionality
   });
 })();

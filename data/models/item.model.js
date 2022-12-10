@@ -1,5 +1,6 @@
 const { helpers } = require("../../utils/helpers");
 const { Comment } = require("./comment.model");
+const { ObjectId } = require("mongodb");
 
 class Item {
   constructor(obj) {
@@ -15,15 +16,21 @@ class Item {
     this.comments = [];
     this.isClaimed = false;
     this.createdAt = new Date().valueOf();
-    this.createdBy = ""; // TODO get user id from localstorage
+    this.createdBy = obj?.createdBy
+      ? ObjectId(helpers.sanitizeString(obj?.createdBy))
+      : "";
     this.updatedAt = new Date().valueOf();
-    this.updatedBy = ""; // TODO get user id from localstorage
+    this.updatedBy = obj?.createdBy
+      ? ObjectId(helpers.sanitizeString(obj?.createdBy))
+      : "";
   }
 
   deserialize(item) {
     return {
       ...item,
       _id: item?._id?.toString(),
+      createdBy: item?.createdBy?.toString(),
+      updatedBy: item?.updatedBy?.toString(),
       comments: (item.comments || []).map((ct) =>
         new Comment().deserialize(ct)
       ),
