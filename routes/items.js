@@ -1,10 +1,10 @@
 const express = require("express");
 const router = express.Router();
-const { itemsDL } = require("../data");
+//const { itemsDL } = require("../data");
 const { checkId, helpers, validations } = require("../utils/helpers");
 const { itemImageUpload } = require("../utils/multer");
-const data = require("../public/js/");
-const listingData = data.listing;
+const data = require("../public/js/listing");
+const listingData = data.listings;
 const {
   sendListingUpdateEmail,
   sendListingUpdateEmailToActor,
@@ -14,8 +14,64 @@ const { User } = require("./models/user.model");
 
 router.route("/listing").get(async (req, res) => {
   // item listing page - paginated
+  const page1 = parseInt(req.query.page1);
+  const page2 = parseInt(req.query.page2);
+  let limit = 10;
+  let current1;
+  const startIndex1 = (page1 - 1) * limit;
+  const endIndex1 = page1 * limit;
+  const startIndex2 = (page2 - 1) * limit;
+  const endIndex2 = page2 * limit;
+
   let data1 = await listingData.fetchingLostData();
   let data2 = await listingData.fetchingFoundData();
+  let sortItem2 = "";
+  let sortItem1 = "";
+  let sort1 = req.query.option1.forEach((radio) => {
+    if (radio.checked) {
+      if (radio.value == "createdAt") {
+        sortItem1 = "createdAt";
+      }
+      if (radio.value == "dateLostOrFound") {
+        sortItem1 = "dateLostOrFound";
+      }
+    }
+  });
+
+  let sortBy2 = req.query.option2.forEach((radio) => {
+    if (radio.checked) {
+      if (radio.value == "createdAt") {
+        sortItem2 = "createdAt";
+      }
+      if (radio.value == "dateLostOrFound") {
+        sortItem2 = "dateLostOrFound";
+      }
+    }
+  });
+
+  if (endIndex1 < data1.length) {
+    next1 = {
+      page1: page1 + 1,
+    };
+  }
+  if (endIndex2 < data2.length) {
+    next2 = {
+      page2: page2 + 1,
+    };
+  }
+  if (startIndex1 > 0) {
+    previous1 = {
+      page1: page1 - 1,
+    };
+  }
+  if (startIndex2 > 0) {
+    previous2 = {
+      page1: page1 + 1,
+    };
+  }
+
+  data1 = data1.sort({ sortItem1: -1 }).slice(startIndex1, endIndex1);
+  data2 = data2.sort({ sortItem2: -1 }).slice(startIndex2, endIndex2);
   try {
     if (!data1 && !data2) {
       return new Error("Data not found");
