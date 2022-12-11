@@ -25,18 +25,16 @@
         </div>
       </div>
 <div class = "pagination1">
-<li class = "page-item previous-page disabled"><a class="page-link" href="#">Prev</a></li>
-<li class = "page-item current-page active"><a class="page-link" href="#">1</a></li>
-<li class = "page-item dots"><a class="page-link" href="#">...</a></li>
-<li class = "page-item current-page"><a class="page-link" href="#">5</a></li>
-<li class = "page-item current-page"><a class="page-link" href="#">6</a></li>
-<li class = "page-item dots"><a class="page-link" href="#">...</a></li>
-<li class = "page-item current-page"><a class="page-link" href="#">10</a></li>
-<li class = "page-item next-page"><a class="page-link" href="#">Next</a></li>
+<li class = "page-item previous-page"><button class="previous">{{previous1}}</button></li>
+<li class = "page-item current-page">{{page1}}</li>
+<li class = "page-item next-page"><button class="next">{{next1}}</button></li>
 </div>
 </div>
 {{/each}}
 {{/if}}
+
+
+
 {{#if data2.length}}
 {{#each data2}}
     <div class="found">
@@ -60,14 +58,9 @@
         </div>
       </div>
 <div class = "pagination2">
-<li class = "page-item previous-page disabled"><a class="page-link" href="#">Prev</a></li>
-<li class = "page-item current-page active"><a class="page-link" href="#">1</a></li>
-<li class = "page-item dots"><a class="page-link" href="#">...</a></li>
-<li class = "page-item current-page"><a class="page-link" href="#">5</a></li>
-<li class = "page-item current-page"><a class="page-link" href="#">6</a></li>
-<li class = "page-item dots"><a class="page-link" href="#">...</a></li>
-<li class = "page-item current-page"><a class="page-link" href="#">10</a></li>
-<li class = "page-item next-page"><a class="page-link" href="#">Next</a></li>
+<li class = "page-item previous-page"><button class="previous">{{previous2}}</button></li>
+<li class = "page-item current-page">{{page2}}</li>
+<li class = "page-item next-page"><button class="next">{{next2}}</button></li>
 </div>
     </div>
 {{/if}}
@@ -249,6 +242,6 @@ var i = (Number({{current}}) > 5 ? Number({{current}}) - 4 : 1)
   </div>
 </div>
 
-<script src="/public/js/listings.js" type="module"></script>
+<script src="/public/js/listing/listings.js" type="module"></script>
 <link rel="stylesheet" href="/public/css/modal-style.css" />
 <link rel="stylesheet" href="/public/css/paginating.css" />
