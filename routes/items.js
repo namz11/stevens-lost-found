@@ -3,51 +3,47 @@ const router = express.Router();
 //const { itemsDL } = require("../data");
 const { checkId, helpers, validations } = require("../utils/helpers");
 const { itemImageUpload } = require("../utils/multer");
-const data = require("../public/js/listing");
-const listingData = data.listings;
 const {
   sendListingUpdateEmail,
   sendListingUpdateEmailToActor,
 } = require("../utils/mailer");
 const { itemsDL, userDL } = require("../data");
-const { User } = require("./models/user.model");
 
 router.route("/listing").get(async (req, res) => {
   // item listing page - paginated
-  const page1 = parseInt(req.query.page1);
-  const page2 = parseInt(req.query.page2);
+  const page1 = parseInt(req.query.page1) || 1;
+  const page2 = parseInt(req.query.page2) || 1;
   let limit = 10;
-  let current1;
   const startIndex1 = (page1 - 1) * limit;
   const endIndex1 = page1 * limit;
   const startIndex2 = (page2 - 1) * limit;
   const endIndex2 = page2 * limit;
 
-  let data1 = await listingData.fetchingLostData();
-  let data2 = await listingData.fetchingFoundData();
-  let sortItem2 = "";
-  let sortItem1 = "";
-  let sort1 = req.query.option1.forEach((radio) => {
-    if (radio.checked) {
-      if (radio.value == "createdAt") {
-        sortItem1 = "createdAt";
-      }
-      if (radio.value == "dateLostOrFound") {
-        sortItem1 = "dateLostOrFound";
-      }
-    }
-  });
+  let data1 = await itemsDL.fetchingLostData();
+  let data2 = await itemsDL.fetchingFoundData();
+  let sortItem2 = "createdAt";
+  let sortItem1 = "createdAt";
+  // let sort1 = req.query.option1.forEach((radio) => {
+  //   if (radio.checked) {
+  //     if (radio.value == "createdAt") {
+  //       sortItem1 = "createdAt";
+  //     }
+  //     if (radio.value == "dateLostOrFound") {
+  //       sortItem1 = "dateLostOrFound";
+  //     }
+  //   }
+  // });
 
-  let sortBy2 = req.query.option2.forEach((radio) => {
-    if (radio.checked) {
-      if (radio.value == "createdAt") {
-        sortItem2 = "createdAt";
-      }
-      if (radio.value == "dateLostOrFound") {
-        sortItem2 = "dateLostOrFound";
-      }
-    }
-  });
+  // let sortBy2 = req.query.option2.forEach((radio) => {
+  //   if (radio.checked) {
+  //     if (radio.value == "createdAt") {
+  //       sortItem2 = "createdAt";
+  //     }
+  //     if (radio.value == "dateLostOrFound") {
+  //       sortItem2 = "dateLostOrFound";
+  //     }
+  //   }
+  // });
 
   if (endIndex1 < data1.length) {
     next1 = {
