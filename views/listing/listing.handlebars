@@ -1,70 +1,76 @@
 {{! TODO Add More Details to the outer Modals }}
 {{! TODO Add User Details to the inner Modals }}
-
-{{#if data1.length}}
-{{#each data1}}
-<div class="lost">
-  <div class="sort-by">
-    <input id="rd11" type="radio" name="option1" value="createdAt" checked="checked">Date Added</input>
-    <input id="rd21" type="radio" name="option1" value="dateLostOrFound">Date Lost/Found</input>
-  </div>
-      <div class="container">
-        <div class="card-content">
-          <div class="card">
-            <div class="card-image"><img src="{{picture}}" alt=""></div> 
-            <div class="card-info">
-              <h3>Name : {{name}}</h3>
-              {{!-- <p>Type : {{type}}</p> --}}
-              <p>Description : {{description}}</p>
-              <p>Date : {{dateLostOrFound}}</p>
-              <p>Created at : {{createdAt}}</p>
-              <p>Location : {{lostOrFoundLocation}}</p>
-              {{!-- <p>Comments : {{comments}}</p> --}}
-            </div> 
+<div class="row no-gutters"></div>
+<div class="col-md-6 no-gutters">
+  <div class="leftside d-flex justify-content-center align-items-center">
+  {{#if data1.length}}
+  {{#each data1}}
+  <div class="lost">
+    <div class="sort-by">
+      <input id="rd11" type="radio" name="option1" value="createdAt" checked="checked">Date Added</input>
+      <input id="rd21" type="radio" name="option1" value="dateLostOrFound">Date Lost/Found</input>
+    </div>
+        <div class="container">
+          <div class="card-content">
+            <div class="card">
+              <div class="card-image"><img src="{{picture}}" alt=""></div> 
+              <div class="card-info">
+                <h3>Name : {{name}}</h3>
+                {{!-- <p>Type : {{type}}</p> --}}
+                <p>Description : {{description}}</p>
+                <p>Date : {{dateLostOrFound}}</p>
+                <p>Created at : {{createdAt}}</p>
+                <p>Location : {{lostOrFoundLocation}}</p>
+                {{!-- <p>Comments : {{comments}}</p> --}}
+              </div> 
+            </div>
           </div>
         </div>
-      </div>
-<div class = "pagination1">
-<li class = "page-item previous-page"><button class="previous">{{previous1}}</button></li>
-<li class = "page-item current-page">{{page1}}</li>
-<li class = "page-item next-page"><button class="next">{{next1}}</button></li>
+  <div class = "pagination1">
+  <li class = "page-item previous-page"><button class="previous1" onclick="previousfunc1">Previous</button></li>
+  <li class = "page-item current-page" id="page1">1</li>
+  <li class = "page-item next-page"><button class="next1" onclick="nextfunc1">{{next1}}</button></li>
+  </div>
+  </div>
+  {{/each}}
+  {{/if}}
 </div>
 </div>
-{{/each}}
-{{/if}}
 
-
-
-{{#if data2.length}}
-{{#each data2}}
-    <div class="found">
-        <div class="sort-by">
-          <input id="rd12" type="radio" name="option2" value="createdAt" checked="checked">Date Added</input>
-          <input id="rd22" type="radio" name="option2" value="dateLostOrFound">Date Lost/Found</input>
+<div class="col-md-6 no-gutters">
+  <div class="leftside d-flex justify-content-center align-items-center">
+  {{#if data2.length}}
+  {{#each data2}}
+      <div class="found">
+          <div class="sort-by">
+            <input id="rd12" type="radio" name="option2" value="createdAt" checked="checked">Date Added</input>
+            <input id="rd22" type="radio" name="option2" value="dateLostOrFound">Date Lost/Found</input>
+          </div>
+        <div class="container">
+          <div class="card-content">
+            <div class="card">
+              <div class="card-image"><img src="{{picture}}" alt=""></div> 
+              <div class="card-info">
+                <h3>Name : {{name}}</h3>
+                {{!-- <p>Type : {{type}}</p> --}}
+                <p>Description : {{description}}</p>
+                <p>Date : {{dateLostOrFound}}</p>
+                <p>Created at : {{createdAt}}</p>
+                <p>Location : {{lostOrFoundLocation}}</p>
+                {{!-- <p>Comments : {{comments}}</p> --}}
+              </div>
+          </div>
         </div>
-      <div class="container">
-        <div class="card-content">
-          <div class="card">
-            <div class="card-image"><img src="{{picture}}" alt=""></div> 
-            <div class="card-info">
-              <h3>Name : {{name}}</h3>
-              {{!-- <p>Type : {{type}}</p> --}}
-              <p>Description : {{description}}</p>
-              <p>Date : {{dateLostOrFound}}</p>
-              <p>Created at : {{createdAt}}</p>
-              <p>Location : {{lostOrFoundLocation}}</p>
-              {{!-- <p>Comments : {{comments}}</p> --}}
-            </div>
-        </div>
+  <div class = "pagination2">
+  <li class = "page-item previous-page"><button class="previous2">{{previous2}}</button></li>
+  <li class = "page-item current-page">{{page2}}</li>
+  <li class = "page-item next-page"><button class="next2">{{next2}}</button></li>
+  </div>
       </div>
-<div class = "pagination2">
-<li class = "page-item previous-page"><button class="previous">{{previous2}}</button></li>
-<li class = "page-item current-page">{{page2}}</li>
-<li class = "page-item next-page"><button class="next">{{next2}}</button></li>
+  {{/if}}
+  {{/each}}
+  </div>
 </div>
-    </div>
-{{/if}}
-{{/each}}
 
 {{!-- <div class = "pagination">
 <li class = "page-item previous-page disabled"><a class="page-link" href="#">Prev</a></li>
@@ -122,40 +128,6 @@ var i = (Number({{current}}) > 5 ? Number({{current}}) - 4 : 1)
 {{/ifCond}}
 
 {{/if}} --}}
-
-{{!-- <% if (pages > 0) { %>
-                <ul class="pagination text-center">
-                    <% if (current == 1) 
-                    { %>
-                        <li class="disabled"><a>First</a></li>
-                    <% } 
-                       else { %>
-                        <li><a href="/products/1">First</a></li>
-                    <% } %>
-
-                    <% var i = (Number(current) > 5 ? Number(current) - 4 : 1) %>
-                    <% if (i !== 1) 
-                    { %>
-                        <li class="disabled"><a>...</a></li>
-                    <% } %>
-                    <% for (; i <= (Number(current) + 4) && i <= pages; i++) { %>
-                        <% if (i == current) { %>
-                            <li class="active"><a><%= i %></a></li>
-                        <% } else { %>
-                            <li><a href="/products/<%= i %>"><%= i %></a></li>
-                        <% } %>
-                        <% if (i == Number(current) + 4 && i < pages) { %>
-                            <li class="disabled"><a>...</a></li>
-                        <% } %>
-                    <% } %>
-                    <% if (current == pages) { %>
-                        <li class="disabled"><a>Last</a></li>
-                    <% } else { %>
-                        <li><a href="/products/<%= pages %>">Last</a></li>
-                    <% } %>
-                </ul>
-            <% } %> --}}
-
 
 
 <button id="modal-btn" class="button">Found Item</button>
@@ -241,7 +213,8 @@ var i = (Number({{current}}) > 5 ? Number({{current}}) - 4 : 1)
     </div>
   </div>
 </div>
-
+</div>
 <script src="/public/js/listing/listings.js" type="module"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 <link rel="stylesheet" href="/public/css/modal-style.css" />
 <link rel="stylesheet" href="/public/css/paginating.css" />
