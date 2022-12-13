@@ -105,3 +105,15 @@
 .disabled {
   background: #ccc;
 }
+
+.leftside,
+.rightside {
+  height: 50vh;
+  width: 100%;
+}
+@media screen and (min-width: 768px) {
+  .leftside,
+  .rightside {
+    height: 100vh;
+  }
+}
