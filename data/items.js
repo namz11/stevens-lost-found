@@ -307,14 +307,15 @@ const searchHelper = async (itemsData, searchString) => {
   }
 };
 
-const fetchingLostData = async () => {
+const fetchingLostData = async (sortItem1) => {
   const itemDB = await itemsCollection();
+  const itemsList = await itemDB.find().sort({ sortItem1: 1 }).toArray();
   let Data1 = [];
   let limitPerPage1 = 10;
-  for (let i = 0; i < itemDB.length; i++) {
-    if (itemDB[i].isClaimed == false) {
-      if (itemDB[i].type == "lost" || itemDB[i].type == "Lost") {
-        Data1.push(itemDB[i]);
+  for (let i = 0; i < itemsList.length; i++) {
+    if (itemsList[i].isClaimed == false) {
+      if (itemsList[i].type == "lost" || itemsList[i].type == "Lost") {
+        Data1.push(itemsList[i]);
       }
     }
   }
@@ -327,14 +328,15 @@ const fetchingLostData = async () => {
   return Data1;
 };
 
-const fetchingFoundData = async () => {
+const fetchingFoundData = async (sortItem2) => {
   const itemDB = await itemsCollection();
+  const itemsList = await itemDB.find().sort({ sortItem2: 1 }).toArray();
   let Data2 = [];
   let limitPerPage2 = 10;
-  for (let i = 0; i < itemDB.length; i++) {
-    if (itemDB[i].isClaimed == false) {
-      if (itemDB[i].type == "found" || itemDB[i].type == "Found") {
-        Data2.push(itemDB[i]);
+  for (let i = 0; i < itemsList.length; i++) {
+    if (itemsList[i].isClaimed == false) {
+      if (itemsList[i].type == "found" || itemsList[i].type == "Found") {
+        Data2.push(itemsList[i]);
       }
     }
   }
