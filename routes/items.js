@@ -77,7 +77,7 @@ router.route("/listing").get(async (req, res) => {
     return res.status(500).send(new Error(e.message));
   }
 
-  return res.render("listing", { data1: data1, data2: data2 });
+  return res.render("listing/listing", { data1: data1, data2: data2 });
 });
 
 router.route("/my-listings/:id").get(async (req, res) => {
