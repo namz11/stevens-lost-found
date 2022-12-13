@@ -22,11 +22,10 @@ router.route("/listing").get(async (req, res) => {
   const endIndex1 = page1 * limit;
   const startIndex2 = (page2 - 1) * limit;
   const endIndex2 = page2 * limit;
-
-  let data1 = await itemsDL.fetchingLostData();
-  let data2 = await itemsDL.fetchingFoundData();
   let sortItem2 = "createdAt";
   let sortItem1 = "createdAt";
+  let data1 = await itemsDL.fetchingLostData(sortItem1);
+  let data2 = await itemsDL.fetchingFoundData(sortItem2);
   // let sort1 = req.query.option1.forEach((radio) => {
   //   if (radio.checked) {
   //     if (radio.value == "createdAt") {
@@ -70,16 +69,16 @@ router.route("/listing").get(async (req, res) => {
     };
   }
 
-  data1 = data1.sort({ sortItem1: -1 }).slice(startIndex1, endIndex1);
-  data2 = data2.sort({ sortItem2: -1 }).slice(startIndex2, endIndex2);
-  try {
-    if (!data1 && !data2) {
-      return new Error("Data not found");
-    }
-  } catch (e) {
-    console.log(e);
-    return res.status(500).send(new Error(e.message));
-  }
+  data1 = data1.slice(startIndex1, endIndex1);
+  data2 = data2.slice(startIndex2, endIndex2);
+  // try {
+  //   if (!data1 && !data2) {
+  //     return new Error("Data not found");
+  //   }
+  // } catch (e) {
+  //   console.log(e);
+  //   return res.status(500).send(new Error(e.message));
+  // }
 
   return res.render("listing/listing", { data1: data1, data2: data2 });
 });
