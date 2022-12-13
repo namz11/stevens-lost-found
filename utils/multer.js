@@ -39,10 +39,6 @@ itemImageUpload = (req, res, next) => {
       }
       return res.status(400).json(error);
     } else {
-      if (!req.file) {
-        return res.status(500).json("file not found");
-      }
-
       next();
     }
   });

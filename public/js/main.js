@@ -20,7 +20,7 @@
           .then((res) => {
             if (res.logout) {
               localStorage.clear();
-              location.replace(`/auth/login`);
+              location.href = `/auth/login`;
             } else {
               alert(res.message || "Something went wrong.");
             }

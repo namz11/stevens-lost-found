@@ -1,0 +1,122 @@
+<div class="p-4">
+  <div>
+    <strong>
+      Type :
+    </strong>
+    {{item.type}}
+  </div>
+  <div>
+    <strong>
+      Name :
+    </strong>
+    {{item.name}}
+  </div>
+  <div>
+    <strong>
+      Description :
+    </strong>
+    {{item.description}}
+  </div>
+  <div>
+    <strong>
+      Date
+      {{item.type}}
+      :
+    </strong>
+    {{item.dateLostOrFound}}
+  </div>
+  <div>
+    <strong>
+      Location
+      {{item.type}}
+      :
+    </strong>
+    {{item.lostOrFoundLocation}}
+  </div>
+  <div>
+    <strong>
+      Posted by
+    </strong>
+    {{user.firstName}}
+    {{user.lastName}}
+    <strong>
+      at
+    </strong>
+    {{item.createdAt}}
+  </div>
+  <div
+    class="itemDisplayPicture my-3"
+    style="background-image:url(http://localhost:3000/{{item.picture}})"
+  >
+  </div>
+  <div class="my-3 d-flex">
+    {{#if allowActions}}
+      <a href="/items/edit/{{item._id}}" class="me-4 btn btn-primary px-4">
+        Edit
+      </a>
+      <button id="deleteBtn" type="button" class="me-4 btn btn-danger px-4">
+        Delete
+      </button>
+    {{/if}}
+    {{#if item.isClaimed}}
+      <strong>
+        This item has been claimed
+      </strong>
+    {{else}}
+      <button id="claimBtn" type="button" class="btn btn-warning px-4">
+        Claim
+      </button>
+    {{/if}}
+  </div>
+</div>
+
+<section class="p-4 mb-5">
+  <h2>
+    Comments
+  </h2>
+  {{#each item.comments}}
+    <div class="comment">
+      <div>
+        {{{this.comment}}}
+      </div>
+      <div class="user">
+        by
+        {{this.userInfo.firstName}}
+        {{this.userInfo.lastName}}
+        at
+        {{this.createdAt}}
+      </div>
+    </div>
+  {{/each}}
+
+  <div>
+    <form id="comment-form" action="{{action}}" method="post">
+      <label for="comment">
+        Add new comment
+        <br />
+        <textarea
+          id="comment"
+          name="comment"
+          rows="4"
+          cols="50"
+          placeholder="enter comment..."
+          value=""
+        >
+        </textarea>
+      </label>
+      {{! <input
+        id="createdBy"
+        name="createdBy"
+        type="hidden"
+        value="{{user._id}"
+      /> }}
+      <div>
+        <button type="submit" value="Submit" class="me-4 btn btn-primary px-4">
+          Add
+        </button>
+      </div>
+    </form>
+  </div>
+</section>
+<link rel="stylesheet" href="/public/css/item/view-styles.css" />
+<script src="/public/js/item/view.js" type="module"></script>

@@ -6,7 +6,6 @@ const bodyParser = require("body-parser");
 const flash = require("express-flash");
 const session = require("express-session");
 const passport = require("passport");
-const methodOverride = require("method-override");
 
 const app = express();
 // const data = await Group50_Project_CS546();
@@ -20,6 +19,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(flash());
 app.use(
   session({
+    name: "AuthCookie",
     secret: "secret",
     resave: false,
     saveUninitialized: false,
@@ -28,7 +28,6 @@ app.use(
 
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(methodOverride("_method"));
 
 app.engine(
   "handlebars",

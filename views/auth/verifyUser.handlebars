@@ -1,33 +1,35 @@
-<section>
-  <h1>
-    Verify User
-  </h1>
-
+<section class="body-wrapper">
   <form id="verifyUserForm">
-    <div>
-      <label for="otp">
-        Name
-        <input
-          id="otp"
-          type="text"
-          name="otp"
-          placeholder="enter otp..."
-          required
-        />
-      </label>
+    <div class="verifyScreen">
+      <h1>
+        Verify User
+      </h1>
+      <div class="inp">
+        <label for="otp">
+          OTP
+        </label>
+        <div class="sec-2">
+          <ion-icon name="lock-closed-outline"></ion-icon>
+          <input
+            id="otp"
+            type="text"
+            name="otp"
+            placeholder="Enter OTP..."
+            required
+          />
+        </div>
+      </div>
+      <button type="submit" class="btn">
+        Verify
+      </button>
+      <button type="button" id="btnResendOtp" class="btn {">
+        Resend OTP
+      </button>
+      <ul id="verifyErrors" class="hide"></ul>
+      <br />
     </div>
-
-    <button type="submit">
-      Verify
-    </button>
-
-    <button type="button" id="btnResendOtp">
-      Resend OTP
-    </button>
-
-    <ul id="verifyErrors" class="hide">
-    </ul>
   </form>
 </section>
+
 <script src="/public/js/auth/verifyUser.js" type="module"></script>
-<link rel="stylesheet" href="/public/css/form-styles.css" />
+<link rel="stylesheet" href="/public/css/auth/verify-style.css" />

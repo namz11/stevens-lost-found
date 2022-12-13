@@ -54,7 +54,7 @@ import { helpers, validations } from "/public/js/helpers.js";
               if (res.success) {
                 alert(res.message || "User verified");
                 sessionStorage.setItem("user", JSON.stringify(res.data));
-                this.location.replace("/items/listing");
+                location.href = "/items/listing";
               } else {
                 alert(res.message || "Something went wrong.");
               }
