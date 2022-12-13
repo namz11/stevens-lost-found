@@ -95,6 +95,23 @@ const { sortBy, create, max } = require("lodash");
 //   }
 // });
 
+function previousfunc1() {
+  let page1 = parseInt(document.getElementsById(page1));
+  document.getElementsByClassName(page1).innerHTML = page1 - 1;
+}
+function previousfunc2() {
+  let page2 = parseInt(document.getElementsById(page2));
+  document.getElementsByClassName(page2).innerHTML = page2 - 1;
+}
+function nextfunc1() {
+  let page1 = parseInt(document.getElementsById(page1));
+  document.getElementsByClassName(page1).innerHTML = page1 + 1;
+}
+function nextfunc2() {
+  let page2 = parseInt(document.getElementsById(page2));
+  document.getElementsByClassName(page2).innerHTML = page2 + 1;
+}
+
 // //getting Data
 // const fetchingLostData = async () => {
 //   const data = await Group50_Project_CS546();
