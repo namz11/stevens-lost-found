@@ -309,7 +309,7 @@ const searchHelper = async (itemsData, searchString) => {
 
 const fetchingLostData = async (sortItem1) => {
   const itemDB = await itemsCollection();
-  const itemsList = await itemDB.find().sort({ sortItem1: 1 }).toArray();
+  const itemsList = await itemDB.find().sort({ sortItem1: -1 }).toArray();
   let Data1 = [];
   let limitPerPage1 = 10;
   for (let i = 0; i < itemsList.length; i++) {
@@ -330,7 +330,7 @@ const fetchingLostData = async (sortItem1) => {
 
 const fetchingFoundData = async (sortItem2) => {
   const itemDB = await itemsCollection();
-  const itemsList = await itemDB.find().sort({ sortItem2: 1 }).toArray();
+  const itemsList = await itemDB.find().sort({ sortItem2: -1 }).toArray();
   let Data2 = [];
   let limitPerPage2 = 10;
   for (let i = 0; i < itemsList.length; i++) {
