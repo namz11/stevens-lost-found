@@ -1,11 +1,4 @@
-// const mongoCollections = require("./config/mongoCollections");
-// const Group50_Project_CS546 = mongoCollections.itemsCollection;
-
-// const data = await Group50_Project_CS546();
-// TODO FOR MODALS
-
-const { sortBy, create, max } = require("lodash");
-
+console.log("this file is running");
 // Listing
 // Handlebars.registerHelper("ifEquals", function(arg1, arg2, options) {
 //   return (arg1 == arg2) ? options.fn(this) : options.inverse(this);
@@ -83,7 +76,7 @@ const { sortBy, create, max } = require("lodash");
 //     }
 //   }
 // });
-
+console.log("this file is running");
 // document.getElementsByName("option2").forEach((radio) => {
 //   if (radio.checked) {
 //     if (radio.value == "createdAt") {
@@ -94,23 +87,6 @@ const { sortBy, create, max } = require("lodash");
 //     }
 //   }
 // });
-
-function previousfunc1() {
-  let page1 = parseInt(document.getElementsById(page1));
-  document.getElementsByClassName(page1).innerHTML = page1 - 1;
-}
-function previousfunc2() {
-  let page2 = parseInt(document.getElementsById(page2));
-  document.getElementsByClassName(page2).innerHTML = page2 - 1;
-}
-function nextfunc1() {
-  let page1 = parseInt(document.getElementsById(page1));
-  document.getElementsByClassName(page1).innerHTML = page1 + 1;
-}
-function nextfunc2() {
-  let page2 = parseInt(document.getElementsById(page2));
-  document.getElementsByClassName(page2).innerHTML = page2 + 1;
-}
 
 // //getting Data
 // const fetchingLostData = async () => {
@@ -294,3 +270,181 @@ function nextfunc2() {
 // };
 
 // TODO (RUSHABH): Rushabh can try to make some changes on this using similar Class Names and IDs so that it works in a similar fashion to user lisitngs
+
+// function previousfunc1() {
+//   let page1 = document.getElementsById(page1);
+//   page1.innerHTML = parseInt(page1.innerHTML) - 1;
+//   // document.getElementsByClassName(page1).innerHTML = page1 - 1;
+// }
+// function previousfunc2() {
+//   // let page2 = parseInt(document.getElementsById(page2));
+//   // document.getElementsByClassName(page2).innerHTML = page2 - 1;
+//   let page2 = document.getElementsById(page2);
+//   page2.innerHTML = parseInt(page2.innerHTML) - 1;
+// }
+// function nextfunc1() {
+//   let page1 = document.getElementsById(page1);
+//   console.log(page1);
+//   page1.innerHTML = parseInt(page1.innerHTML) + 1;
+// }
+// function nextfunc2() {
+//   let page2 = document.getElementsById(page2);
+//   page2.innerHTML = parseInt(page2.innerHTML) + 1;
+// }
+
+(function () {
+  document.addEventListener("DOMContentLoaded", function () {
+    // Handler when the DOM is fully loaded
+    let sortItem1 = "";
+    document.getElementsByName("option1").forEach((radio) => {
+      if (radio.checked) {
+        if (radio.value == "createdAt") {
+          sortItem1 = "createdAt";
+        }
+        if (radio.value == "dateLostOrFound") {
+          sortItem1 = "dateLostOrFound";
+        }
+      }
+    });
+    let sortItem2 = "";
+    document.getElementsByName("option2").forEach((radio) => {
+      if (radio.checked) {
+        if (radio.value == "createdAt") {
+          sortItem2 = "createdAt";
+        }
+        if (radio.value == "dateLostOrFound") {
+          sortItem2 = "dateLostOrFound";
+        }
+      }
+    });
+
+    const previous1button = document.getElementsByClassName("previous1");
+    if (previous1button) {
+      console.log("Found previos");
+      previous1button[0].addEventListener("click", (event) => {
+        event.stopPropagation();
+        event.preventDefault();
+
+        let page1 = document.getElementById("page1");
+        let newpage1 = parseInt(page1.innerHTML) - 1;
+        let page2 = document.getElementById("page2");
+        let newpage2 = parseInt(page2.innerHTML);
+
+        let data = {
+          sortItem1: sortItem1,
+          sortItem2: sortItem2,
+          page1: newpage1,
+          page2: newpage2,
+        };
+        fetch("/items/listing", {
+          method: "GET",
+        })
+          .then((resp) => resp.json())
+          .then((res) => {
+            if (res.success) {
+              location.href = `/items/listing?page1=${newpage1}&page2=${newpage2}&sortItem1=${sortItem1}&sortItem2=${sortItem2}`;
+            } else {
+              alert(res.messsage || "Something went wrong");
+            }
+          });
+      });
+    }
+
+    const previous2button = document.getElementsByClassName("previous2");
+    if (previous2button) {
+      previous2button.addEventListener("click", (event) => {
+        event.stopPropagation();
+        event.preventDefault();
+
+        let page1 = document.getElementById("page1");
+        let newpage1 = parseInt(page1.innerHTML);
+        let page2 = document.getElementById("page2");
+        let newpage2 = parseInt(page2.innerHTML) - 1;
+
+        data = {
+          sortItem1: sortItem1,
+          sortItem2: sortItem2,
+          page1: newpage1,
+          page2: newpage2,
+        };
+        fetch("/items/listing", {
+          method: "GET",
+        })
+          .then((resp) => resp)
+          .then((res) => {
+            if (res.success) {
+              location.href = `/items/listing?page1=${newpage1}&page2=${newpage2}&sortItem1=${sortItem1}&sortItem2=${sortItem2}`;
+            } else {
+              alert(res.messsage || "Something went wrong");
+            }
+          });
+      });
+    }
+
+    const next1button = document.getElementsByClassName("next1");
+    if (next1button) {
+      next1button.addEventListener("click", (event) => {
+        event.stopPropagation();
+        event.preventDefault();
+
+        let page1 = document.getElementsById("page1");
+        newpage1 = parseInt(page1.innerHTML) + 1;
+        let page2 = document.getElementsById("page2");
+        newpage2 = parseInt(page2.innerHTML);
+
+        data = {
+          sortItem1: sortItem1,
+          sortItem2: sortItem2,
+          page1: newpage1,
+          page2: newpage2,
+        };
+        fetch("/items/listing", {
+          method: "POST",
+          body: JSON.stringify(data),
+        })
+          .then((resp) => resp.json())
+          .then((res) => {
+            if (res.success) {
+              location.href = `/items/listing?page1=${newpage1}&page2=${newpage2}`;
+            } else {
+              alert(res.messsage || "Something went wrong");
+            }
+          });
+      });
+    }
+    const next2button = document.getElementsByClassName("next1");
+    if (next2button) {
+      //setup event listeners for form
+
+      // event listener - submit button
+      next2button.addEventListener("click", (event) => {
+        event.stopPropagation();
+        event.preventDefault();
+
+        let page1 = document.getElementsById("page1");
+        newpage1 = parseInt(page1.innerHTML);
+        let page2 = document.getElementsById("page2");
+        newpage2 = parseInt(page2.innerHTML) + 1;
+
+        data = {
+          sortItem1: sortItem1,
+          sortItem2: sortItem2,
+          page1: newpage1,
+          page2: newpage2,
+        };
+        fetch("/items/listing", {
+          method: "POST",
+          body: JSON.stringify(data),
+        })
+          .then((resp) => resp.json())
+          .then((res) => {
+            if (res.success) {
+              location.href = `/items/listing?page1=${newpage1}&page2=${newpage2}`;
+            } else {
+              alert(res.messsage || "Something went wrong");
+            }
+          });
+      });
+    }
+  });
+})();
