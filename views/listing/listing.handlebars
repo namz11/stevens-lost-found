@@ -30,9 +30,9 @@
   {{/each}}
   {{/if}}
     <div class = "pagination1">
-    <li class = "page-item previous-page"><button class="previous1" onclick="previousfunc1">Previous</button></li>
-    <li class = "page-item current-page" id="page1">1</li>
-    <li class = "page-item next-page"><button class="next1" onclick="nextfunc1">Next</button></li>
+    <li class = "page-item previous-page"><button class="previous1">Previous</button></li>
+    <li class = "page-item current-page" id="page1">{{page1}}</li>
+    <li class = "page-item next-page"><button class="next1">Next</button></li>
   </div>
 </div>
 </div>
@@ -65,9 +65,9 @@
     {{/each}}
   {{/if}}
     <div class = "pagination2">
-    <li class = "page-item previous-page"><button class="previous2">Previous</button></li>
-    <li class = "page-item current-page">{{page2}}</li>
-    <li class = "page-item next-page"><button class="next2">Next</button></li>
+    <li class = "page-item previous-page"><button class="previous2" onclick="previousfunc2"></button>>Previous</button></li>
+    <li class = "page-item current-page" id="page2">{{page2}}</li>
+    <li class = "page-item next-page"><button class="next2" onclick="nextfunc2"></button>>Next</button></li>
   </div>
   </div>
 </div>
