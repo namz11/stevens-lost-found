@@ -114,7 +114,7 @@
 
 
 {{!-- Modal For Successful Deletion --}}
-{{#if itemDeleted}}
+{{#if success}}
   <!-- Modal -->
 <div id="success_tic" class="modal-fade" role="dialog">
 <div class="modal-dialog">
@@ -134,19 +134,22 @@
 </div>
 </div>
 </div>
-<script>
-const modal = document.querySelector('#success_tic');
-function openModal() {
-modal.style.display = 'block'
-}
-openModal()
-const closeBtn = document.querySelector('#close-btn');
-closeBtn.addEventListener('click', closeModal);
-function closeModal() {
-  modal.style.display = 'none';
-} </script>
+
+<!-- HTML for the error modal -->
+<div id="error_modal" class="modal">
+  <div class="modal-content">
+    <p>There was an error deleting the item. Please try again.</p>
+    <button id="error-modal-close-btn">Close</button>
+  </div>
+</div>
+
+
 {{/if}}
 
   </div>
+<script
+  src="https://code.jquery.com/jquery-3.6.2.js"
+  integrity="sha256-pkn2CUZmheSeyssYw3vMp1+xyub4m+e+QK4sQskvuo4="
+  crossorigin="anonymous"></script>
 <script src="/public/js/userListings.js" type="module"></script>
 <link rel="stylesheet" href="/public/css/modal-styles.css" />

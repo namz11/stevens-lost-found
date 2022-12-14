@@ -291,28 +291,75 @@ router.route("/:id/status").put(async (req, res) => {
 router
   .route("/:id")
   .get(async (req, res) => {
-    // item page
-    return res.send("NOT IMPLEMENTED");
+    let id = req.params.id;
+    let user, item, authenticatedUserId;
+    try {
+      id = checkId(id, "Item ID");
+    } catch (e) {
+      return res.status(400).send(e);
+    }
+
+    try {
+      item = await itemsDL.getItemById(id);
+      item = {
+        ...item,
+        dateLostOrFound: helpers.getDate(new Date(item.dateLostOrFound)),
+        createdAt: helpers.getDate(new Date(item.createdAt)),
+      };
+    } catch (e) {
+      return res.status(404).send("Item not found");
+    }
+
+    try {
+      let allUsers = await userDL.getAllUsers();
+      item.comments = item.comments.map((c) => {
+        for (u of allUsers) {
+          if (ObjectId(u._id).equals(c.createdBy)) {
+            c = { ...c, userInfo: u };
+            break;
+          }
+        }
+        return { ...c, createdAt: helpers.getDate(c.createdAt) };
+      });
+      let userId = checkId(item.createdBy, "User ID");
+      user = await userDL.getUserById(userId);
+      authenticatedUserId = req?.session?.passport?.user?._id;
+    } catch (e) {
+      return res.status(500).send("Internal Server Error");
+    }
+    const allowActions =
+      ObjectId(user._id).equals(authenticatedUserId) && !item.isClaimed;
+    return res.render("item/view", {
+      title: "Item Page",
+      item,
+      user,
+      allowActions,
+      action: `/items/${id}/comment`,
+    });
   })
   .delete(async (req, res) => {
-    //  item
+    // delete item
+    let id = req.params.id;
+    try {
+      id = checkId(id, "Item ID");
+    } catch (e) {
+      return res.status(400).send(e);
+    }
+    try {
+      let item = await itemsDL.getItemById(id);
+    } catch (e) {
+      return res.status(404).send("item not found");
+    }
 
-    id = checkId(req.params.id, "Item ID");
-
-    const theUser = await userFunctions.getUserByItemId(id)
-    const userId = theUser._id
-
-    const deletedItem = await itemFunctions.deleteItem(id);
-    if(!deletedItem) throw "Could Not Delete Item"
-    // res.status(200).json(deletedItem);
-
-    // Render The My Listings Page After Deletion
-    const d = await itemFunctions.getItemsByUserId(userId);
-
-    res.render("/listing/userListings", {
-      itemsData: d, title: "My Listings", itemDeleted: deletedItem
-    });
-   // TODO: Check with Professor If This Is a Good
+    try {
+      let item = await itemsDL.deleteItem(id);
+      return res.json({
+        success: true,
+        message: "Item deleted!",
+      });
+    } catch (e) {
+      return res.status(500).send("Internal server errror");
+    }
   });
 
 router.route("/:id/suggestions").get(async (req, res) => {

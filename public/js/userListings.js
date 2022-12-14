@@ -57,13 +57,11 @@ function outsideClick(e) {
   }
 }
 
-
 (function () {
   document.addEventListener("DOMContentLoaded", function () {
     // Handler when the DOM is fully loaded
 
     const confirmButton = document.querySelector('#confirm-yes-btn');
-    debugger;
     if (confirmButton) {
       confirmButton.addEventListener("click", (event) => {
           event.stopPropagation();
@@ -72,15 +70,15 @@ function outsideClick(e) {
           const theItemId = event.target.getAttribute("data-id");
           const theUserId = event.target.getAttribute("data-user");
 
-          data = {
+          let data = {
             itemId: theItemId,
             userId: theUserId
-          }
+          };
 
           fetch(`/${theItemId}/status`, {
             method: "POST",
             headers: {
-              Accept: "application/json, text/plain, */*",
+              Accept: "application/json",
               "Content-Type": "application/json",
             },
             body: JSON.stringify(data),
@@ -98,17 +96,17 @@ function outsideClick(e) {
               alert(error.message || "Something went wrong.");
             });
         });
-
     }
   });
 })();
+
+
 
 (function () {
   document.addEventListener("DOMContentLoaded", function () {
     // Handler when the DOM is fully loaded
 
     let editButton = document.querySelector('#edit-btn');
-    debugger;
     if (editButton) {
       editButton.addEventListener("click", (event) => {
           event.stopPropagation();
@@ -116,19 +114,17 @@ function outsideClick(e) {
 
           const theItemId = event.target.getAttribute("data-id");
 
-          data = {
+          let data = {
             itemId: theItemId,
-          }
+          };
 
+          // Remove the Accept header and add the Content-Type header as the third argument to the fetch method
           fetch(`/edit/${theItemId}`, {
             method: "GET", //Get Item Edit Page
             headers: {
-              Accept: "application/json, text/plain, */*",
               "Content-Type": "application/json",
             },
-            body: JSON.stringify(data),
-          })
-            .then((resp) => resp.json())
+          }).then((resp) => resp.json())
             .then((res) => {
               if (res.success) {
                 alert(res.message || "Item Claimed");
@@ -141,53 +137,55 @@ function outsideClick(e) {
               alert(error.message || "Something went wrong.");
             });
         });
-
     }
   });
 })();
 
-(function () {
-  document.addEventListener("DOMContentLoaded", function () {
-    // Handler when the DOM is fully loaded
 
-    let deleteButton = document.querySelector('#delete-btn');
-    debugger;
-    if (deleteButton) {
-      deleteButton.addEventListener("click", (event) => {
-          event.stopPropagation();
-          event.stopImmediatePropagation();
 
-          const theItemId = event.target.getAttribute("data-id");
 
-          data = {
-            itemId: theItemId,
-          }
+$(document).ready(function() {
+  $("#delete-btn").click(function(e) {
+    e.preventDefault();
 
-          fetch(`/items/${theItemId}`, {
-            method: "DELETE",
-            headers: {
-              Accept: "application/json, text/plain, */*",
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(data), 
-          })
-            .then((resp) => resp.json())
-            .then((res) => {
-              if (res.success) {
-                alert(res.message || "Item Deleted");
-                location.href = "/items/my-listing";
-              } else {
-                alert(res.message || "Something went wrong.");
-              }
-            })
-            .catch((error) => {
-              alert(error.message || "Something went wrong.");
-            });
+    // Set the ID of the item you want to delete
+    // const itemId = 123;
+    const itemId = e.target.getAttribute("data-button");
+
+    $.ajax({
+      url: "/items/" + itemId,
+      method: "DELETE",
+      success: function(res) {
+        // Check if the item was successfully deleted
+        if (res.success) {
+          const modal = document.querySelector("#success_tic");
+          modal.style.display = "block";
+
+          const closeBtn = document.querySelector("#close-btn");
+          closeBtn.addEventListener("click", function() {
+            modal.style.display = "none";
+            // Refresh the page after deleting the item
+            window.location.reload(true);
+          });
+        } else {
+          throw "Could Not Delete Item";
+        }
+      },
+      error: function(err) {
+        // Handle the error
+        console.error("Could not delete item:", err);
+
+        const modal = document.querySelector("#error_modal");
+        modal.style.display = "block";
+        
+        const closeBtn = document.querySelector("#error-modal-close-btn");
+        closeBtn.addEventListener("click", function() {
+          modal.style.display = "none";
         });
-
-    }
+      }
+    });
   });
-})();
+});
 
 
 Handlebars.registerHelper("ifEquals", function(arg1, arg2, options) {
