@@ -322,37 +322,23 @@ console.log("this file is running");
     if (previous1button) {
       console.log("Found previos");
       previous1button[0].addEventListener("click", (event) => {
-        event.stopPropagation();
-        event.preventDefault();
+        // event.stopPropagation();
+        // event.preventDefault();
 
         let page1 = document.getElementById("page1");
         let newpage1 = parseInt(page1.innerHTML) - 1;
         let page2 = document.getElementById("page2");
         let newpage2 = parseInt(page2.innerHTML);
 
-        let data = {
-          sortItem1: sortItem1,
-          sortItem2: sortItem2,
-          page1: newpage1,
-          page2: newpage2,
-        };
-        fetch("/items/listing", {
-          method: "GET",
-        })
-          .then((resp) => resp.json())
-          .then((res) => {
-            if (res.success) {
-              location.href = `/items/listing?page1=${newpage1}&page2=${newpage2}&sortItem1=${sortItem1}&sortItem2=${sortItem2}`;
-            } else {
-              alert(res.messsage || "Something went wrong");
-            }
-          });
+        if (newpage1 > 0 && newpage2 > 0) {
+          location.href = `/items/listing?page1=${newpage1}&page2=${newpage2}&sortItem1=${sortItem1}&sortItem2=${sortItem2}`;
+        }
       });
     }
 
     const previous2button = document.getElementsByClassName("previous2");
     if (previous2button) {
-      previous2button.addEventListener("click", (event) => {
+      previous2button[0].addEventListener("click", (event) => {
         event.stopPropagation();
         event.preventDefault();
 
@@ -360,90 +346,94 @@ console.log("this file is running");
         let newpage1 = parseInt(page1.innerHTML);
         let page2 = document.getElementById("page2");
         let newpage2 = parseInt(page2.innerHTML) - 1;
-
-        data = {
-          sortItem1: sortItem1,
-          sortItem2: sortItem2,
-          page1: newpage1,
-          page2: newpage2,
-        };
-        fetch("/items/listing", {
-          method: "GET",
-        })
-          .then((resp) => resp)
-          .then((res) => {
-            if (res.success) {
-              location.href = `/items/listing?page1=${newpage1}&page2=${newpage2}&sortItem1=${sortItem1}&sortItem2=${sortItem2}`;
-            } else {
-              alert(res.messsage || "Something went wrong");
-            }
-          });
+        if (newpage1 > 0 && newpage2 > 0) {
+          location.href = `/items/listing?page1=${newpage1}&page2=${newpage2}&sortItem1=${sortItem1}&sortItem2=${sortItem2}`;
+        }
+        // data = {
+        //   sortItem1: sortItem1,
+        //   sortItem2: sortItem2,
+        //   page1: newpage1,
+        //   page2: newpage2,
+        // };
+        // fetch("/items/listing", {
+        //   method: "GET",
+        // })
+        //   .then((resp) => resp)
+        //   .then((res) => {
+        //     if (res.success) {
+        //       location.href = `/items/listing?page1=${newpage1}&page2=${newpage2}&sortItem1=${sortItem1}&sortItem2=${sortItem2}`;
+        //     } else {
+        //       alert(res.messsage || "Something went wrong");
+        //     }
+        //   });
       });
     }
 
     const next1button = document.getElementsByClassName("next1");
     if (next1button) {
-      next1button.addEventListener("click", (event) => {
+      next1button[0].addEventListener("click", (event) => {
         event.stopPropagation();
         event.preventDefault();
 
-        let page1 = document.getElementsById("page1");
-        newpage1 = parseInt(page1.innerHTML) + 1;
-        let page2 = document.getElementsById("page2");
-        newpage2 = parseInt(page2.innerHTML);
-
-        data = {
-          sortItem1: sortItem1,
-          sortItem2: sortItem2,
-          page1: newpage1,
-          page2: newpage2,
-        };
-        fetch("/items/listing", {
-          method: "POST",
-          body: JSON.stringify(data),
-        })
-          .then((resp) => resp.json())
-          .then((res) => {
-            if (res.success) {
-              location.href = `/items/listing?page1=${newpage1}&page2=${newpage2}`;
-            } else {
-              alert(res.messsage || "Something went wrong");
-            }
-          });
+        let page1 = document.getElementById("page1");
+        let newpage1 = parseInt(page1.innerHTML) + 1;
+        let page2 = document.getElementById("page2");
+        let newpage2 = parseInt(page2.innerHTML);
+        if (newpage1 > 0 && newpage2 > 0) {
+          location.href = `/items/listing?page1=${newpage1}&page2=${newpage2}&sortItem1=${sortItem1}&sortItem2=${sortItem2}`;
+        }
+        // data = {
+        //   sortItem1: sortItem1,
+        //   sortItem2: sortItem2,
+        //   page1: newpage1,
+        //   page2: newpage2,
+        // };
+        // fetch("/items/listing", {
+        //   method: "POST",
+        //   body: JSON.stringify(data),
+        // })
+        //   .then((resp) => resp.json())
+        //   .then((res) => {
+        //     if (res.success) {
+        //       location.href = `/items/listing?page1=${newpage1}&page2=${newpage2}`;
+        //     } else {
+        //       alert(res.messsage || "Something went wrong");
+        //     }
+        //   });
       });
     }
-    const next2button = document.getElementsByClassName("next1");
+    const next2button = document.getElementsByClassName("next2");
     if (next2button) {
-      //setup event listeners for form
-
-      // event listener - submit button
-      next2button.addEventListener("click", (event) => {
+      next2button[0].addEventListener("click", (event) => {
         event.stopPropagation();
         event.preventDefault();
 
-        let page1 = document.getElementsById("page1");
-        newpage1 = parseInt(page1.innerHTML);
-        let page2 = document.getElementsById("page2");
-        newpage2 = parseInt(page2.innerHTML) + 1;
+        let page1 = document.getElementById("page1");
+        let newpage1 = parseInt(page1.innerHTML);
+        let page2 = document.getElementById("page2");
+        let newpage2 = parseInt(page2.innerHTML) + 1;
 
-        data = {
-          sortItem1: sortItem1,
-          sortItem2: sortItem2,
-          page1: newpage1,
-          page2: newpage2,
-        };
-        fetch("/items/listing", {
-          method: "POST",
-          body: JSON.stringify(data),
-        })
-          .then((resp) => resp.json())
-          .then((res) => {
-            if (res.success) {
-              location.href = `/items/listing?page1=${newpage1}&page2=${newpage2}`;
-            } else {
-              alert(res.messsage || "Something went wrong");
-            }
-          });
+        if (newpage1 > 0 && newpage2 > 0) {
+          location.href = `/items/listing?page1=${newpage1}&page2=${newpage2}&sortItem1=${sortItem1}&sortItem2=${sortItem2}`;
+        }
+        // data = {
+        //   sortItem1: sortItem1,
+        //   sortItem2: sortItem2,
+        //   page1: newpage1,
+        //   page2: newpage2,
+        // };
+        // fetch("/items/listing", {
+        //   method: "POST",
+        //   body: JSON.stringify(data),
+        // })
+        //   .then((resp) => resp.json())
+        //   .then((res) => {
+        //     if (res.success) {
+        //       location.href = `/items/listing?page1=${newpage1}&page2=${newpage2}`;
+        //     } else {
+        //       alert(res.messsage || "Something went wrong");
+        //     }
+        //   });
       });
     }
   });
