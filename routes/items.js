@@ -15,7 +15,95 @@ router.get("/", (req, res) => {
 
 router.route("/listing").get(async (req, res) => {
   // item listing page - paginated
-  return res.send("NOT IMPLEMENTED");
+  let page1 = parseInt(req.query.page1) || 1;
+  let page2 = parseInt(req.query.page2) || 1;
+  let limit = 5;
+  let startIndex1 = (page1 - 1) * limit;
+  let endIndex1 = page1 * limit;
+  let startIndex2 = (page2 - 1) * limit;
+  let endIndex2 = page2 * limit;
+  let sortItem2 = req.body.sortItem1 || "createdAt";
+  let sortItem1 = req.body.sortItem2 || "createdAt";
+  let data1 = await itemsDL.fetchingLostData(sortItem1);
+  let data2 = await itemsDL.fetchingFoundData(sortItem2);
+  // let sort1 = req.body.option1.forEach((radio) => {
+  //   if (radio.checked) {
+  //     if (radio.value == "createdAt") {
+  //       sortItem1 = "createdAt";
+  //     }
+  //     if (radio.value == "dateLostOrFound") {
+  //       sortItem1 = "dateLostOrFound";
+  //     }
+  //   }
+  // });
+  // let sortBy2 = req.query.option2.forEach((radio) => {
+  //   if (radio.checked) {
+  //     if (radio.value == "createdAt") {
+  //       sortItem2 = "createdAt";
+  //     }
+  //     if (radio.value == "dateLostOrFound") {
+  //       sortItem2 = "dateLostOrFound";
+  //     }
+  //   }
+  // });
+
+  // if (endIndex1 < data1.length) {
+  //   next1 = {
+  //     page1: page1 + 1,
+  //   };
+  // }
+  // if (endIndex2 < data2.length) {
+  //   next2 = {
+  //     page2: page2 + 1,
+  //   };
+  // }
+  // if (startIndex1 > 0) {
+  //   previous1 = {
+  //     page1: page1 - 1,
+  //   };
+  // }
+  // if (startIndex2 > 0) {
+  //   previous2 = {
+  //     page1: page1 + 1,
+  //   };
+  // }
+
+  if (endIndex1 > data1.length) {
+    endIndex1 = data1.length - 1;
+    startIndex1 = endIndex1 - limit;
+    page1 = Math.abs(data1.length / limit);
+  }
+  if (endIndex2 > data2.length) {
+    endIndex2 = data2.length - 1;
+    startIndex2 = endIndex2 - limit;
+    page2 = Math.abs(data2.length / limit);
+  }
+  if (startIndex1 < 0) {
+    startIndex1 = 0;
+    endIndex1 = limit;
+  }
+  if (startIndex2 < 0) {
+    startIndex2 = 0;
+    endIndex1 = limit;
+  }
+
+  data1 = data1.slice(startIndex1, endIndex1);
+  data2 = data2.slice(startIndex2, endIndex2);
+  // try {
+  //   if (!data1 && !data2) {
+  //     return new Error("Data not found");
+  //   }
+  // } catch (e) {
+  //   console.log(e);
+  //   return res.status(500).send(new Error(e.message));
+  // }
+
+  return res.render("listing/listing", {
+    data1: data1,
+    data2: data2,
+    page1: page1,
+    page2: page2,
+  });
 });
 
 router.route("/my-listings/:id").get(async (req, res) => {
@@ -394,6 +482,23 @@ router
       return res.status(404).send("item not found");
     }
 
+    id = checkId(req.params.id, "Item ID");
+
+    const theUser = await userDL.getUserByItemId(id);
+    const userId = theUser._id;
+
+    const deletedItem = await itemsDL.deleteItem(id);
+    if (!deletedItem) throw "Could Not Delete Item";
+    // res.status(200).json(deletedItem);
+
+    // Render The My Listings Page After Deletion
+    const d = await itemsDL.getItemsByUserId(userId);
+
+    res.render("/listing/userListings", {
+      itemsData: d,
+      title: "My Listings",
+    });
+    // TODO: Check with Professor If This Is a Good
     try {
       let item = await itemsDL.deleteItem(id);
       return res.json({

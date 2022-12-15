@@ -21,5 +21,4 @@ module.exports = {
   usersCollection: getCollectionFn("users"),
   itemsCollection: getCollectionFn("items"),
   userVerificationCollection: getCollectionFn("userVerification"),
-  commentCollection: getCollectionFn("comments"),
 };

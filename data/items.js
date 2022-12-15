@@ -59,10 +59,6 @@ const getItemsByUserId = async (userId) => {
 
   const theItems = await itemDB.find({}).toArray();
 
-  // const theItems = await itemDB
-  //   .find({}, { projection: { createdBy: ObjectId(userId) } })
-  //   .toArray();
-
   let foundItem = false;
   let allItemsWithThatId = {};
   for (let i = 0; i < theItems.length; i++) {
@@ -74,7 +70,6 @@ const getItemsByUserId = async (userId) => {
   }
   if (!foundItem) throw new Error("No Items Found With That Id");
   return allItemsWithThatId;
-  // return theItems;
 };
 
 const updateItem = async (id, itemObj) => {
@@ -181,10 +176,44 @@ const updateIsClaimedStatus = async (itemId) => {
   return await getItemById(itemId);
 };
 
+const deleteItem = async (id) => {
+  var itemId = checkId(id, "invalid item id");
+
+  var items = await itemsCollection();
+  var deletionInfo = await items.deleteOne({ _id: ObjectId(itemId) });
+
+  if (deletionInfo.deletedCount === 0) {
+    throw new Error("error in delete");
+  }
+  return true;
+};
+
+const createComment = async (comment, createdBy, itemId) => {
+  itemId = checkId(itemId, "Item ID");
+  const item = await getItemById(itemId);
+
+  if (!helpers.isStringValid(comment)) {
+    throw new Error("Cannot have empty comment");
+  }
+
+  let newComment = new Comment(comment, createdBy);
+  item.comments.push(newComment);
+  const items = await itemsCollection();
+  const updateInfo = await items.updateOne(
+    { _id: ObjectId(itemId) },
+    { $set: { comments: item.comments } }
+  );
+
+  if (!updateInfo.matchedCount && !updateInfo.modifiedCount)
+    throw new Error("Update failed");
+
+  return await getItemById(itemId);
+};
+
 const searchHelper = async (itemsData, searchString) => {
   try {
-    if (!itemsData) throw new Error("No Data Provided");
-    if (!searchString) throw new Error("No Search String Provided");
+    if (!itemsData) throw "No Data Provided";
+    if (!searchString) throw "No Search String Provided";
 
     let score1, score2, score3;
     let count = 0;
@@ -227,38 +256,34 @@ const searchHelper = async (itemsData, searchString) => {
   }
 };
 
-const deleteItem = async (id) => {
-  var itemId = checkId(id, "invalid item id");
-
-  var items = await itemsCollection();
-  var deletionInfo = await items.deleteOne({ _id: ObjectId(itemId) });
-
-  if (deletionInfo.deletedCount === 0) {
-    throw new Error("error in delete");
+const fetchingLostData = async (sortItem1) => {
+  const itemDB = await itemsCollection();
+  const itemsList = await itemDB.find().sort({ sortItem1: -1 }).toArray();
+  let Data1 = [];
+  let limitPerPage1 = 10;
+  for (let i = 0; i < itemsList.length; i++) {
+    if (itemsList[i].isClaimed == false) {
+      if (itemsList[i].type == "lost" || itemsList[i].type == "Lost") {
+        Data1.push(itemsList[i]);
+      }
+    }
   }
-  return true;
+  return Data1;
 };
 
-const createComment = async (comment, createdBy, itemId) => {
-  itemId = checkId(itemId, "Item ID");
-  const item = await getItemById(itemId);
-
-  if (!helpers.isStringValid(comment)) {
-    throw new Error("Cannot have empty comment");
+const fetchingFoundData = async (sortItem2) => {
+  const itemDB = await itemsCollection();
+  const itemsList = await itemDB.find().sort({ sortItem2: -1 }).toArray();
+  let Data2 = [];
+  let limitPerPage2 = 10;
+  for (let i = 0; i < itemsList.length; i++) {
+    if (itemsList[i].isClaimed == false) {
+      if (itemsList[i].type == "found" || itemsList[i].type == "Found") {
+        Data2.push(itemsList[i]);
+      }
+    }
   }
-
-  let newComment = new Comment(comment, createdBy);
-  item.comments.push(newComment);
-  const items = await itemsCollection();
-  const updateInfo = await items.updateOne(
-    { _id: ObjectId(itemId) },
-    { $set: { comments: item.comments } }
-  );
-
-  if (!updateInfo.matchedCount && !updateInfo.modifiedCount)
-    throw new Error("Update failed");
-
-  return await getItemById(itemId);
+  return Data2;
 };
 
 module.exports = {
@@ -271,5 +296,7 @@ module.exports = {
   updateIsClaimedStatus,
   deleteItem,
   searchHelper,
+  fetchingLostData,
+  fetchingFoundData,
   createComment,
 };
