@@ -4,6 +4,7 @@ import { authHelpers } from "/public/js/helpers.js";
     // Handler when the DOM is fully loaded
 
     const forgotPasswordForm = document.getElementById("forgotPasswordForm");
+    const errorHandle = document.getElementById("error");
 
     if (forgotPasswordForm) {
       //setup event listeners for form
@@ -14,6 +15,7 @@ import { authHelpers } from "/public/js/helpers.js";
         event.stopImmediatePropagation();
         event.preventDefault();
         const form = event.target.elements;
+        errorHandle.hidden = true;
 
         let emailEntered = document.getElementById("email");
 
@@ -23,7 +25,7 @@ import { authHelpers } from "/public/js/helpers.js";
           document
             .getElementById("email")
             .setAttribute("value", emailEntered.value);
-          return alert(e.message || "Something went wrong.");
+          return handleError(e.message || "Something went wrong.");
         }
 
         fetch("/auth/forgot-password", {
@@ -47,8 +49,7 @@ import { authHelpers } from "/public/js/helpers.js";
                 document
                   .getElementById("email")
                   .setAttribute("value", data.email || "");
-
-                return alert(data.message || "Something went wrong.");
+                return handleError(data.message || "Something went wrong.");
               }
             }
             location.href = "/auth/login";
@@ -58,6 +59,11 @@ import { authHelpers } from "/public/js/helpers.js";
             alert(error.message || "Something went wrong.");
           });
       });
+    }
+
+    function handleError(errMessage) {
+      errorHandle.hidden = false;
+      errorHandle.innerHTML = errMessage;
     }
   });
 })();
