@@ -4,6 +4,7 @@ import { authHelpers } from "/public/js/helpers.js";
     // Handler when the DOM is fully loaded
 
     const registerForm = document.getElementById("register");
+    const errorHandle = document.getElementById("error");
 
     if (registerForm) {
       //setup event listeners for form
@@ -14,6 +15,7 @@ import { authHelpers } from "/public/js/helpers.js";
         event.stopImmediatePropagation();
         event.preventDefault();
         const form = event.target.elements;
+        errorHandle.hidden = true;
 
         let firstNameEntered = document.getElementById("FN");
         let lastNameEntered = document.getElementById("LN");
@@ -57,7 +59,8 @@ import { authHelpers } from "/public/js/helpers.js";
           document
             .getElementById("pass")
             .setAttribute("value", passwordEntered.value);
-          return alert(e.message || "Something went wrong.");
+
+          return handleError(e.message || "Something went wrong.");
         }
 
         fetch("/auth/register", {
@@ -102,7 +105,7 @@ import { authHelpers } from "/public/js/helpers.js";
                   .getElementById("pass")
                   .setAttribute("value", data.password);
 
-                return alert(data.message || "Something went wrong.");
+                return handleError(data.message || "Something went wrong.");
               }
             }
             location.href = "/auth/login";
@@ -112,6 +115,11 @@ import { authHelpers } from "/public/js/helpers.js";
             alert(error.message || "Something went wrong.");
           });
       });
+    }
+
+    function handleError(errMessage) {
+      errorHandle.hidden = false;
+      errorHandle.innerHTML = errMessage;
     }
   });
 })();
