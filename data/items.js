@@ -3,19 +3,16 @@ const { helpers, validations, checkId } = require("../utils/helpers");
 const { Item } = require("./models/item.model");
 const { itemsCollection } = require("../config/mongoCollections");
 const levenshtein = require("js-levenshtein");
+const { Comment } = require("./models/comment.model");
 
 const getItemById = async (id) => {
   id = checkId(id, "Item ID");
 
-  if (!ObjectId.isValid(id)) throw "Invalid Object ID";
-
   const itemDB = await itemsCollection();
+  const item = await itemDB.findOne({ _id: ObjectId(id) });
+  if (item === null) throw new Error("No item with that id");
 
-  const theItem = await itemDB.findOne({ _id: ObjectId(id) });
-
-  if (theItem === null) throw "No Item Found With The Provided Id";
-
-  return { ...theItem, _id: theItem._id.toString() };
+  return new Item().deserialize(item);
 };
 
 const getItems = async () => {
@@ -26,6 +23,8 @@ const getItems = async () => {
 };
 
 const createItem = async (itemObj) => {
+  itemObj.createdBy = checkId(itemObj.createdBy, "User ID");
+
   if (!validations.isNameValid(itemObj?.name)) {
     throw new Error("Name field needs to have valid value");
   }
@@ -44,7 +43,7 @@ const createItem = async (itemObj) => {
   const itemDB = await itemsCollection();
   const insertInfo = await itemDB.insertOne(newItem);
   if (!insertInfo.acknowledged || !insertInfo.insertedId)
-    throw "Could not add item";
+    throw new Error("Could not add item");
 
   const added = { ...newItem, _id: insertInfo.insertedId.toString() };
   return new Item().deserialize(added);
@@ -54,15 +53,11 @@ const getItemsByUserId = async (userId) => {
   userId = checkId(userId, "User ID");
   const theUser = await userFunctions.getUserById(userId);
   if (!theUser) {
-    throw "User with the given Id does not exist";
+    throw new Error("User with the given Id does not exist");
   }
   const itemDB = await itemsCollection();
 
   const theItems = await itemDB.find({}).toArray();
-
-  // const theItems = await itemDB
-  //   .find({}, { projection: { createdBy: ObjectId(userId) } })
-  //   .toArray();
 
   let foundItem = false;
   let allItemsWithThatId = {};
@@ -73,13 +68,12 @@ const getItemsByUserId = async (userId) => {
       allItemsWithThatId = currentItem;
     }
   }
-  if (!foundItem) throw "No Items Found With That Id";
+  if (!foundItem) throw new Error("No Items Found With That Id");
   return allItemsWithThatId;
-  // return theItems;
 };
 
 const updateItem = async (id, itemObj) => {
-  // TODO check for valid id
+  id = checkId(id, "Item ID");
 
   if (!validations.isNameValid(itemObj?.name)) {
     throw new Error("Name field needs to have valid value");
@@ -94,13 +88,17 @@ const updateItem = async (id, itemObj) => {
     delete itemObj.picture;
   }
 
-  // TODO uncomment
-  // const itemById = await getItemById(id);
-  // if (helpers.compareItemObjects(itemById, itemObj)) {
-  //   throw "Please change atleast 1 value to update";
-  // }
+  const itemById = await getItemById(id);
+  if (helpers.compareItemObjects(itemById, itemObj)) {
+    throw new Error("Please change atleast 1 value to update");
+  }
 
-  // TODO check for user
+  itemObj.updatedBy = checkId(itemObj.updatedBy, "User ID");
+  itemObj.updatedBy = ObjectId(itemObj.updatedBy);
+  if (itemObj.updatedBy !== ObjectId(itemById.createdBy)) {
+    throw new Error("You don't have authorization to do this action");
+  }
+  itemObj.updatedAt = new Date().valueOf();
 
   const itemDB = await itemsCollection();
   const updateInfo = await itemDB.updateOne(
@@ -108,12 +106,12 @@ const updateItem = async (id, itemObj) => {
     { $set: itemObj }
   );
   if (!updateInfo.matchedCount && !updateInfo.modifiedCount)
-    throw "Update failed";
+    throw new Error("Update failed");
 
   return await getItemById(id);
 };
+
 const getItemSuggestions = async (id) => {
-  // TODO check for valid id
   id = checkId(id, "Item ID");
 
   const itemById = await getItemById(id);
@@ -124,24 +122,58 @@ const getItemSuggestions = async (id) => {
     .filter((it) => it.type !== itemById.type)
     .map((item) => getLevenshteinScore(itemById, item))
     .sort((x, y) => x.score - y.score)
-    .slice(0, 10);
+    .slice(0, 5);
 
-  // return itemsList;
   return suggestions;
 };
 
 const getLevenshteinScore = (obj1, obj2) => {
   // check how much obj2 matches with obj1
-  const { name, description, lostOrFoundLocation } = obj1;
+  let { name, description, lostOrFoundLocation } = obj1;
+  name = helpers.sanitizeString(name);
+  description = helpers.sanitizeString(description);
+  lostOrFoundLocation = helpers.sanitizeString(lostOrFoundLocation);
+
+  let { name: name2, description: desc2, lostOrFoundLocation: loc2 } = obj2;
+  name2 = helpers.sanitizeString(name2);
+  desc2 = helpers.sanitizeString(desc2);
+  loc2 = helpers.sanitizeString(loc2);
+
   let score;
-  score += levenshtein(name, obj2.name);
-  score += levenshtein(name, obj2.description);
-  score += levenshtein(lostOrFoundLocation, obj2.lostOrFoundLocation);
-  score += levenshtein(lostOrFoundLocation, obj2.description);
-  score += levenshtein(description, obj2.name);
-  score += levenshtein(description, obj2.description);
-  score += levenshtein(description, obj2.lostOrFoundLocation);
+
+  score = levenshtein(name, name2);
+  score += levenshtein(name, desc2);
+  score += levenshtein(lostOrFoundLocation, loc2);
+  score += desc2 ? levenshtein(lostOrFoundLocation, desc2) : 0;
+  if (description.length) {
+    score += levenshtein(description, name2);
+    score += desc2.length ? levenshtein(description, desc2) : 0;
+    score += levenshtein(description, loc2);
+  }
+
   return { ...obj2, score };
+};
+
+const updateIsClaimedStatus = async (itemId) => {
+  itemId = checkId(itemId, "Item ID");
+  const itemDB = await itemsCollection();
+  const theItem = await itemDB.findOne({ _id: ObjectId(itemId) });
+  if (!theItem) throw new Error("No Item with the provided id exists");
+
+  let updatedItem = {
+    isClaimed: true,
+  };
+
+  const updatedInfo = await itemDB.updateOne(
+    { _id: ObjectId(itemId) },
+    { $set: updatedItem }
+  );
+
+  if (updatedInfo.modifiedCount === 0) {
+    throw new Error("Could Not Update The Item");
+  }
+
+  return await getItemById(itemId);
 };
 
 const deleteItem = async (id) => {
@@ -156,70 +188,103 @@ const deleteItem = async (id) => {
   return true;
 };
 
-const updateIsClaimedStatus = async (itemId) => {
+const createComment = async (comment, createdBy, itemId) => {
   itemId = checkId(itemId, "Item ID");
-  const itemDB = await itemsCollection();
-  const theItem = await itemDB.findOne({ _id: ObjectId(itemId) });
-  if (!theItem) throw "No Item with the provided id exists";
+  const item = await getItemById(itemId);
 
-  let updatedItem = {
-    isClaimed: true,
-  };
+  if (!helpers.isStringValid(comment)) {
+    throw new Error("Cannot have empty comment");
+  }
 
-  const updatedInfo = await itemDB.updateOne(
+  let newComment = new Comment(comment, createdBy);
+  item.comments.push(newComment);
+  const items = await itemsCollection();
+  const updateInfo = await items.updateOne(
     { _id: ObjectId(itemId) },
-    { $set: updatedItem }
+    { $set: { comments: item.comments } }
   );
 
-  if (updatedInfo.modifiedCount === 0) {
-    throw " Could Not Update The Item";
-  }
+  if (!updateInfo.matchedCount && !updateInfo.modifiedCount)
+    throw new Error("Update failed");
 
   return await getItemById(itemId);
 };
 
-
-const searchHelper = async (itemsData, searchString) =>{
+const searchHelper = async (itemsData, searchString) => {
   try {
-    if(!itemsData) throw "No Data Provided"
-    if(!searchString) throw "No Search String Provided"
+    if (!itemsData) throw "No Data Provided";
+    if (!searchString) throw "No Search String Provided";
 
     let score1, score2, score3;
-    let count = 0
+    let count = 0;
     const matchedEntries = [];
     searchString = searchString.toLowerCase();
     for (let i = 0; i < itemsData.length; i++) {
-
       if (
         itemsData[i].name.toLowerCase().includes(searchString) ||
-        itemsData[i].lostOrFoundLocation.toLowerCase().includes(searchString) || itemsData[i].description.toLowerCase().includes(searchString)
+        itemsData[i].lostOrFoundLocation.toLowerCase().includes(searchString) ||
+        itemsData[i].description.toLowerCase().includes(searchString)
       ) {
-        score1 = levenshtein(itemsData[i].name.toLowerCase(), searchString)
-        score2 = levenshtein(itemsData[i].lostOrFoundLocation.toLowerCase(), searchString)
-        score3 = levenshtein(itemsData[i].description.toLowerCase(), searchString)
+        score1 = levenshtein(itemsData[i].name.toLowerCase(), searchString);
+        score2 = levenshtein(
+          itemsData[i].lostOrFoundLocation.toLowerCase(),
+          searchString
+        );
+        score3 = levenshtein(
+          itemsData[i].description.toLowerCase(),
+          searchString
+        );
 
-        let scores = []
-        scores.push(score1)
-        scores.push(score2)
-        scores.push(score3)
+        let scores = [];
+        scores.push(score1);
+        scores.push(score2);
+        scores.push(score3);
 
-        scores.sort((a, b) => a - b)
-        count+=1
-        itemsData[i].score = scores[0]
+        scores.sort((a, b) => a - b);
+        count += 1;
+        itemsData[i].score = scores[0];
         matchedEntries.push(itemsData[i]);
       }
-    } 
-    matchedEntries.sort((a, b) => a.score - b.score);
-    for (let i=0;i<matchedEntries.length;i++){
-      delete matchedEntries[i].score
     }
-    return matchedEntries
-
-  }catch (e) {
+    matchedEntries.sort((a, b) => a.score - b.score);
+    for (let i = 0; i < matchedEntries.length; i++) {
+      delete matchedEntries[i].score;
+    }
+    return matchedEntries;
+  } catch (e) {
     console.log(e);
   }
-}
+};
 
+const fetchingLostData = async (sortItem1) => {
+  const itemDB = await itemsCollection();
+  const itemsList = await itemDB.find().sort({ sortItem1: -1 }).toArray();
+  let Data1 = [];
+  let limitPerPage1 = 10;
+  for (let i = 0; i < itemsList.length; i++) {
+    if (itemsList[i].isClaimed == false) {
+      if (itemsList[i].type == "lost" || itemsList[i].type == "Lost") {
+        Data1.push(itemsList[i]);
+      }
+    }
+  }
+  return Data1;
+};
+
+const fetchingFoundData = async (sortItem2) => {
+  const itemDB = await itemsCollection();
+  const itemsList = await itemDB.find().sort({ sortItem2: -1 }).toArray();
+  let Data2 = [];
+  let limitPerPage2 = 10;
+  for (let i = 0; i < itemsList.length; i++) {
+    if (itemsList[i].isClaimed == false) {
+      if (itemsList[i].type == "found" || itemsList[i].type == "Found") {
+        Data2.push(itemsList[i]);
+      }
+    }
+  }
+  return Data2;
+};
 
 module.exports = {
   getItemById,
@@ -229,7 +294,9 @@ module.exports = {
   getItemSuggestions,
   getItemsByUserId,
   updateIsClaimedStatus,
-  getLevenshteinScore,
   deleteItem,
-  searchHelper
+  searchHelper,
+  fetchingLostData,
+  fetchingFoundData,
+  createComment,
 };

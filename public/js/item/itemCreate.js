@@ -53,9 +53,13 @@ import { validations } from "/public/js/helpers.js";
             form?.lostOrFoundLocation?.value
           );
           formData.append("picture", form?.picture?.files[0]);
+          const user = JSON.parse(sessionStorage.getItem("user"));
+          const headers = new Headers();
+          headers.append("X-User-Id", user._id);
           fetch("/items/add", {
             method: "POST",
             body: formData,
+            headers,
           })
             .then((resp) => resp.json())
             .then((res) => {

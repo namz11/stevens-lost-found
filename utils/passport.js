@@ -1,23 +1,21 @@
 const LocalStrategy = require("passport-local").Strategy;
-const bcrypt = require("bcrypt");
-const LocalStorage = require("node-localstorage").LocalStorage;
+const bcrypt = require("bcryptjs");
 const mongoCollections = require("../config/mongoCollections");
 const auth = mongoCollections.usersCollection;
-var localStorage = new LocalStorage("./scratch");
 const { ObjectId } = require("mongodb");
+const { userDL } = require("../data");
 
 function initialize(passport) {
-  const authenticateUser = async (email, password, done) => {
+  const authenticateUser = async (req, email, password, done) => {
     const readData = await auth();
     const user = await readData.findOne({ email: email });
+
     if (user === null) {
       return done(null, false, { message: "No user with that email" });
     }
-
     try {
       if (await bcrypt.compare(password, user.password)) {
-        localStorage.setItem("user", JSON.stringify(user));
-        //console.log(user);
+        const user = await userDL.getUserByEmail(email);
         return done(null, user);
       } else {
         return done(null, false, { message: "Password incorrect" });
@@ -27,12 +25,17 @@ function initialize(passport) {
     }
   };
 
-  passport.use(new LocalStrategy({ usernameField: "email" }, authenticateUser));
-  passport.serializeUser((user, done) => done(null, user._id));
-  passport.deserializeUser(async (id, done) => {
+  passport.use(
+    new LocalStrategy(
+      { usernameField: "email", passReqToCallback: true },
+      authenticateUser
+    )
+  );
+  passport.serializeUser((user, done) => done(null, user));
+  passport.deserializeUser(async (user, done) => {
     const readData = await auth();
-    const user = await readData.findOne({ _id: ObjectId(id) });
-    return done(null, user._id);
+    const userDe = await readData.findOne({ _id: ObjectId(user._id) });
+    return done(null, userDe._id);
   });
 }
 

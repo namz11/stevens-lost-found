@@ -23,7 +23,7 @@ This will create an uploads folder in the root of the project, this folder will 
 3. Populate the Db
 
 ```
------ under construction -----
+npm run seed
 ```
 
 4. Run the server

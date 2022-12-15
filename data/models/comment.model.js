@@ -2,12 +2,14 @@ const { ObjectId } = require("mongodb");
 const { helpers } = require("../../utils/helpers");
 
 class Comment {
-  constructor(comment) {
+  constructor(comment, createdBy) {
     this._id = new ObjectId();
     this.comment = helpers.sanitizeString(comment);
 
     this.createdAt = new Date().valueOf();
-    this.createdBy = ""; // TODO get user id from localstorage
+    this.createdBy = createdBy
+      ? ObjectId(helpers.sanitizeString(createdBy))
+      : "";
   }
 
   deserialize(comment) {

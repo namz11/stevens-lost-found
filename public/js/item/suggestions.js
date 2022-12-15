@@ -4,7 +4,6 @@ import { helpers, validations } from "/public/js/helpers.js";
     // Handler when the DOM is fully loaded
 
     const claimButtons = document.getElementsByClassName("claim-btn");
-    debugger;
     if (claimButtons) {
       Array.from(claimButtons).forEach((btn) => {
         btn.addEventListener("click", (event) => {

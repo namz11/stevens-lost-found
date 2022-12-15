@@ -50,11 +50,14 @@ import { validations } from "/public/js/helpers.js";
             form?.lostOrFoundLocation?.value
           );
           formData.append("picture", form?.picture?.files[0]);
-
+          const user = JSON.parse(sessionStorage.getItem("user"));
+          const headers = new Headers();
+          headers.append("X-User-Id", user._id);
           const itemId = location.pathname.split("/").pop();
           fetch(`/items/edit/${itemId}`, {
             method: "PUT",
             body: formData,
+            headers,
           })
             .then((resp) => resp.json())
             .then((res) => {
@@ -62,7 +65,7 @@ import { validations } from "/public/js/helpers.js";
                 alert(res.message || "Item updated!");
                 editItemForm.reset();
                 const id = location.pathname.split("/").pop();
-                location.replace(`/items/${id}`);
+                location.href = `/items/${id}`;
               } else {
                 alert(res.message || "Something went wrong.");
               }

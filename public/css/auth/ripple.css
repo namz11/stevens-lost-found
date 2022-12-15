@@ -1,0 +1,78 @@
+.cont {
+  display: flex;
+  width: 100%;
+  height: 100vh;
+  align-items: center;
+  background-color: #f1f7fe;
+  justify-content: center;
+  z-index: -1;
+}
+
+.con {
+  z-index: 1;
+}
+
+/*Ripple by CodePen user @antoniolee*/
+
+.rip {
+  position: absolute;
+  -webkit-animation: ripple 4s infinite;
+  animation: ripple 4s infinite;
+  border-radius: 100%;
+  border: none;
+  background-color: #eff2f5;
+  box-shadow: inset 9px 9px 19px #a5a7a9, inset -9px -9px 19px #ffffff;
+  transition: 0.4s ease-in all;
+  opacity: 0;
+}
+
+@-webkit-keyframes ripple {
+  0% {
+    width: 30px;
+    height: 20px;
+    opacity: 1;
+  }
+  100% {
+    width: 1200px;
+    height: 600px;
+    opacity: 0;
+  }
+}
+
+@keyframes ripple {
+  0% {
+    width: 30px;
+    height: 20px;
+    opacity: 1;
+  }
+  100% {
+    width: 1200px;
+    height: 600px;
+    opacity: 0;
+  }
+}
+
+.cont .rip:nth-child(1) {
+  -webkit-animation-delay: 700ms;
+  animation-delay: 700ms;
+}
+
+.cont .rip:nth-child(2) {
+  -webkit-animation-delay: 1200ms;
+  animation-delay: 1200ms;
+}
+
+.cont .rip:nth-child(3) {
+  -webkit-animation-delay: 1800ms;
+  animation-delay: 1800ms;
+}
+
+.cont .rip:nth-child(4) {
+  -webkit-animation-delay: 2300ms;
+  animation-delay: 2300ms;
+}
+
+.cont .rip:nth-child(5) {
+  -webkit-animation-delay: 2800ms;
+  animation-delay: 2800ms;
+}
