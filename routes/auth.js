@@ -75,9 +75,9 @@ router
         res
       );
     } catch (e) {
-      res.status(400).render("auth/register", {
-        layout: "main",
-        title: "Register",
+      return res.status(400).json({
+        success: false,
+        message: e.message,
         firstName: req.body.firstName,
         lastName: req.body.lastName,
         email: req.body.email,
@@ -121,10 +121,10 @@ router
         res
       );
     } catch (e) {
-      return res.status(400).render("auth/forgotPassword", {
-        layout: "main",
-        title: "Forgot Password",
-        error: e,
+      return res.status(400).json({
+        success: false,
+        message: e.message,
+        email: req.body.email,
       });
     }
   });
@@ -218,7 +218,6 @@ router
         }
       }
     } catch (e) {
-      console.log(e);
       res.status(500).send(e);
     }
   });

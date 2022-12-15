@@ -1,3 +1,7 @@
+.customHeight {
+  height: 100vh;
+}
+
 .screen-1 {
   background: #f1f7fe;
   padding: 2em;
@@ -102,6 +106,7 @@
   border: none;
   border-radius: 30px;
   font-weight: 600;
+  cursor: pointer;
 }
 
 .screen-1 .footer {
@@ -126,6 +131,11 @@
   padding: 1em;
 }
 
-button {
-  cursor: pointer;
+.mainTitle {
+  font-size: 4em !important;
+  color: #ef4444;
+}
+
+.smallText {
+  font-size: 1em !important;
 }
