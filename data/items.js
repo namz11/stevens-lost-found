@@ -59,10 +59,6 @@ const getItemsByUserId = async (userId) => {
 
   const theItems = await itemDB.find({}).toArray();
 
-  // const theItems = await itemDB
-  //   .find({}, { projection: { createdBy: ObjectId(userId) } })
-  //   .toArray();
-
   let foundItem = false;
   let allItemsWithThatId = {};
   for (let i = 0; i < theItems.length; i++) {
@@ -74,7 +70,6 @@ const getItemsByUserId = async (userId) => {
   }
   if (!foundItem) throw new Error("No Items Found With That Id");
   return allItemsWithThatId;
-  // return theItems;
 };
 
 const updateItem = async (id, itemObj) => {
@@ -181,52 +176,6 @@ const updateIsClaimedStatus = async (itemId) => {
   return await getItemById(itemId);
 };
 
-// const searchHelper = async (itemsData, searchString) => {
-//   try {
-//     if (!itemsData) throw new Error("No Data Provided");
-//     if (!searchString) throw new Error("No Search String Provided");
-
-//     let score1, score2, score3;
-//     let count = 0;
-//     const matchedEntries = [];
-//     searchString = searchString.toLowerCase();
-//     for (let i = 0; i < itemsData.length; i++) {
-//       if (
-//         itemsData[i].name.toLowerCase().includes(searchString) ||
-//         itemsData[i].lostOrFoundLocation.toLowerCase().includes(searchString) ||
-//         itemsData[i].description.toLowerCase().includes(searchString)
-//       ) {
-//         score1 = levenshtein(itemsData[i].name.toLowerCase(), searchString);
-//         score2 = levenshtein(
-//           itemsData[i].lostOrFoundLocation.toLowerCase(),
-//           searchString
-//         );
-//         score3 = levenshtein(
-//           itemsData[i].description.toLowerCase(),
-//           searchString
-//         );
-
-//         let scores = [];
-//         scores.push(score1);
-//         scores.push(score2);
-//         scores.push(score3);
-
-//         scores.sort((a, b) => a - b);
-//         count += 1;
-//         itemsData[i].score = scores[0];
-//         matchedEntries.push(itemsData[i]);
-//       }
-//     }
-//     matchedEntries.sort((a, b) => a.score - b.score);
-//     for (let i = 0; i < matchedEntries.length; i++) {
-//       delete matchedEntries[i].score;
-//     }
-//     return matchedEntries;
-//   } catch (e) {
-//     console.log(e);
-//   }
-// };
-
 const deleteItem = async (id) => {
   var itemId = checkId(id, "invalid item id");
 
@@ -319,12 +268,6 @@ const fetchingLostData = async (sortItem1) => {
       }
     }
   }
-
-  // Data1 = Data1.find()
-  //   .sort({ sortItem1: -1 })
-  //   .slice((currentPage1 - 1) * limitPerPage1, currentPage1 * limitPerPage1)
-  //   .exec();
-
   return Data1;
 };
 
@@ -340,12 +283,6 @@ const fetchingFoundData = async (sortItem2) => {
       }
     }
   }
-
-  // Data2 = Data2.find()
-  //   .sort({ sortItem2: -1 })
-  //   .slice((currentPage2 - 1) * limitPerPage2, currentPage2 * limitPerPage2)
-  //   .exec();
-
   return Data2;
 };
 

@@ -1,9 +1,5 @@
 const express = require("express");
 const exphbs = require("express-handlebars");
-// const mongoCollections = require("./config/mongoCollections");
-// const Group50_Project_CS546 = mongoCollections.itemsCollection;
-const bodyParser = require("body-parser");
-const flash = require("express-flash");
 const session = require("express-session");
 const passport = require("passport");
 
@@ -16,7 +12,6 @@ app.use("/uploads", express.static("uploads"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use(flash());
 app.use(
   session({
     name: "AuthCookie",

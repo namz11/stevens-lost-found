@@ -297,26 +297,6 @@ console.log("this file is running");
     // Handler when the DOM is fully loaded
     let sortItem1 = "";
     let sortItem2 = "";
-    // document.getElementsByName("option1").forEach((radio) => {
-    //   if (radio.checked) {
-    //     if (radio.value == "createdAt") {
-    //       sortItem1 = "createdAt";
-    //     }
-    //     if (radio.value == "dateLostOrFound") {
-    //       sortItem1 = "dateLostOrFound";
-    //     }
-    //   }
-    // });
-    // document.getElementsByName("option2").forEach((radio) => {
-    //   if (radio.checked) {
-    //     if (radio.value == "createdAt") {
-    //       sortItem2 = "createdAt";
-    //     }
-    //     if (radio.value == "dateLostOrFound") {
-    //       sortItem2 = "dateLostOrFound";
-    //     }
-    //   }
-    // });
 
     let rd11 = document.getElementById("rd11");
     let rd21 = document.getElementById("rd21");
@@ -337,11 +317,7 @@ console.log("this file is running");
     }
     const previous1button = document.getElementsByClassName("previous1");
     if (previous1button) {
-      console.log("Found previos");
       previous1button[0].addEventListener("click", (event) => {
-        // event.stopPropagation();
-        // event.preventDefault();
-
         let page1 = document.getElementById("page1");
         let newpage1 = parseInt(page1.innerHTML) - 1;
         let page2 = document.getElementById("page2");
@@ -366,23 +342,6 @@ console.log("this file is running");
         if (newpage1 > 0 && newpage2 > 0) {
           location.href = `/items/listing?page1=${newpage1}&page2=${newpage2}&sortItem1=${sortItem1}&sortItem2=${sortItem2}`;
         }
-        // data = {
-        //   sortItem1: sortItem1,
-        //   sortItem2: sortItem2,
-        //   page1: newpage1,
-        //   page2: newpage2,
-        // };
-        // fetch("/items/listing", {
-        //   method: "GET",
-        // })
-        //   .then((resp) => resp)
-        //   .then((res) => {
-        //     if (res.success) {
-        //       location.href = `/items/listing?page1=${newpage1}&page2=${newpage2}&sortItem1=${sortItem1}&sortItem2=${sortItem2}`;
-        //     } else {
-        //       alert(res.messsage || "Something went wrong");
-        //     }
-        //   });
       });
     }
 
@@ -399,24 +358,6 @@ console.log("this file is running");
         if (newpage1 > 0 && newpage2 > 0) {
           location.href = `/items/listing?page1=${newpage1}&page2=${newpage2}&sortItem1=${sortItem1}&sortItem2=${sortItem2}`;
         }
-        // data = {
-        //   sortItem1: sortItem1,
-        //   sortItem2: sortItem2,
-        //   page1: newpage1,
-        //   page2: newpage2,
-        // };
-        // fetch("/items/listing", {
-        //   method: "POST",
-        //   body: JSON.stringify(data),
-        // })
-        //   .then((resp) => resp.json())
-        //   .then((res) => {
-        //     if (res.success) {
-        //       location.href = `/items/listing?page1=${newpage1}&page2=${newpage2}`;
-        //     } else {
-        //       alert(res.messsage || "Something went wrong");
-        //     }
-        //   });
       });
     }
     const next2button = document.getElementsByClassName("next2");
@@ -433,24 +374,6 @@ console.log("this file is running");
         if (newpage1 > 0 && newpage2 > 0) {
           location.href = `/items/listing?page1=${newpage1}&page2=${newpage2}&sortItem1=${sortItem1}&sortItem2=${sortItem2}`;
         }
-        // data = {
-        //   sortItem1: sortItem1,
-        //   sortItem2: sortItem2,
-        //   page1: newpage1,
-        //   page2: newpage2,
-        // };
-        // fetch("/items/listing", {
-        //   method: "POST",
-        //   body: JSON.stringify(data),
-        // })
-        //   .then((resp) => resp.json())
-        //   .then((res) => {
-        //     if (res.success) {
-        //       location.href = `/items/listing?page1=${newpage1}&page2=${newpage2}`;
-        //     } else {
-        //       alert(res.messsage || "Something went wrong");
-        //     }
-        //   });
       });
     }
   });
