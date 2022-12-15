@@ -15,14 +15,13 @@ router.get("/", (req, res) => {
 
 router.route("/listing").get(async (req, res) => {
   // item listing page - paginated
-  console.log("THis is my listing");
-  const page1 = parseInt(req.query.page1) || 1;
-  const page2 = parseInt(req.query.page2) || 1;
+  let page1 = parseInt(req.query.page1) || 1;
+  let page2 = parseInt(req.query.page2) || 1;
   let limit = 5;
-  const startIndex1 = (page1 - 1) * limit;
-  const endIndex1 = page1 * limit;
-  const startIndex2 = (page2 - 1) * limit;
-  const endIndex2 = page2 * limit;
+  let startIndex1 = (page1 - 1) * limit;
+  let endIndex1 = page1 * limit;
+  let startIndex2 = (page2 - 1) * limit;
+  let endIndex2 = page2 * limit;
   let sortItem2 = req.body.sortItem1 || "createdAt";
   let sortItem1 = req.body.sortItem2 || "createdAt";
   let data1 = await itemsDL.fetchingLostData(sortItem1);
@@ -71,15 +70,21 @@ router.route("/listing").get(async (req, res) => {
 
   if (endIndex1 > data1.length) {
     endIndex1 = data1.length - 1;
+    startIndex1 = endIndex1 - limit;
+    page1 = Math.abs(data1.length / limit);
   }
   if (endIndex2 > data2.length) {
     endIndex2 = data2.length - 1;
+    startIndex2 = endIndex2 - limit;
+    page2 = Math.abs(data2.length / limit);
   }
   if (startIndex1 < 0) {
     startIndex1 = 0;
+    endIndex1 = limit;
   }
   if (startIndex2 < 0) {
     startIndex2 = 0;
+    endIndex1 = limit;
   }
 
   data1 = data1.slice(startIndex1, endIndex1);
