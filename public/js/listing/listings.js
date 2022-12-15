@@ -296,28 +296,45 @@ console.log("this file is running");
   document.addEventListener("DOMContentLoaded", function () {
     // Handler when the DOM is fully loaded
     let sortItem1 = "";
-    document.getElementsByName("option1").forEach((radio) => {
-      if (radio.checked) {
-        if (radio.value == "createdAt") {
-          sortItem1 = "createdAt";
-        }
-        if (radio.value == "dateLostOrFound") {
-          sortItem1 = "dateLostOrFound";
-        }
-      }
-    });
     let sortItem2 = "";
-    document.getElementsByName("option2").forEach((radio) => {
-      if (radio.checked) {
-        if (radio.value == "createdAt") {
-          sortItem2 = "createdAt";
-        }
-        if (radio.value == "dateLostOrFound") {
-          sortItem2 = "dateLostOrFound";
-        }
-      }
-    });
+    // document.getElementsByName("option1").forEach((radio) => {
+    //   if (radio.checked) {
+    //     if (radio.value == "createdAt") {
+    //       sortItem1 = "createdAt";
+    //     }
+    //     if (radio.value == "dateLostOrFound") {
+    //       sortItem1 = "dateLostOrFound";
+    //     }
+    //   }
+    // });
+    // document.getElementsByName("option2").forEach((radio) => {
+    //   if (radio.checked) {
+    //     if (radio.value == "createdAt") {
+    //       sortItem2 = "createdAt";
+    //     }
+    //     if (radio.value == "dateLostOrFound") {
+    //       sortItem2 = "dateLostOrFound";
+    //     }
+    //   }
+    // });
 
+    let rd11 = document.getElementById("rd11");
+    let rd21 = document.getElementById("rd21");
+    let rd12 = document.getElementById("rd12");
+    let rd22 = document.getElementById("rd22");
+
+    if (rd11.checked) {
+      sortItem1 = rd11.value;
+    }
+    if (rd21.checked) {
+      sortItem1 = rd21.value;
+    }
+    if (rd12.checked) {
+      sortItem2 = rd12.value;
+    }
+    if (rd22.checked) {
+      sortItem2 = rd22.value;
+    }
     const previous1button = document.getElementsByClassName("previous1");
     if (previous1button) {
       console.log("Found previos");
