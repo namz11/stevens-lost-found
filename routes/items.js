@@ -121,24 +121,24 @@ router
       }
 
       try {
-        itemObjName = xssCheck(itemObj?.name);
-        if (!validations.isNameValid(itemObjName)) {
+        itemObj.name = xssCheck(itemObj?.name);
+        if (!validations.isNameValid(itemObj.name)) {
           throw new Error("Name field needs to have valid value");
         }
 
-        itemObjType = xssCheck(itemObj?.type);
-        itemObj.type = validations.isTypeValid(itemObjType);
+        itemObj.type = xssCheck(itemObj?.type);
+        itemObj.type = validations.isTypeValid(itemObj.type);
         if (!itemObj.type) {
           throw new Error("Type field needs to have valid value");
         }
 
-        itemObjDateLostOrFound = xssCheck(itemObj?.dateLostOrFound);
-        if (!validations.isDateValid(itemObjDateLostOrFound)) {
+        itemObj.dateLostOrFound = xssCheck(itemObj?.dateLostOrFound);
+        if (!validations.isDateValid(itemObj.dateLostOrFound)) {
           throw new Error("Date field needs to have valid value");
         }
 
-        itemObjLostOrFoundLocation = xssCheck(itemObj?.lostOrFoundLocation);
-        if (!validations.isLocationValid(itemObjLostOrFoundLocation)) {
+        itemObj.lostOrFoundLocation = xssCheck(itemObj?.lostOrFoundLocation);
+        if (!validations.isLocationValid(itemObj.lostOrFoundLocation)) {
           throw new Error("Location field needs to have valid value");
         }
       } catch (e) {
@@ -227,18 +227,18 @@ router
         itemId = xssCheck(req.params.id);
         itemId = checkId(itemId, "Item ID");
 
-        itemObjName = xssCheck(itemObj?.name);
-        if (!validations.isNameValid(itemObjName)) {
+        itemObj.name = xssCheck(itemObj?.name);
+        if (!validations.isNameValid(itemOb.name)) {
           throw new Error("Name field needs to have valid value");
         }
 
-        itemObjDateLostOrFound = xssCheck(itemObj?.dateLostOrFound);
-        if (!validations.isDateValid(itemObjDateLostOrFound)) {
+        itemObj.dateLostOrFound = xssCheck(itemObj?.dateLostOrFound);
+        if (!validations.isDateValid(itemObj.dateLostOrFound)) {
           throw new Error("Date field needs to have valid value");
         }
 
-        itemObjLostOrFoundLocation = xssCheck(itemObj?.lostOrFoundLocation);
-        if (!validations.isLocationValid(itemObjLostOrFoundLocation)) {
+        itemObj.lostOrFoundLocation = xssCheck(itemObj?.lostOrFoundLocation);
+        if (!validations.isLocationValid(itemObj.lostOrFoundLocation)) {
           throw new Error("Location field needs to have valid value");
         }
       } catch (e) {
