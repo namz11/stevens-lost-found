@@ -1,7 +1,10 @@
 const { ObjectId } = require("mongodb");
 const { helpers, validations, checkId } = require("../utils/helpers");
 const { Item } = require("./models/item.model");
-const { itemsCollection } = require("../config/mongoCollections");
+const {
+  itemsCollection,
+  usersCollection,
+} = require("../config/mongoCollections");
 const levenshtein = require("js-levenshtein");
 const { Comment } = require("./models/comment.model");
 
@@ -51,25 +54,27 @@ const createItem = async (itemObj) => {
 
 const getItemsByUserId = async (userId) => {
   userId = checkId(userId, "User ID");
-  const theUser = await userFunctions.getUserById(userId);
+  const userDB = await usersCollection();
+  const theUser = await userDB.findOne({ _id: ObjectId(userId) });
   if (!theUser) {
     throw new Error("User with the given Id does not exist");
   }
+
   const itemDB = await itemsCollection();
-
-  const theItems = await itemDB.find({}).toArray();
-
-  let foundItem = false;
-  let allItemsWithThatId = {};
-  for (let i = 0; i < theItems.length; i++) {
-    const currentItem = theItems[i];
-    if (currentItem.createdBy.toString() === userId) {
-      foundItem = true;
-      allItemsWithThatId = currentItem;
-    }
-  }
-  if (!foundItem) throw new Error("No Items Found With That Id");
-  return allItemsWithThatId;
+  const userItems = await itemDB
+    .find({ createdBy: ObjectId(userId) })
+    .toArray();
+  // let foundItem = false;
+  // let allItemsWithThatId = {};
+  // for (let i = 0; i < theItems.length; i++) {
+  //   const currentItem = theItems[i];
+  //   if (currentItem.createdBy.toString() === userId) {
+  //     foundItem = true;
+  //     allItemsWithThatId = currentItem;
+  //   }
+  // }
+  if (!userItems) throw new Error("No Items Found With That Id");
+  return userItems;
 };
 
 const updateItem = async (id, itemObj) => {
@@ -176,8 +181,13 @@ const updateIsClaimedStatus = async (itemId) => {
   return await getItemById(itemId);
 };
 
-const deleteItem = async (id) => {
+const deleteItem = async (id, userId) => {
   var itemId = checkId(id, "invalid item id");
+
+  item = await getItemById(id);
+  if (!ObjectId(item.createdBy).equals(userId)) {
+    throw new Error("You don't have authorization to do this action");
+  }
 
   var items = await itemsCollection();
   var deletionInfo = await items.deleteOne({ _id: ObjectId(itemId) });
@@ -185,6 +195,7 @@ const deleteItem = async (id) => {
   if (deletionInfo.deletedCount === 0) {
     throw new Error("error in delete");
   }
+
   return true;
 };
 
