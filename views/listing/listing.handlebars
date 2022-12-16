@@ -1,78 +1,136 @@
-{{! TODO Add More Details to the outer Modals }}
-{{! TODO Add User Details to the inner Modals }}
-<div class="row no-gutters"></div>
-<div class="col-md-6 no-gutters">
-  <div class="leftside d-flex justify-content-center align-items-center">
-    <div class="lost">
-    <div class="sort-by">
-      <input id="rd11" type="radio" name="option1" value="createdAt" checked="checked">Date Added</input>
-      <input id="rd21" type="radio" name="option1" value="dateLostOrFound">Date Lost/Found</input>
+<div class="mt-4 mb-5 mx-3">
+  <div class="px-5 pb-3">
+    <h3>
+      Lost Items: Displaying {{query.size}} of {{count}} items
+    </h3>
+    <div class="py-2 d-flex">
+      SORT BY:
+
+      {{#compare query.sortBy "dateAdded" operator="==="}}
+        <span class="sort-item active" data-type="lost" data-field="dateAdded">
+          Date Added
+          {{#compare query.sortOrder "1" operator="=="}}
+            <span class="asc">
+              ↑
+            </span>
+          {{/compare}}
+          {{#compare query.sortOrder "-1" operator="=="}}
+            <span class="desc">
+              ↓
+            </span>
+          {{/compare}}
+        </span>
+        <span class="sort-item">
+          Lost Date
+        </span>
+      {{/compare}}
+
+      {{#compare query.sortBy "lostDate" operator="==="}}
+        <span class="sort-item">
+          Date Added
+        </span>
+        <span
+          class="sort-item active"
+          data-type="lost"
+          data-field="lostDate"
+          data-val=""
+        >
+          Lost Date
+          {{#compare query.sortOrder "1" operator="=="}}
+            <span class="asc">
+              ↑
+            </span>
+          {{/compare}}
+          {{#compare query.sortOrder "-1" operator="=="}}
+            <span class="desc">
+              ↓
+            </span>
+          {{/compare}}
+        </span>
+      {{/compare}}
     </div>
-  {{#if data1.length}}
-  {{#each data1}}
-        <div class="container">
-          <div class="card-content">
-            <div class="card">
-              <div class="card-image"><img src="{{picture}}" alt=""></div> 
-              <div class="card-info">
-                <h3>Name : {{name}}</h3>
-                {{!-- <p>Type : {{type}}</p> --}}
-                <p>Description : {{description}}</p>
-                <p>Date : {{dateLostOrFound}}</p>
-                <p>Created at : {{createdAt}}</p>
-                <p>Location : {{lostOrFoundLocation}}</p>
-                {{!-- <p>Comments : {{comments}}</p> --}}
-              </div> 
+
+    {{#if items.length}}
+      {{#each items}}
+        <div class="suggestion">
+          <div class="content">
+            <div class="name">
+              {{this.name}}
+            </div>
+            <div class="dates">
+              <span>
+                Date Added:
+                {{this.createdAt}}
+              </span>
+              <span>
+                |
+              </span>
+              <span>
+                {{#compare this.type "lost" operator="==="}}
+                  Date Lost:
+                {{/compare}}
+                {{#compare this.type "found" operator="==="}}
+                  Date Found:
+                {{/compare}}
+                {{this.dateLostOrFound}}
+              </span>
+            </div>
+            <div class="description">
+              {{this.description}}
             </div>
           </div>
-        </div>
-  </div>
-  {{/each}}
-  {{/if}}
-    <div class = "pagination1">
-    <li class = "page-item previous-page"><button class="previous1">Previous</button></li>
-    <li class = "page-item current-page" id="page1">{{page1}}</li>
-    <li class = "page-item next-page"><button class="next1">Next</button></li>
-  </div>
-</div>
-</div>
-
-<div class="col-md-6 no-gutters">
-  <div class="leftside d-flex justify-content-center align-items-center">
-    <div class="found">
-          <div class="sort-by">
-            <input id="rd12" type="radio" name="option2" value="createdAt" checked="checked">Date Added</input>
-            <input id="rd22" type="radio" name="option2" value="dateLostOrFound">Date Lost/Found</input>
-          </div>
-  {{#if data2.length}}
-  {{#each data2}}
-        <div class="container">
-          <div class="card-content">
-            <div class="card">
-              <div class="card-image"><img src="{{picture}}" alt=""></div> 
-              <div class="card-info">
-                <h3>Name : {{name}}</h3>
-                {{!-- <p>Type : {{type}}</p> --}}
-                <p>Description : {{description}}</p>
-                <p>Date : {{dateLostOrFound}}</p>
-                <p>Created at : {{createdAt}}</p>
-                <p>Location : {{lostOrFoundLocation}}</p>
-                {{!-- <p>Comments : {{comments}}</p> --}}
-              </div>
+          <div class="action">
+            <div class="author">
+              {{this.userInfo.firstName}}
+              {{this.userInfo.lastName}}
+            </div>
+            <div class="location">
+              {{#compare this.type "lost" operator="==="}}
+                Lost at:
+              {{/compare}}
+              {{#compare this.type "found" operator="==="}}
+                Found at:
+              {{/compare}}
+              {{this.lostOrFoundLocation}}
+            </div>
+            <button type="button" data-id="{{this._id}}" class="claim-btn">
+              Claim
+            </button>
+            <a href="/items/{{this._id}}">
+              See Details
+            </a>
           </div>
         </div>
-      </div>
-    {{/each}}
-  {{/if}}
-    <div class = "pagination2">
-    <li class = "page-item previous-page"><button class="previous2" onclick="previousfunc2"></button>>Previous</button></li>
-    <li class = "page-item current-page" id="page2">{{page2}}</li>
-    <li class = "page-item next-page"><button class="next2" onclick="nextfunc2"></button>>Next</button></li>
-  </div>
+      {{/each}}
+    {{/if}}
+
+    <nav aria-label="Page navigation example">
+      <ul class="pagination">
+        <li class="page-item">
+          <a class="page-link" href="#" aria-label="Previous">
+            <span aria-hidden="true">
+              &laquo;
+            </span>
+          </a>
+        </li>
+        <li class="page-item">
+          <a class="page-link active" href="#">
+            {{query.page}}
+          </a>
+        </li>
+        <li class="page-item">
+          <a class="page-link" href="#" aria-label="Next">
+            <span aria-hidden="true">
+              &raquo;
+            </span>
+          </a>
+        </li>
+      </ul>
+    </nav>
   </div>
 </div>
 
-</div>
 <script src="/public/js/listing/listings.js" type="module"></script>
 <link rel="stylesheet" href="/public/css/modal-styles.css" />
 <link rel="stylesheet" href="/public/css/listing/paginating.css" />
+<link rel="stylesheet" href="/public/css/item/suggestions-styles.css" />
