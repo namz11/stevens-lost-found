@@ -55,10 +55,15 @@ const sendOTPVerificationEmail = async ({ userId, email, redirect }, res) => {
   }
 };
 
-const sendListingUpdateEmail = async (
-  { user, userId, userItem, actor, actorId, actorNumber, action },
-  res
-) => {
+const sendListingUpdateEmail = async ({
+  user,
+  userId,
+  userItem,
+  actor,
+  actorId,
+  actorNumber,
+  action,
+}) => {
   try {
     const mailOptions = {
       from: "stevenslostandfound@gmail.com",
@@ -75,14 +80,16 @@ const sendListingUpdateEmail = async (
       // TODO (AMAN): Display an image of the item
     };
 
-    await transporter.sendMail(mailOptions);
-    return true;
+    // Handle the result of the sendMail call
+    const result = await transporter.sendMail(mailOptions);
+    return result;
   } catch (error) {
+    // Handle any errors that may occur
     console.log(error);
-    return res.status(500).json({
+    return {
       success: false,
       message: "Please Try Again",
-    });
+    };
   }
 };
 
@@ -92,7 +99,7 @@ const sendListingUpdateEmailToActor = async (
 ) => {
   try {
     const mailOptions = {
-      from: "narmitmashruwala@gmail.com",
+      from: "stevenslostandfound@gmail.com",
       to: actorId,
       subject: `<strong>Update for ${action} item</strong>: Here are the contact details for <em>"${userItem}"</em>`,
       html: `<p>Hi ${actor} Here are the contact details of <em>${user}</em>, who posted for <em>${userItem}</em>:</p><br> 
@@ -105,7 +112,10 @@ const sendListingUpdateEmailToActor = async (
     };
 
     await transporter.sendMail(mailOptions);
-    return true;
+    return res.json({
+      success: true,
+      message: "Email sent successfully",
+    });
   } catch (error) {
     console.log(error);
     return res.status(500).json({
