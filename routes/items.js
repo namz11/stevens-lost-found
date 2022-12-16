@@ -10,102 +10,46 @@ const {
   sendListingUpdateEmailToActor,
 } = require("../utils/mailer");
 const { itemsDL, userDL } = require("../data");
+const { QueryParams } = require("../data/models/queryParams.model");
 
 router.get("/", (req, res) => {
-  return res.redirect("/items/listing");
+  return res.redirect("/items/listing/lost");
 });
 
-router.route("/listing").get(async (req, res) => {
-  // item listing page - paginated
-  let page1 = parseInt(req.query.page1) || 1;
-  let page2 = parseInt(req.query.page2) || 1;
-  let limit = 5;
-  let startIndex1 = (page1 - 1) * limit;
-  let endIndex1 = page1 * limit;
-  let startIndex2 = (page2 - 1) * limit;
-  let endIndex2 = page2 * limit;
-  let sortItem2 = req.body.sortItem1 || "createdAt";
-  let sortItem1 = req.body.sortItem2 || "createdAt";
-  let data1 = await itemsDL.fetchingLostData(sortItem1);
-  let data2 = await itemsDL.fetchingFoundData(sortItem2);
-  // let sort1 = req.body.option1.forEach((radio) => {
-  //   if (radio.checked) {
-  //     if (radio.value == "createdAt") {
-  //       sortItem1 = "createdAt";
-  //     }
-  //     if (radio.value == "dateLostOrFound") {
-  //       sortItem1 = "dateLostOrFound";
-  //     }
-  //   }
-  // });
-  // let sortBy2 = req.query.option2.forEach((radio) => {
-  //   if (radio.checked) {
-  //     if (radio.value == "createdAt") {
-  //       sortItem2 = "createdAt";
-  //     }
-  //     if (radio.value == "dateLostOrFound") {
-  //       sortItem2 = "dateLostOrFound";
-  //     }
-  //   }
-  // });
+router.route("/listing/:type").get(async (req, res) => {
+  try {
+    const type = helpers.sanitizeString(req.params.type).toLowerCase();
+    // item listing page - paginated
+    const query = new QueryParams(
+      { ...req.query, type },
+      { sortBy: "dateAdded" }
+    );
+    let allUsers = await userDL.getAllUsers();
+    let data = await itemsDL.getPaginatedItems(query);
+    if (data?.item?.length) {
+      data.items = (data?.items || []).map((item) => {
+        for (user of allUsers) {
+          if (ObjectId(user._id).equals(item.createdBy)) {
+            item = { ...item, userInfo: user };
+            break;
+          }
+        }
+        return {
+          ...c,
+          createdAt: helpers.getDate(item.createdAt),
+          dateLostOrFound: helpers.getDate(item.dateLostOrFound),
+        };
+      });
+    }
 
-  // if (endIndex1 < data1.length) {
-  //   next1 = {
-  //     page1: page1 + 1,
-  //   };
-  // }
-  // if (endIndex2 < data2.length) {
-  //   next2 = {
-  //     page2: page2 + 1,
-  //   };
-  // }
-  // if (startIndex1 > 0) {
-  //   previous1 = {
-  //     page1: page1 - 1,
-  //   };
-  // }
-  // if (startIndex2 > 0) {
-  //   previous2 = {
-  //     page1: page1 + 1,
-  //   };
-  // }
-
-  if (endIndex1 > data1.length) {
-    endIndex1 = data1.length - 1;
-    startIndex1 = endIndex1 - limit;
-    page1 = Math.abs(data1.length / limit);
+    return res.render("listing/listing", {
+      ...data,
+      type,
+      query,
+    });
+  } catch (e) {
+    return res.status(400).send(e);
   }
-  if (endIndex2 > data2.length) {
-    endIndex2 = data2.length - 1;
-    startIndex2 = endIndex2 - limit;
-    page2 = Math.abs(data2.length / limit);
-  }
-  if (startIndex1 < 0) {
-    startIndex1 = 0;
-    endIndex1 = limit;
-  }
-  if (startIndex2 < 0) {
-    startIndex2 = 0;
-    endIndex1 = limit;
-  }
-
-  data1 = data1.slice(startIndex1, endIndex1);
-  data2 = data2.slice(startIndex2, endIndex2);
-  // try {
-  //   if (!data1 && !data2) {
-  //     return new Error("Data not found");
-  //   }
-  // } catch (e) {
-  //   console.log(e);
-  //   return res.status(500).send(new Error(e.message));
-  // }
-
-  return res.render("listing/listing", {
-    data1: data1,
-    data2: data2,
-    page1: page1,
-    page2: page2,
-  });
 });
 
 router.route("/my-listings/:id").get(async (req, res) => {

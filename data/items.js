@@ -256,34 +256,22 @@ const searchHelper = async (itemsData, searchString) => {
   }
 };
 
-const fetchingLostData = async (sortItem1) => {
+const getPaginatedItems = async (query) => {
   const itemDB = await itemsCollection();
-  const itemsList = await itemDB.find().sort({ sortItem1: -1 }).toArray();
-  let Data1 = [];
-  let limitPerPage1 = 10;
-  for (let i = 0; i < itemsList.length; i++) {
-    if (itemsList[i].isClaimed == false) {
-      if (itemsList[i].type == "lost" || itemsList[i].type == "Lost") {
-        Data1.push(itemsList[i]);
-      }
-    }
-  }
-  return Data1;
-};
 
-const fetchingFoundData = async (sortItem2) => {
-  const itemDB = await itemsCollection();
-  const itemsList = await itemDB.find().sort({ sortItem2: -1 }).toArray();
-  let Data2 = [];
-  let limitPerPage2 = 10;
-  for (let i = 0; i < itemsList.length; i++) {
-    if (itemsList[i].isClaimed == false) {
-      if (itemsList[i].type == "found" || itemsList[i].type == "Found") {
-        Data2.push(itemsList[i]);
-      }
-    }
-  }
-  return Data2;
+  const count = await itemDB.find({ type: query?.type }).count();
+  const itemsList = await itemDB
+    .find({ type: query?.type })
+    .sort({ [query?.sortBy]: query?.sortOrder })
+    .skip(query?.page > 0 ? (query?.page - 1) * query?.size : 0)
+    .limit(query?.size)
+    .toArray();
+
+  if (!itemsList) throw new Error("Could not get items");
+  return {
+    count,
+    items: itemsList.map((item) => new Item().deserialize(item)),
+  };
 };
 
 module.exports = {
@@ -296,7 +284,6 @@ module.exports = {
   updateIsClaimedStatus,
   deleteItem,
   searchHelper,
-  fetchingLostData,
-  fetchingFoundData,
   createComment,
+  getPaginatedItems,
 };
