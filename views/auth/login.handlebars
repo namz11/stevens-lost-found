@@ -6,14 +6,14 @@
       <div class="row align-items-center g-lg-5 py-5">
         <div class="col-lg-6 text-center text-lg-start">
           <h1 class="display-4 fw-bold lh-3 mb-4 mainTitle">Stevens lost & Found</h1>
-          <p class="col-lg-10 fs-4 smallText">A lost and found application is a
-            tool that helps people track down and reclaim lost items. It works
-            by allowing users to enter information about a lost item, such as
-            its location, description, and contact information. Other users can
-            then search the database to see if the lost item has been found and
-            claimed. Overall, the lost and found application is a useful tool
-            for helping people reunite with lost items and avoid the frustration
-            and inconvenience of losing something valuable.
+          <p class="col-lg-10 fs-4 smallText">A lost and found application that
+            helps people track down and reclaim lost items. It works by allowing
+            users to enter information about a lost item, such as its location,
+            description, and contact information. Other users can then search
+            the database to see if the lost item has been found and claimed.
+            Overall, the lost and found application is a useful tool for helping
+            people reunite with lost items and avoid the frustration and
+            inconvenience of losing something valuable.
           </p>
         </div>
         <div class="col-md-10 mx-auto col-lg-5">
@@ -56,17 +56,7 @@
                 </div>
               </div>
 
-              {{#if messages.error}}
-                <p class="error">
-                  {{messages.error}}
-                </p>
-              {{/if}}
-
-              {{#if error}}
-                <p class="error">
-                  {{error}}
-                </p>
-              {{/if}}
+              <p class="error" id="error" hidden></p>
 
               <button type="submit" value="Submit" class="login">
                 Login
@@ -88,11 +78,13 @@
       </div>
     </div>
   </div>
-  <button class="rip"></button>
-  <button class="rip"></button>
-  <button class="rip"></button>
-  <button class="rip"></button>
-  <button class="rip"></button>
+  <label for="ripple-button"></label>
+
+  <button id="ripple-button" class="rip"></button>
+  <button id="ripple-button" class="rip"></button>
+  <button id="ripple-button" class="rip"></button>
+  <button id="ripple-button" class="rip"></button>
+  <button id="ripple-button" class="rip"></button>
 </div>
 
 <script src="/public/js/auth/login.js" type="module"></script>

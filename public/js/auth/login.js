@@ -4,6 +4,7 @@ import { helpers, validations, authHelpers } from "/public/js/helpers.js";
     // Handler when the DOM is fully loaded
 
     const loginForm = document.getElementById("login");
+    const errorHandle = document.getElementById("error");
     let emailE = document.getElementById("email");
     let passwordE = document.getElementById("pass");
 
@@ -16,6 +17,7 @@ import { helpers, validations, authHelpers } from "/public/js/helpers.js";
         event.stopImmediatePropagation();
         event.preventDefault();
         const form = event.target.elements;
+        errorHandle.hidden = true;
 
         let emailEnteredByUser = emailE.value;
         let passwordEnteredByUser = passwordE.value;
@@ -33,7 +35,7 @@ import { helpers, validations, authHelpers } from "/public/js/helpers.js";
           document
             .getElementById("pass")
             .setAttribute("value", passwordEnteredByUser);
-          return alert(e.message || "Something went wrong.");
+          return handleError(e.message || "Something went wrong.");
         }
 
         fetch("/auth/login", {
@@ -50,7 +52,7 @@ import { helpers, validations, authHelpers } from "/public/js/helpers.js";
           .then((resp) => {
             if (resp.status === 401) {
               // TODO display error
-              alert("wrong username or password");
+              handleError("Wrong username or password");
               return null;
             } else {
               return resp.json();
@@ -63,7 +65,7 @@ import { helpers, validations, authHelpers } from "/public/js/helpers.js";
                 location.href = "/";
               } else {
                 // TODO display error if res.message is there else show alert
-                alert(res.message || "Something went wrong.");
+                return handleError(res.message || "Something went wrong.");
               }
             }
           })
@@ -71,6 +73,10 @@ import { helpers, validations, authHelpers } from "/public/js/helpers.js";
             alert(error.message || "Something went wrong.");
           });
       });
+    }
+    function handleError(errMessage) {
+      errorHandle.hidden = false;
+      errorHandle.innerHTML = errMessage;
     }
   });
 })();

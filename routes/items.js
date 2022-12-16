@@ -1,7 +1,7 @@
 const express = require("express");
 const { ObjectId } = require("mongodb");
 const router = express.Router();
-const { checkId, helpers, validations } = require("../utils/helpers");
+const { checkId, helpers, validations, xssCheck } = require("../utils/helpers");
 const { itemImageUpload } = require("../utils/multer");
 const {
   sendListingUpdateEmail,
@@ -53,7 +53,7 @@ router.route("/listing/:type").get(async (req, res) => {
 router.route("/my-listings/:id").get(async (req, res) => {
   // TODO (AMAN): Pagination
 
-  let id = req.params.id;
+  let id = xssCheck(req.params.id);
   try {
     id = checkId(req.params.id, "Item ID");
   } catch (e) {
@@ -121,17 +121,24 @@ router
       }
 
       try {
-        if (!validations.isNameValid(itemObj?.name)) {
+        itemObjName = xssCheck(itemObj?.name);
+        if (!validations.isNameValid(itemObjName)) {
           throw new Error("Name field needs to have valid value");
         }
-        itemObj.type = validations.isTypeValid(itemObj?.type);
+
+        itemObjType = xssCheck(itemObj?.type);
+        itemObj.type = validations.isTypeValid(itemObjType);
         if (!itemObj.type) {
           throw new Error("Type field needs to have valid value");
         }
-        if (!validations.isDateValid(itemObj?.dateLostOrFound)) {
+
+        itemObjDateLostOrFound = xssCheck(itemObj?.dateLostOrFound);
+        if (!validations.isDateValid(itemObjDateLostOrFound)) {
           throw new Error("Date field needs to have valid value");
         }
-        if (!validations.isLocationValid(itemObj?.lostOrFoundLocation)) {
+
+        itemObjLostOrFoundLocation = xssCheck(itemObj?.lostOrFoundLocation);
+        if (!validations.isLocationValid(itemObjLostOrFoundLocation)) {
           throw new Error("Location field needs to have valid value");
         }
       } catch (e) {
@@ -217,15 +224,21 @@ router
       }
 
       try {
-        itemId = checkId(req.params.id, "Item ID");
+        itemId = xssCheck(req.params.id);
+        itemId = checkId(itemId, "Item ID");
 
-        if (!validations.isNameValid(itemObj?.name)) {
+        itemObjName = xssCheck(itemObj?.name);
+        if (!validations.isNameValid(itemObjName)) {
           throw new Error("Name field needs to have valid value");
         }
-        if (!validations.isDateValid(itemObj?.dateLostOrFound)) {
+
+        itemObjDateLostOrFound = xssCheck(itemObj?.dateLostOrFound);
+        if (!validations.isDateValid(itemObjDateLostOrFound)) {
           throw new Error("Date field needs to have valid value");
         }
-        if (!validations.isLocationValid(itemObj?.lostOrFoundLocation)) {
+
+        itemObjLostOrFoundLocation = xssCheck(itemObj?.lostOrFoundLocation);
+        if (!validations.isLocationValid(itemObjLostOrFoundLocation)) {
           throw new Error("Location field needs to have valid value");
         }
       } catch (e) {
@@ -292,8 +305,11 @@ router.route("/:id/comment").post(async (req, res) => {
   let authenticatedUserId = req?.session?.passport?.user?._id;
 
   try {
+    id = xssCheck(id);
     id = checkId(id, "Item ID");
     authenticatedUserId = checkId(authenticatedUserId, "User ID");
+
+    comment = xssCheck(comment);
     if (!helpers.isStringValid(comment)) {
       throw new Error("Cannot have empty comment");
     }
@@ -313,10 +329,12 @@ router.route("/:id/status").put(async (req, res) => {
   // TODO (AMAN): Pass Actor Details Using Session
 
   // get item details
-  theItem = itemsDL.getItemById(req.body.itemId);
+  theItem = xssCheck(req.body.itemId);
+  theItem = itemsDL.getItemById(theItem);
 
   // get user details
-  theUser = userDL.getUserById(req.body.userId);
+  theUser = xssCheck(req.body.userId);
+  theUser = userDL.getUserById(theUser);
 
   // update isClaimed status
   itIsClaimed = itemsDL.updateIsClaimedStatus(itemId);
@@ -327,28 +345,28 @@ router.route("/:id/status").put(async (req, res) => {
   try {
     const toUser = sendListingUpdateEmail(
       {
-        user: theUser.firstName,
-        userId: theUser.email,
-        userItem: theItem.name,
+        user: xssCheck(theUser.firstName),
+        userId: xssCheck(theUser.email),
+        userItem: xssCheck(theItem.name),
         // TODO (AMAN): Pass Actor Details Using Session
-        actor: someone.something,
-        actorId: someone.something,
-        actorNumber: someone.something,
-        action: someone.something,
+        actor: xssCheck(someone.something),
+        actorId: xssCheck(someone.something),
+        actorNumber: xssCheck(someone.something),
+        action: xssCheck(someone.something),
       },
       res
     );
 
     const toActor = sendListingUpdateEmailToActor(
       {
-        user: theUser.firstName,
-        userId: theUser.email,
-        userItem: theItem.name,
+        user: xssCheck(theUser.firstName),
+        userId: xssCheck(theUser.email),
+        userItem: xssCheck(theItem.name),
         // TODO (AMAN): Pass Actor Details Using Session
-        actor: someone.something,
-        actorId: someone.something,
-        actorNumber: someone.something,
-        action: someone.something,
+        actor: xssCheck(someone.something),
+        actorId: xssCheck(someone.something),
+        actorNumber: xssCheck(someone.something),
+        action: xssCheck(someone.something),
       },
       res
     );
@@ -366,7 +384,7 @@ router.route("/:id/status").put(async (req, res) => {
 router
   .route("/:id")
   .get(async (req, res) => {
-    let id = req.params.id;
+    let id = xssCheck(req.params.id);
     let user, item, authenticatedUserId;
     try {
       id = checkId(id, "Item ID");
@@ -414,7 +432,8 @@ router
   })
   .delete(async (req, res) => {
     // delete item
-    let id = req.params.id;
+
+    let id = xssCheck(req.params.id);
     try {
       id = checkId(id, "Item ID");
     } catch (e) {
@@ -426,7 +445,8 @@ router
       return res.status(404).send("item not found");
     }
 
-    id = checkId(req.params.id, "Item ID");
+    id = xssCheck(req.params.id);
+    id = checkId(id, "Item ID");
 
     const theUser = await userDL.getUserByItemId(id);
     const userId = theUser._id;
@@ -458,7 +478,8 @@ router.route("/:id/suggestions").get(async (req, res) => {
   // TODO validations
   let itemId;
   try {
-    itemId = checkId(req.params.id, "Item ID");
+    itemId = xssCheck(req.params.id);
+    itemId = checkId(itemId, "Item ID");
   } catch (e) {
     return res.status(400).json({
       success: false,

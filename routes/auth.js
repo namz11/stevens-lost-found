@@ -8,7 +8,7 @@ const {
 const bcrypt = require("bcryptjs");
 const passport = require("passport");
 const initializePassport = require("../utils/passport");
-const { checkId, authHelpers } = require("../utils/helpers");
+const { checkId, authHelpers, xssCheck } = require("../utils/helpers");
 
 const saltRounds = 10;
 
@@ -53,12 +53,19 @@ router
   .post(isUserAuthenticated, async (req, res) => {
     // create user
     try {
-      userEmail = authHelpers.checkEmail(req.body.email);
-      userPassword = authHelpers.checkPassword(req.body.password);
-      userFirstName = authHelpers.checkName(req.body.firstName, "First Name");
-      userLastName = authHelpers.checkName(req.body.lastName, "Last Name");
-      userPhoneNumber = authHelpers.checkPhoneNumber(req.body.phoneNumber);
-      userDOB = authHelpers.checkDOB(req.body.dateOfBirth);
+      userFirstName = xssCheck(req.body.firstName);
+      userFirstName = authHelpers.checkName(userFirstName, "First Name");
+      userLastName = xssCheck(req.body.lastName);
+      userLastName = authHelpers.checkName(userLastName, "Last Name");
+      userEmail = xssCheck(req.body.email);
+      userEmail = authHelpers.checkEmail(userEmail);
+      userDOB = xssCheck(req.body.dateOfBirth);
+      userDOB = authHelpers.checkDOB(userDOB);
+      userPhoneNumber = xssCheck(req.body.phoneNumber);
+      userPhoneNumber = authHelpers.checkPhoneNumber(userPhoneNumber);
+      userPassword = xssCheck(req.body.password);
+      userPassword = authHelpers.checkPassword(userPassword);
+
       const hashedPassword = await bcrypt.hash(req.body.password, saltRounds);
 
       const result = await userDL.enterUser(
@@ -114,7 +121,9 @@ router
     // redirect to login
 
     try {
-      userEmail = authHelpers.checkEmail(req.body.email);
+      userEmail = xssCheck(req.body.email);
+      userEmail = authHelpers.checkEmail(userEmail);
+
       const userByEmail = await userDL.getUserByEmail(userEmail);
       sendForgotPasswordLinkEmail(
         { id: userByEmail._id, email: userByEmail.email, redirect: true },
@@ -140,7 +149,8 @@ router
   })
   .post(async (req, res) => {
     try {
-      userPassword = authHelpers.checkPassword(req.body.newPassword);
+      userPassword = xssCheck(req.body.newPassword);
+      userPassword = authHelpers.checkPassword(userPassword);
       const userPasswordUpdate = await userDL.updatePassword(
         req.params.id,
         req.body.newPassword
@@ -170,7 +180,9 @@ router
     let { userId, otp } = req.body;
 
     try {
+      userId = xssCheck(userId);
       userId = checkId(userId, "User ID");
+      otp = xssCheck(otp);
     } catch (e) {
       console.log(e);
       return res.status(400).send(e);
@@ -226,7 +238,9 @@ router.route("/resend-otp").post(async (req, res) => {
   let { userId, email } = req.body;
 
   try {
+    userId = xssCheck(userId);
     userId = checkId(userId, "User ID");
+    email = xssCheck(email);
   } catch (e) {
     console.log(e);
     return res.status(400).send(e);
@@ -260,8 +274,10 @@ router.route("/logout").delete(async (req, res) => {
 
 async function takingInUser(req, res, next) {
   try {
-    userEmail = authHelpers.checkEmail(req.body.email);
-    userPassword = authHelpers.checkPassword(req.body.password);
+    userEmail = xssCheck(req.body.email);
+    userEmail = authHelpers.checkEmail(userEmail);
+    userPassword = xssCheck(req.body.password);
+    userPassword = authHelpers.checkPassword(userPassword);
     next();
   } catch (e) {
     return res.status(400).json({ success: false, message: e.message });
