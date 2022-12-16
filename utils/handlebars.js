@@ -47,6 +47,21 @@ const register = function (Handlebars) {
         return options.inverse(this);
       }
     },
+    ifEquals: function (arg1, arg2, options) {
+      return arg1 == arg2 ? options.fn(this) : options.inverse(this);
+    },
+    ifCond: function (v1, v2, options) {
+      if (v1 === v2) {
+        return options.fn(this);
+      }
+      return options.inverse(this);
+    },
+    ifNot: function (v1, v2, options) {
+      if (v1 !== v2) {
+        return options.fn(this);
+      }
+      return options.inverse(this);
+    },
   };
 
   if (Handlebars && typeof Handlebars.registerHelper === "function") {
