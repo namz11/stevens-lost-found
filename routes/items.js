@@ -52,32 +52,23 @@ router.route("/listing/:type").get(async (req, res) => {
   }
 });
 
-router.route("/my-listings/:id").get(async (req, res) => {
-  // TODO (AMAN): Pagination
-
-  let id = req.params.id;
+router.route("/my-listing").get(async (req, res) => {
+  let authenticatedUserId = req?.session?.passport?.user?._id;
   try {
-    id = checkId(req.params.id, "Item ID");
+    authenticatedUserId = checkId(authenticatedUserId, "User ID");
   } catch (e) {
-    console.log(e);
-    return res.status(400).render("error", {
-      class: "error",
-      message: "Error: Invalid ID or ID Not Provided",
-    });
+    return res.status(400).send(e);
   }
 
   try {
-    const d = await itemsDL.getItemsByUserId(id);
+    const d = await itemsDL.getItemsByUserId(authenticatedUserId);
 
-    res.render("/listing/myListings", {
-      itemsData: d,
+    return res.render("listing/myListings", {
+      items: d,
       title: "My Listings",
     });
   } catch (e) {
-    return res.status(404).render("error", {
-      class: "error",
-      message: e,
-    });
+    return res.status(404).send(e);
   }
 });
 
@@ -426,37 +417,41 @@ router
   })
   .delete(async (req, res) => {
     // delete item
-    let id = req.params.id;
+    let id = req.params.id,
+      item;
+
     try {
       id = checkId(id, "Item ID");
     } catch (e) {
       return res.status(400).send(e);
     }
     try {
-      let item = await itemsDL.getItemById(id);
+      item = await itemsDL.getItemById(id);
     } catch (e) {
       return res.status(404).send("item not found");
     }
 
-    id = checkId(req.params.id, "Item ID");
-
-    const theUser = await userDL.getUserByItemId(id);
-    const userId = theUser._id;
-
-    const deletedItem = await itemsDL.deleteItem(id);
-    if (!deletedItem) throw "Could Not Delete Item";
-    // res.status(200).json(deletedItem);
-
-    // Render The My Listings Page After Deletion
-    const d = await itemsDL.getItemsByUserId(userId);
-
-    res.render("/listing/userListings", {
-      itemsData: d,
-      title: "My Listings",
-    });
-    // TODO: Check with Professor If This Is a Good
+    let authenticatedUserId = req?.session?.passport?.user?._id;
     try {
-      let item = await itemsDL.deleteItem(id);
+      authenticatedUserId = checkId(authenticatedUserId, "User ID");
+    } catch (e) {
+      return res.status(400).send(e);
+    }
+    if (item) {
+      try {
+        if (!ObjectId(item.createdBy).equals(authenticatedUserId)) {
+          throw new Error("You don't have authorization to do this action");
+        }
+      } catch (e) {
+        return res.status(401).json({
+          success: false,
+          message: "You don't have authorization to do this action",
+        });
+      }
+    }
+
+    try {
+      await itemsDL.deleteItem(id, authenticatedUserId);
       return res.json({
         success: true,
         message: "Item deleted!",
@@ -492,3 +487,121 @@ router.route("/:id/suggestions").get(async (req, res) => {
 });
 
 module.exports = router;
+
+//#region new code
+// router.route("/listing").get(async (req, res) => {
+//   var noMatch = null;
+//   if(req.query.search){
+//       const buttonId = req.query.buttonId;
+//       if (buttonId === "search-form-lost-button") { //This condition will take care of dynamic content loading
+//           // Handle button 1 click...
+//           const regex = new RegExp(escapeRegex(req.query.search), 'gi');
+//           // Get all items from DB
+//           const itemDB = await itemsCollection();
+//           let d = itemDB.find({name: regex, lostOrFoundLocation: regex, description: regex}, function(err, allListings){
+//               if(err){
+//                   console.log(err);
+//               } else {
+//                   if(allListings.length < 1) {
+//                       noMatch = "No listings match that query, please try again.";
+//                   }
+//                   res.json({ data1: allListings, noMatch: noMatch }); // Return JSON response
+//               }
+//           });
+//       }
+
+//        else if (buttonId === "search-form-found-button") {
+//   // Handle button 2 click... //This condition will take care of dynamic content loading
+//   // If this happens use .html() upon success in ajax reuest to put the data into the html element
+//   const regex = new RegExp(escapeRegex(req.query.search), 'gi');
+//   // Get all items from DB
+//   const itemDB = await itemsCollection();
+//   let d = itemDB.find({name: regex, lostOrFoundLocation: regex, description: regex}, function(err, allListings){
+//       if(err){
+//           console.log(err);
+//       } else {
+//           if(allListings.length < 1) {
+//               noMatch = "No listings match that query, please try again.";
+//           }
+//           res.json({ data2: allListings, noMatch: noMatch }); // Return JSON response
+//       }
+//   });
+// }
+// } else{ //This code will load the listings default
+
+// const page1 = parseInt(req.query.page1) || 1;
+// const page2 = parseInt(req.query.page2) || 1;
+// let limit = 5;
+// const startIndex1 = (page1 - 1) * limit;
+// const endIndex1 = page1 * limit;
+// const startIndex2 = (page2 - 1) * limit;
+// const endIndex2 = page2 * limit;
+// let sortItem2 = req.body.sortItem1 || "createdAt";
+// let sortItem1 = req.body.sortItem2 || "createdAt";
+
+// if(req.query.search){
+
+// }
+
+// let data1 = await itemsDL.fetchingLostData(sortItem1);
+// let data2 = await itemsDL.fetchingFoundData(sortItem2);
+
+// if (endIndex1 > data1.length) {
+//   endIndex1 = data1.length - 1;
+// }
+// if (endIndex2 > data2.length) {
+//   endIndex2 = data2.length - 1;
+// }
+// if (startIndex1 < 0) {
+//   startIndex1 = 0;
+// }
+// if (startIndex2 < 0) {
+//   startIndex2 = 0;
+// }
+
+// data1 = data1.slice(startIndex1, endIndex1);
+// data2 = data2.slice(startIndex2, endIndex2);
+
+// return res.render("listing/listing", {
+//   data1: data1,
+//   data2: data2,
+//   page1: page1,
+//   page2: page2,
+// });
+// }
+// });
+//#endregion
+
+// Paginated
+// router.route("/my-listings/:id").get(async (req, res) => {
+//   let id = req.params.id;
+//   let page = req.query.page || 1;
+//   let limit = 10;
+//   let skip = (page - 1) * limit;
+
+//   try {
+//     id = checkId(req.params.id, "Item ID");
+//   } catch (e) {
+//     console.log(e)
+//     return res.status(400).render("error",{
+//       class: "error",
+//       message: "Error: Invalid ID or ID Not Provided",
+//     });
+//   }
+
+//   try {
+//     const items = await itemFunctions.getItemsByUserId(id);
+//     const count = items.length;
+//     const pages = Math.ceil(count / limit);
+//     const d = items.slice(skip, skip + limit);
+
+//     res.render("/listing/userListings", {
+//       itemsData: d, title: "My Listings", page, pages
+//     });
+//   } catch (e) {
+//     return res.status(404).render("error", {
+//       class: "error",
+//       message: e,
+//     });
+//   }
+// });
