@@ -53,17 +53,17 @@ router
   .post(isUserAuthenticated, async (req, res) => {
     // create user
     try {
-      userFirstName = xssCheck(req.body.firstName);
+      let userFirstName = xssCheck(req.body.firstName);
       userFirstName = authHelpers.checkName(userFirstName, "First Name");
-      userLastName = xssCheck(req.body.lastName);
+      let userLastName = xssCheck(req.body.lastName);
       userLastName = authHelpers.checkName(userLastName, "Last Name");
-      userEmail = xssCheck(req.body.email);
+      let userEmail = xssCheck(req.body.email);
       userEmail = authHelpers.checkEmail(userEmail);
-      userDOB = xssCheck(req.body.dateOfBirth);
+      let userDOB = xssCheck(req.body.dateOfBirth);
       userDOB = authHelpers.checkDOB(userDOB);
-      userPhoneNumber = xssCheck(req.body.phoneNumber);
+      let userPhoneNumber = xssCheck(req.body.phoneNumber);
       userPhoneNumber = authHelpers.checkPhoneNumber(userPhoneNumber);
-      userPassword = xssCheck(req.body.password);
+      let userPassword = xssCheck(req.body.password);
       userPassword = authHelpers.checkPassword(userPassword);
 
       const hashedPassword = await bcrypt.hash(req.body.password, saltRounds);
@@ -121,7 +121,7 @@ router
     // redirect to login
 
     try {
-      userEmail = xssCheck(req.body.email);
+      let userEmail = xssCheck(req.body.email);
       userEmail = authHelpers.checkEmail(userEmail);
 
       const userByEmail = await userDL.getUserByEmail(userEmail);
@@ -149,7 +149,7 @@ router
   })
   .post(async (req, res) => {
     try {
-      userPassword = xssCheck(req.body.newPassword);
+      let userPassword = xssCheck(req.body.newPassword);
       userPassword = authHelpers.checkPassword(userPassword);
       const userPasswordUpdate = await userDL.updatePassword(
         req.params.id,
@@ -274,9 +274,9 @@ router.route("/logout").delete(async (req, res) => {
 
 async function takingInUser(req, res, next) {
   try {
-    userEmail = xssCheck(req.body.email);
+    let userEmail = xssCheck(req.body.email);
     userEmail = authHelpers.checkEmail(userEmail);
-    userPassword = xssCheck(req.body.password);
+    let userPassword = xssCheck(req.body.password);
     userPassword = authHelpers.checkPassword(userPassword);
     next();
   } catch (e) {

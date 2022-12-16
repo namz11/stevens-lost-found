@@ -329,12 +329,12 @@ router.route("/:id/status").put(async (req, res) => {
   // TODO (AMAN): Pass Actor Details Using Session
 
   // get item details
-  theItem = xssCheck(req.body.itemId);
+  let itemId = xssCheck(req.body.itemId);
   theItem = itemsDL.getItemById(theItem);
 
   // get user details
-  theUser = xssCheck(req.body.userId);
-  theUser = userDL.getUserById(theUser);
+  let userId = xssCheck(req.body.userId);
+  theUser = userDL.getUserById(userId);
 
   // update isClaimed status
   itIsClaimed = itemsDL.updateIsClaimedStatus(itemId);
