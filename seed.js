@@ -490,7 +490,7 @@ const main = async () => {
   //#endregion
   // await connection.closeConnection();
 
-  console.log("DB seed successful. There are 6 users & 31 items.");
+  console.log("DB seed successful. There are 6 users & 41 items.");
   await connection.closeConnection();
 };
 
