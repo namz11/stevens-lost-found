@@ -1,6 +1,6 @@
 const { ObjectId } = require("mongodb");
 const xss = require("xss");
-
+const _ = require("lodash");
 const checkId = (id, varName) => {
   if (!id) throw `Error: You must provide a ${varName}`;
   if (typeof id !== "string") throw `Error:${varName} must be a string`;

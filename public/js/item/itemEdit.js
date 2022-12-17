@@ -60,12 +60,8 @@ import { validations } from "/public/js/helpers.js";
             body: formData,
             headers,
           })
-            .then((resp) => {
-              debugger;
-              resp.json();
-            })
+            .then((resp) => resp.json())
             .then((res) => {
-              debugger;
               if (res.success) {
                 alert(res.message || "Item updated!");
                 editItemForm.reset();

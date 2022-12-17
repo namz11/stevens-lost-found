@@ -233,12 +233,6 @@ router
   .put(
     (req, res, next) => itemImageUpload(req, res, next),
     async (req, res) => {
-      itemImageUpload(req, res, function (err) {
-        if (err) {
-          return;
-        }
-      });
-
       let itemId, itemObj, itemById;
       try {
         itemObj = req.body;
@@ -286,17 +280,24 @@ router
         });
       }
 
-      if (item.isClaimed) {
-        return res.status(400).json({
-          success: false,
-          message: "Item has been claimed. Action unavailable.",
-        });
-      }
+      try {
+        if (itemById.isClaimed) {
+          return res.status(400).json({
+            success: false,
+            message: "Item has been claimed. Action unavailable.",
+          });
+        }
 
-      if (helpers.compareItemObjects(itemById, itemObj)) {
-        return res.status(400).json({
+        if (helpers.compareItemObjects(itemById, itemObj)) {
+          return res.status(400).json({
+            success: false,
+            message: "Please change atleast 1 value to update",
+          });
+        }
+      } catch (e) {
+        return res.status(500).json({
           success: false,
-          message: "Please change atleast 1 value to update",
+          message: e.message || "Something went wrong",
         });
       }
 
