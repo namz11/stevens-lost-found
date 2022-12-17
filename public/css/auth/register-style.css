@@ -96,7 +96,7 @@
 
 .reg .login {
   padding: 1em;
-  background: #ef4444;
+  background: #e40000;
   color: white;
   border: none;
   border-radius: 30px;
@@ -114,7 +114,7 @@
 
 .reg .footer a {
   text-decoration: none;
-  color: #ef4444;
+  color: #e40000;
   cursor: pointer;
   padding-left: 0.5em;
   padding-right: 0.5em;

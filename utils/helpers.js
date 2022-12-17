@@ -1,4 +1,5 @@
 const { ObjectId } = require("mongodb");
+const xss = require("xss");
 
 const checkId = (id, varName) => {
   if (!id) throw `Error: You must provide a ${varName}`;
@@ -107,6 +108,10 @@ const authHelpers = {
   },
 };
 
+const xssCheck = (str) => {
+  return xss(str);
+};
+
 const helpers = {
   // Check for valid string
   isStringValid: (str, charCount = 1) => {
@@ -198,4 +203,5 @@ module.exports = {
   validations,
   checkId,
   authHelpers,
+  xssCheck,
 };
