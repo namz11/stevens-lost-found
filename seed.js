@@ -44,7 +44,7 @@ const main = async () => {
         lastName: "patel",
         email: "vpatel10@stevens.edu",
         phoneNumber: "9876543210",
-        dob: "2001-08-13",
+        dob: "2000-02-23",
         password: hashedPassword,
         isVerified: true,
       })
