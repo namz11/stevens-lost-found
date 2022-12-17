@@ -68,7 +68,7 @@ const sendListingUpdateEmail = async ({
     const mailOptions = {
       from: "stevenslostandfound@gmail.com",
       to: userId,
-      subject: `<strong>Update</strong>: ${actor} has ${action} your item`,
+      subject: `Update: ${actor} has ${action} your item`,
       html: `<p>Hi <strong>${user}</strong>, your <em>"${userItem}"</em> has been <strong>${action}</strong> by <em>${actor}</em>.</p> <br> 
       <p>Here are the contact details of <em>${actor}</em>:</p><br> 
       <ul>
@@ -101,8 +101,8 @@ const sendListingUpdateEmailToActor = async (
     const mailOptions = {
       from: "stevenslostandfound@gmail.com",
       to: actorId,
-      subject: `<strong>Update for ${action} item</strong>: Here are the contact details for <em>"${userItem}"</em>`,
-      html: `<p>Hi ${actor} Here are the contact details of <em>${user}</em>, who posted for <em>${userItem}</em>:</p><br> 
+      subject: `Update for ${action} item: Here are the contact details for "${userItem}"`,
+      html: `<p>Hi ${actor}, here are the contact details of <em>${user}</em>, who posted for <em>${userItem}</em>:</p><br> 
       <ul>
       <li>Name: ${user}</li>
       <li>Email: <a href = "mailto: ${userId}">${userId}</a></li>
