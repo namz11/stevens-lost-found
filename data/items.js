@@ -165,20 +165,32 @@ const updateIsClaimedStatus = async (itemId) => {
   const theItem = await itemDB.findOne({ _id: ObjectId(itemId) });
   if (!theItem) throw new Error("No Item with the provided id exists");
 
+  if (theItem.type == "lost") {
+    action = "Found";
+  } else if (theItem.type == "found") {
+    action = "Claimed";
+  }
+
   let updatedItem = {
     isClaimed: true,
   };
 
-  const updatedInfo = await itemDB.updateOne(
-    { _id: ObjectId(itemId) },
-    { $set: updatedItem }
-  );
+  if (theItem.isClaimed === false) {
+    const updatedInfo = await itemDB.updateOne(
+      { _id: ObjectId(itemId) },
+      { $set: updatedItem }
+    );
 
-  if (updatedInfo.modifiedCount === 0) {
-    throw new Error("Could Not Update The Item");
+    if (updatedInfo.modifiedCount != 1) {
+      throw new Error("Could Not Update The Item");
+    }
+
+    return await getItemById(itemId);
+  } else {
+    // TODO: Handle Else Case
+    // alert(`Item Already ${action}`);
+    return `Item Already ${action}`;
   }
-
-  return await getItemById(itemId);
 };
 
 const deleteItem = async (id, userId) => {
