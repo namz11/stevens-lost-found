@@ -29,7 +29,7 @@ const main = async () => {
 
   //#region users
   try {
-    user1 = await userDL.enterUser(
+    user1 = await userDL.enterUserFromSeedFile(
       ...Object.values({
         firstName: "narmit",
         lastName: "mashruwala",
@@ -37,9 +37,10 @@ const main = async () => {
         phoneNumber: "9876543210",
         dob: "2000-02-23",
         password: hashedPassword,
+        isVerified: true,
       })
     );
-    user2 = await userDL.enterUser(
+    user2 = await userDL.enterUserFromSeedFile(
       ...Object.values({
         firstName: "vatsal",
         lastName: "patel",
@@ -47,9 +48,10 @@ const main = async () => {
         phoneNumber: "9876543210",
         dob: "2000-03-23",
         password: hashedPassword,
+        isVerified: true,
       })
     );
-    user3 = await userDL.enterUser(
+    user3 = await userDL.enterUserFromSeedFile(
       ...Object.values({
         firstName: "aman",
         lastName: "patel",
@@ -57,9 +59,10 @@ const main = async () => {
         phoneNumber: "9876543210",
         dob: "2000-04-23",
         password: hashedPassword,
+        isVerified: true,
       })
     );
-    user4 = await userDL.enterUser(
+    user4 = await userDL.enterUserFromSeedFile(
       ...Object.values({
         firstName: "bobby",
         lastName: "chaudhary",
@@ -67,9 +70,10 @@ const main = async () => {
         phoneNumber: "9876543210",
         dob: "2000-05-23",
         password: hashedPassword,
+        isVerified: true,
       })
     );
-    user5 = await userDL.enterUser(
+    user5 = await userDL.enterUserFromSeedFile(
       ...Object.values({
         firstName: "rushabh",
         lastName: "thakkar",
@@ -77,11 +81,12 @@ const main = async () => {
         phoneNumber: "9876543210",
         dob: "2000-06-23",
         password: hashedPassword,
+        isVerified: true,
       })
     );
     // TODO
     // email: "phill@stevens.edu",
-    user6 = await userDL.enterUser(
+    user6 = await userDL.enterUserFromSeedFile(
       ...Object.values({
         firstName: "patrick",
         lastName: "hill",
@@ -89,6 +94,7 @@ const main = async () => {
         phoneNumber: "9876543210",
         dob: "2000-01-23",
         password: hashedPassword,
+        isVerified: true,
       })
     );
   } catch (e) {
