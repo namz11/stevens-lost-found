@@ -331,7 +331,7 @@ router
 
 router.route("/:id/comment").post(async (req, res) => {
   let id = req.params.id;
-  const { comment } = req.body;
+  let { comment } = req.body;
   let authenticatedUserId = req?.session?.passport?.user?._id;
 
   try {
@@ -468,7 +468,7 @@ router
             break;
           }
         }
-        return { ...c, createdAt: helpers.formatDate(c.createdAt) };
+        return { ...c, createdAt: helpers.formatDate(new Date(c.createdAt)) };
       });
       let userId = checkId(item.createdBy, "User ID");
       user = await userDL.getUserById(userId);
