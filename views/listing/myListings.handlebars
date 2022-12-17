@@ -68,15 +68,20 @@
 <div id="delete-modal" class="modal">
   <div class="modal-content">
     <div class="modal-header">
-
-      <h1>Delete Listing?</h1>
+      <h1>
+        Delete Listing?
+      </h1>
       <span
         class="close"
         onclick="document.getElementById('delete-modal').style.display='none'"
-      >&times;</span>
+      >
+        &times;
+      </span>
     </div>
     <div class="modal-body">
-      <p>Are you sure you want to delete this listing?</p>
+      <p>
+        Are you sure you want to delete this listing?
+      </p>
       <button
         type="button"
         id="close-this-modal"
@@ -100,7 +105,9 @@
     <div class="modal-body">
       <div class="page-body">
         <div class="head">
-          <h3 style="margin-top:5px;">Listing Deleted Successfully!</h3>
+          <h3 style="margin-top:5px;">
+            Listing Deleted Successfully!
+          </h3>
           <div class="checkmark-circle">
             <div class="background"></div>
             <div class="checkmark draw"></div>
@@ -110,33 +117,6 @@
     </div>
   </div>
 </div>
-
-{{!-- <div id="modal" class="modal">
-  <div class="modal-content">
-    <div class="modal-header">
-      <span class="close">&times;</span>
-      <h2>{{this.name}}</h2>
-    </div>
-    <div class="modal-body">
-      <p>Are you sure {{itemAction-String}}</p>
-      <!-- define item action string in js -->
-      <button
-        id="confirm-yes-btn"
-        data-id="{{this._id}}"
-        data-user="{{this.createdBy}}"
-        class="button"
-      >Yes</button>
-      <button id="confirm-no-btn" class="button">No</button>
-      <p>
-        Once you proceed with a yes, a confirmation email will be sent to the OP
-        and the contact details of the OP will be shown.
-      </p>
-    </div>
-    <div class="modal-footer">
-      <h3>{{this.type}} Item</h3>
-    </div>
-  </div>
-</div> --}}
 
 <script src="/public/js/listing/myListings.js" type="module"></script>
 <link rel="stylesheet" href="/public/css/modal-styles.css" />

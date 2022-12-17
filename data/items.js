@@ -64,15 +64,7 @@ const getItemsByUserId = async (userId) => {
   const userItems = await itemDB
     .find({ createdBy: ObjectId(userId) })
     .toArray();
-  // let foundItem = false;
-  // let allItemsWithThatId = {};
-  // for (let i = 0; i < theItems.length; i++) {
-  //   const currentItem = theItems[i];
-  //   if (currentItem.createdBy.toString() === userId) {
-  //     foundItem = true;
-  //     allItemsWithThatId = currentItem;
-  //   }
-  // }
+
   if (!userItems) throw new Error("No Items Found With That Id");
   return userItems;
 };
@@ -188,7 +180,6 @@ const updateIsClaimedStatus = async (itemId) => {
     return await getItemById(itemId);
   } else {
     // TODO: Handle Else Case
-    // alert(`Item Already ${action}`);
     return `Item Already ${action}`;
   }
 };
@@ -233,52 +224,6 @@ const createComment = async (comment, createdBy, itemId) => {
   return await getItemById(itemId);
 };
 
-const searchHelper = async (itemsData, searchString) => {
-  try {
-    if (!itemsData) throw "No Data Provided";
-    if (!searchString) throw "No Search String Provided";
-
-    let score1, score2, score3;
-    let count = 0;
-    const matchedEntries = [];
-    searchString = searchString.toLowerCase();
-    for (let i = 0; i < itemsData.length; i++) {
-      if (
-        itemsData[i].name.toLowerCase().includes(searchString) ||
-        itemsData[i].lostOrFoundLocation.toLowerCase().includes(searchString) ||
-        itemsData[i].description.toLowerCase().includes(searchString)
-      ) {
-        score1 = levenshtein(itemsData[i].name.toLowerCase(), searchString);
-        score2 = levenshtein(
-          itemsData[i].lostOrFoundLocation.toLowerCase(),
-          searchString
-        );
-        score3 = levenshtein(
-          itemsData[i].description.toLowerCase(),
-          searchString
-        );
-
-        let scores = [];
-        scores.push(score1);
-        scores.push(score2);
-        scores.push(score3);
-
-        scores.sort((a, b) => a - b);
-        count += 1;
-        itemsData[i].score = scores[0];
-        matchedEntries.push(itemsData[i]);
-      }
-    }
-    matchedEntries.sort((a, b) => a.score - b.score);
-    for (let i = 0; i < matchedEntries.length; i++) {
-      delete matchedEntries[i].score;
-    }
-    return matchedEntries;
-  } catch (e) {
-    console.log(e);
-  }
-};
-
 const getPaginatedItems = async (query) => {
   const itemDB = await itemsCollection();
 
@@ -309,7 +254,6 @@ module.exports = {
   getItemsByUserId,
   updateIsClaimedStatus,
   deleteItem,
-  searchHelper,
   createComment,
   getPaginatedItems,
 };
