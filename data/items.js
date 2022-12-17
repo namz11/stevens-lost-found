@@ -151,7 +151,7 @@ const getLevenshteinScore = (obj1, obj2) => {
   return { ...obj2, score };
 };
 
-const updateIsClaimedStatus = async (itemId) => {
+const updateIsClaimedStatus = async (itemId, idOfTheFinderOrClaimer) => {
   itemId = checkId(itemId, "Item ID");
   const itemDB = await itemsCollection();
   const theItem = await itemDB.findOne({ _id: ObjectId(itemId) });
@@ -165,6 +165,7 @@ const updateIsClaimedStatus = async (itemId) => {
 
   let updatedItem = {
     isClaimed: true,
+    claimedBy: idOfTheFinderOrClaimer,
   };
 
   if (theItem.isClaimed === false) {
