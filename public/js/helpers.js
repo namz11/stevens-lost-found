@@ -53,7 +53,7 @@ const helpers = {
   },
   isValidJSDate: (date) => date instanceof Date && !isNaN(date),
   // gives datetime in format yyyy-mm-ddTHH:MM
-  getDate: (date) => {
+  getDateString: (date) => {
     if (helpers.isValidJSDate(date)) {
       let strDate = date.toISOString().split(":");
       return `${strDate[0]}:${strDate[1]}`;

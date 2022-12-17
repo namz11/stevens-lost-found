@@ -78,7 +78,7 @@ const authHelpers = {
     var todaysDate = new Date();
     yyyy = todaysDate.getFullYear() - 13;
     mm = todaysDate.getMonth() + 1;
-    dd = todaysDate.getDate();
+    dd = todaysDate.getDateString();
 
     tDate = `${mm}/${dd}/${yyyy}`;
 
@@ -161,10 +161,31 @@ const helpers = {
   },
   isValidJSDate: (date) => date instanceof Date && !isNaN(date),
   // gives datetime in format yyyy-mm-ddTHH:MM
-  getDate: (date) => {
+  getDateString: (date) => {
     if (helpers.isValidJSDate(date)) {
       let strDate = date.toISOString().split(":");
       return `${strDate[0]}:${strDate[1]}`;
+    } else {
+      throw new Error("Invalid Date");
+    }
+  },
+  padTo2Digits: (num) => {
+    return num.toString().padStart(2, "0");
+  },
+  formatDate: (date) => {
+    if (helpers.isValidJSDate(date)) {
+      return (
+        [
+          helpers.padTo2Digits(date.getMonth() + 1),
+          helpers.padTo2Digits(date.getDate()),
+          date.getFullYear(),
+        ].join("-") +
+        " " +
+        [
+          helpers.padTo2Digits(date.getHours()),
+          helpers.padTo2Digits(date.getMinutes()),
+        ].join(":")
+      );
     } else {
       throw new Error("Invalid Date");
     }

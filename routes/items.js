@@ -39,8 +39,8 @@ router.route("/listing/:type").get(async (req, res) => {
         }
         return {
           ...item,
-          createdAt: helpers.getDate(new Date(item.createdAt)),
-          dateLostOrFound: helpers.getDate(new Date(item.dateLostOrFound)),
+          createdAt: helpers.formatDate(new Date(item.createdAt)),
+          dateLostOrFound: helpers.formatDate(new Date(item.dateLostOrFound)),
         };
       });
     }
@@ -98,8 +98,8 @@ router
       action: `/items/add`,
       metaData: {
         dateLostOrFound: {
-          max: helpers.getDate(new Date()),
-          min: helpers.getDate(
+          max: helpers.getDateString(new Date()),
+          min: helpers.getDateString(
             new Date(new Date().setFullYear(new Date().getFullYear() - 1))
           ),
         },
@@ -195,12 +195,12 @@ router
         action: `/items/edit/${itemId}`,
         item: {
           ...item,
-          dateLostOrFound: helpers.getDate(new Date(item.dateLostOrFound)),
+          dateLostOrFound: helpers.formatDate(new Date(item.dateLostOrFound)),
         },
         metaData: {
           dateLostOrFound: {
-            max: helpers.getDate(new Date()),
-            min: helpers.getDate(
+            max: helpers.getDateString(new Date()),
+            min: helpers.getDateString(
               new Date(new Date().setFullYear(new Date().getFullYear() - 1))
             ),
           },
@@ -406,8 +406,8 @@ router
       item = await itemsDL.getItemById(id);
       item = {
         ...item,
-        dateLostOrFound: helpers.getDate(new Date(item.dateLostOrFound)),
-        createdAt: helpers.getDate(new Date(item.createdAt)),
+        dateLostOrFound: helpers.formatDate(new Date(item.dateLostOrFound)),
+        createdAt: helpers.formatDate(new Date(item.createdAt)),
       };
     } catch (e) {
       return res.status(404).send("Item not found");
@@ -422,7 +422,7 @@ router
             break;
           }
         }
-        return { ...c, createdAt: helpers.getDate(c.createdAt) };
+        return { ...c, createdAt: helpers.getDateString(c.createdAt) };
       });
       let userId = checkId(item.createdBy, "User ID");
       user = await userDL.getUserById(userId);

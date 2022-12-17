@@ -1,7 +1,10 @@
 <div class="mt-4 mb-5 mx-3">
   <div class="px-5 pb-3">
     <h3>
-      Lost Items: Displaying {{items.length}} of {{count}} items
+      <span class="text-capitalize">
+        {{type}}
+      </span>
+      Items: Displaying {{items.length}} of {{count}} items
     </h3>
     <div class="py-2 d-flex">
       SORT BY:
@@ -20,8 +23,8 @@
             </span>
           {{/compare}}
         </span>
-        <span class="sort-item" data-field="actionDate">
-          Lost Date
+        <span class="sort-item text-capitalize" data-field="actionDate">
+          {{type}} Date
         </span>
       {{/compare}}
 
@@ -29,8 +32,12 @@
         <span class="sort-item" data-field="dateAdded">
           Date Added
         </span>
-        <span class="sort-item active" data-field="actionDate" data-val="">
-          Lost Date
+        <span
+          class="sort-item active text-capitalize"
+          data-field="actionDate"
+          data-val=""
+        >
+          {{type}} Date
           {{#compare query.sortOrder "1" operator="=="}}
             <span class="asc">
               ↑
