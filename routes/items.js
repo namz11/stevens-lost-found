@@ -29,6 +29,7 @@ router.route("/listing/:type").get(async (req, res) => {
       { ...req.query, type },
       { sortBy: "createdAt" }
     );
+    let titleType = type.charAt(0).toUpperCase() + type.slice(1); //this is to Capitalize Type for title page
     let allUsers = await userDL.getAllUsers();
     let data = await itemsDL.getPaginatedItems(query);
     if (data?.items?.length) {
@@ -50,6 +51,7 @@ router.route("/listing/:type").get(async (req, res) => {
     return res.render("listing/listing", {
       ...data,
       type,
+      title: `${titleType} Listing`,
       query: x,
       nextClass:
         query.size * query.page < data.count
@@ -89,6 +91,7 @@ router
 
     return res.render("item/create", {
       action: `/items/add`,
+      title: "Add Item",
       metaData: {
         dateLostOrFound: {
           max: helpers.getDateString(new Date()),
@@ -186,6 +189,7 @@ router
 
       return res.render("item/edit", {
         action: `/items/edit/${itemId}`,
+        title: "Edit Item",
         item: {
           ...item,
           dateLostOrFound: helpers.formatDate(new Date(item.dateLostOrFound)),
@@ -451,8 +455,10 @@ router
     }
     const allowActions =
       ObjectId(user._id).equals(authenticatedUserId) && !item.isClaimed;
+    let titleType = item.type.charAt(0).toUpperCase() + item.type.slice(1);
+    let titleName = item.name.charAt(0).toUpperCase() + item.name.slice(1);
     return res.render("item/view", {
-      title: "Item Page",
+      title: `${titleName} - ${titleType}`,
       item,
       user,
       allowActions,
@@ -521,6 +527,7 @@ router.route("/:id/suggestions").get(async (req, res) => {
   try {
     const suggestions = await itemsDL.getItemSuggestions(itemId);
     return res.render("item/suggestions", {
+      title: "Suggestions",
       suggestions,
     });
   } catch (e) {
