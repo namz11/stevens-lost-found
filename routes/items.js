@@ -63,8 +63,8 @@ router.route("/listing/:type").get(async (req, res) => {
 });
 
 router.route("/my-listing").get(async (req, res) => {
-  let authenticatedUserId = req?.session?.passport?.user?._id;
   try {
+    let authenticatedUserId = req?.session?.passport?.user?._id;
     authenticatedUserId = checkId(authenticatedUserId, "User ID");
   } catch (e) {
     return res.status(400).send(e);
