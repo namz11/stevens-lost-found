@@ -45,7 +45,12 @@ router.route("/listing/:type").get(async (req, res) => {
       ...data,
       type,
       title: `${titleType} Listing`,
-      query,
+      query: x,
+      nextClass:
+        query.size * query.page < data.count
+          ? "page-link"
+          : "page-link disabled",
+      prevClass: query.page != 1 ? "page-link" : "page-link disabled",
     });
   } catch (e) {
     return res.status(400).send(e);
