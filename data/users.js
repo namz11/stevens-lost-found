@@ -78,6 +78,47 @@ const enterUser = async (
   return await getUserById(inUser.insertedId.toString());
 };
 
+const enterUserFromSeedFile = async (
+  firstName,
+  lastName,
+  email,
+  phoneNumber,
+  dob,
+  password,
+  userVerification
+) => {
+  userEmail = authHelpers.checkEmail(email);
+  userFirstName = authHelpers.checkName(firstName, "First Name");
+  userLastName = authHelpers.checkName(lastName, "Last Name");
+  userPhoneNumber = authHelpers.checkPhoneNumber(phoneNumber);
+  userDOB = authHelpers.checkDOB(dob);
+  userVerified = userVerification;
+
+  const authCollection = await usersCollection();
+  const userExists = await authCollection.findOne({ email: userEmail });
+  if (userExists) {
+    throw new Error("There is already a user with that email.");
+  }
+
+  newUser = {
+    firstName: userFirstName,
+    lastName: userLastName,
+    email: userEmail,
+    phone: userPhoneNumber,
+    dob: userDOB,
+    password: password,
+    isVerified: userVerified,
+  };
+
+  const userToBeInserted = new User(newUser);
+  const inUser = await authCollection.insertOne(userToBeInserted);
+  if (!inUser.acknowledged || !inUser.insertedId) {
+    throw new Error("Cannot add User");
+  }
+
+  return await getUserById(inUser.insertedId.toString());
+};
+
 const getUserByItemId = async (itemId) => {
   itemId = checkId(itemId, "Item ID");
   const itemDB = await itemsCollection();
@@ -136,4 +177,5 @@ module.exports = {
   updatePassword,
   getUserByEmail,
   getUserByItemId,
+  enterUserFromSeedFile,
 };
