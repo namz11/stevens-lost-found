@@ -329,90 +329,73 @@ router.route("/:id/comment").post(async (req, res) => {
 });
 
 router.route("/:id/status").post(async (req, res) => {
-  // get item details
   let itemId = xssCheck(req.body.itemId);
-  theItem = itemsDL.getItemById(theItem);
+  theItem = await itemsDL.getItemById(itemId);
 
   // get user details
   let userId = xssCheck(req.body.userId);
-  theUser = userDL.getUserById(userId);
+  theUser = await userDL.getUserById(theItem.createdBy);
 
   if (theItem.type == "lost") {
-    action = "Found";
+    action = "found";
   } else if (theItem.type == "found") {
-    action = "Claimed";
+    action = "claimed";
   }
 
-  itIsClaimed = await itemsDL.updateIsClaimedStatus(req.body.itemId);
+  if (theItem.type == "lost") {
+    finderOrOwner = "finder";
+  } else if (theItem.type == "found") {
+    finderOrOwner = "owner";
+  }
+  let idOfTheFinderOrClaimer = req.session.passport.user._id;
+  itIsClaimed = await itemsDL.updateIsClaimedStatus(
+    itemId,
+    idOfTheFinderOrClaimer
+  );
   console.log(itIsClaimed);
 
   if (!itIsClaimed) throw new Error("Failed to update the status");
-  // console.log("I am in routes mid");
 
   try {
-    // TODO: Adjust this code once session thing gets fixed
-    // console.log(theUser.firstName);
-    // console.log(theUser.email);
-    // console.log(theItem.name);
-    // console.log(req.session.passport.firstName);
-    // console.log(req.session.passport.email);
-    // console.log(req.session.passport.phone);
-    // console.log(action);
-    //     const toUser = sendListingUpdateEmail(
-    //       {
-    //         user: theUser.firstName,
-    //         userId: theUser.email,
-    //         userItem: theItem.name,
-    //         // TODO (AMAN): Pass Actor Details Using Session
-    //         actor: req.session.passport.firstName,
-    //         actorId: req.session.passport.email,
-    //         actorNumber: req.session.passport.phone,
-    //         action: action,
-    //       },
-    //       res
-    //     );
-    //
-    // const toActor = sendListingUpdateEmailToActor(
-    //   {
-    //     user: theUser.firstName,
-    //     userId: theUser.email,
-    //     userItem: theItem.name,
-    //     // TODO (AMAN): Pass Actor Details Using Session
-    //     actor: req.session.passport.firstName,
-    //     actorId: req.session.passport.email,
-    //     actorNumber: req.session.passport.phone,
-    //     action: action,
-    //   },
-    //   res
-    // );
-    // TODO: Fix Session Variables
-    // Dummy
-    console.log(theUser.firstName);
-    console.log(theItem._id);
+    userFullName = theUser.firstName + " " + theUser.lastName;
+    actorFullName =
+      req.session.passport.user.firstName +
+      " " +
+      req.session.passport.user.lastName;
+
+    console.log(userFullName);
+    console.log(actorFullName);
+
     const toUser = sendListingUpdateEmail(
       {
         user: xssCheck(theUser.firstName),
         userId: xssCheck(theUser.email),
         userItem: xssCheck(theItem.name),
-        // TODO (AMAN): Pass Actor Details Using Session
-        actor: xssCheck(someone.something),
-        actorId: xssCheck(someone.something),
-        actorNumber: xssCheck(someone.something),
-        action: xssCheck(someone.something),
+        actor: xssCheck(actorFullName),
+        actorId: xssCheck(req.session.passport.user.email),
+        actorNumber: xssCheck(req.session.passport.user.phone),
+        action: xssCheck(action),
+        finderOrOwner: xssCheck(finderOrOwner),
       },
       res
     );
 
+    if (finderOrOwner == "finder") {
+      finderOrOwner = "owner";
+    } else if (finderOrOwner == "owner") {
+      finderOrOwner = "finder";
+    }
+
     const toActor = sendListingUpdateEmailToActor(
       {
-        user: xssCheck(theUser.firstName),
+        user: xssCheck(userFullName),
         userId: xssCheck(theUser.email),
         userItem: xssCheck(theItem.name),
-        // TODO (AMAN): Pass Actor Details Using Session
-        actor: xssCheck(someone.something),
-        actorId: xssCheck(someone.something),
-        actorNumber: xssCheck(someone.something),
-        action: xssCheck(someone.something),
+        userNumber: xssCheck(theUser.phone),
+        actor: xssCheck(req.session.passport.user.firstName),
+        actorId: xssCheck(req.session.passport.user.email),
+        action: xssCheck(action),
+        finderOrOwner: xssCheck(finderOrOwner),
       },
       res
     );
@@ -549,37 +532,3 @@ router.route("/:id/suggestions").get(async (req, res) => {
 });
 
 module.exports = router;
-
-// Paginated
-// router.route("/my-listings/:id").get(async (req, res) => {
-//   let id = req.params.id;
-//   let page = req.query.page || 1;
-//   let limit = 10;
-//   let skip = (page - 1) * limit;
-
-//   try {
-//     id = checkId(req.params.id, "Item ID");
-//   } catch (e) {
-//     console.log(e)
-//     return res.status(400).render("error",{
-//       class: "error",
-//       message: "Error: Invalid ID or ID Not Provided",
-//     });
-//   }
-
-//   try {
-//     const items = await itemFunctions.getItemsByUserId(id);
-//     const count = items.length;
-//     const pages = Math.ceil(count / limit);
-//     const d = items.slice(skip, skip + limit);
-
-//     res.render("/listing/userListings", {
-//       itemsData: d, title: "My Listings", page, pages
-//     });
-//   } catch (e) {
-//     return res.status(404).render("error", {
-//       class: "error",
-//       message: e,
-//     });
-//   }
-// });
