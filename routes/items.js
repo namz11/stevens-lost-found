@@ -1,3 +1,5 @@
+// TODO: Deal With Sessions
+
 const express = require("express");
 const path = require("path");
 const { ObjectId } = require("mongodb");
@@ -60,32 +62,23 @@ router.route("/listing/:type").get(async (req, res) => {
   }
 });
 
-router.route("/my-listings/:id").get(async (req, res) => {
-  // TODO (AMAN): Pagination
-
-  let id = xssCheck(req.params.id);
+router.route("/my-listing").get(async (req, res) => {
+  let authenticatedUserId = req?.session?.passport?.user?._id;
   try {
-    id = checkId(req.params.id, "Item ID");
+    authenticatedUserId = checkId(authenticatedUserId, "User ID");
   } catch (e) {
-    console.log(e);
-    return res.status(400).render("error", {
-      class: "error",
-      message: "Error: Invalid ID or ID Not Provided",
-    });
+    return res.status(400).send(e);
   }
 
   try {
-    const d = await itemsDL.getItemsByUserId(id);
+    const d = await itemsDL.getItemsByUserId(authenticatedUserId);
 
-    res.render("/listing/myListings", {
-      itemsData: d,
+    return res.render("listing/myListings", {
+      items: d,
       title: "My Listings",
     });
   } catch (e) {
-    return res.status(404).render("error", {
-      class: "error",
-      message: e,
-    });
+    return res.status(404).send(e);
   }
 });
 
@@ -335,9 +328,7 @@ router.route("/:id/comment").post(async (req, res) => {
   }
 });
 
-router.route("/:id/status").put(async (req, res) => {
-  // TODO (AMAN): Pass Actor Details Using Session
-
+router.route("/:id/status").post(async (req, res) => {
   // get item details
   let itemId = xssCheck(req.body.itemId);
   theItem = itemsDL.getItemById(theItem);
@@ -346,13 +337,58 @@ router.route("/:id/status").put(async (req, res) => {
   let userId = xssCheck(req.body.userId);
   theUser = userDL.getUserById(userId);
 
-  // update isClaimed status
-  itIsClaimed = itemsDL.updateIsClaimedStatus(itemId);
+  if (theItem.type == "lost") {
+    action = "Found";
+  } else if (theItem.type == "found") {
+    action = "Claimed";
+  }
+
+  itIsClaimed = await itemsDL.updateIsClaimedStatus(req.body.itemId);
+  console.log(itIsClaimed);
 
   if (!itIsClaimed) throw new Error("Failed to update the status");
+  // console.log("I am in routes mid");
 
-  // Send Email
   try {
+    // TODO: Adjust this code once session thing gets fixed
+    // console.log(theUser.firstName);
+    // console.log(theUser.email);
+    // console.log(theItem.name);
+    // console.log(req.session.passport.firstName);
+    // console.log(req.session.passport.email);
+    // console.log(req.session.passport.phone);
+    // console.log(action);
+    //     const toUser = sendListingUpdateEmail(
+    //       {
+    //         user: theUser.firstName,
+    //         userId: theUser.email,
+    //         userItem: theItem.name,
+    //         // TODO (AMAN): Pass Actor Details Using Session
+    //         actor: req.session.passport.firstName,
+    //         actorId: req.session.passport.email,
+    //         actorNumber: req.session.passport.phone,
+    //         action: action,
+    //       },
+    //       res
+    //     );
+    //
+    // const toActor = sendListingUpdateEmailToActor(
+    //   {
+    //     user: theUser.firstName,
+    //     userId: theUser.email,
+    //     userItem: theItem.name,
+    //     // TODO (AMAN): Pass Actor Details Using Session
+    //     actor: req.session.passport.firstName,
+    //     actorId: req.session.passport.email,
+    //     actorNumber: req.session.passport.phone,
+    //     action: action,
+    //   },
+    //   res
+    // );
+    // TODO: Fix Session Variables
+    // Dummy
+    console.log(theUser.firstName);
+    console.log(theItem._id);
     const toUser = sendListingUpdateEmail(
       {
         user: xssCheck(theUser.firstName),
@@ -380,14 +416,14 @@ router.route("/:id/status").put(async (req, res) => {
       },
       res
     );
+
+    if (!toUser)
+      throw "Oops! Something Went Wrong: Failed to send email to user";
+    if (!toActor) throw "Oops! Something Went Wrong: Failed to send email";
+
     // TODO (AMAN)
-    // res.redirect("");
-    // res.render("");
   } catch (e) {
     console.log(e);
-    // TODO (AMAN)
-    // res.redirect("");
-    // res.render("");
   }
 });
 
@@ -442,39 +478,41 @@ router
   })
   .delete(async (req, res) => {
     // delete item
+    let id = xssCheck(req.params.id),
+      item;
 
-    let id = xssCheck(req.params.id);
     try {
       id = checkId(id, "Item ID");
     } catch (e) {
       return res.status(400).send(e);
     }
     try {
-      let item = await itemsDL.getItemById(id);
+      item = await itemsDL.getItemById(id);
     } catch (e) {
       return res.status(404).send("item not found");
     }
 
-    id = xssCheck(req.params.id);
-    id = checkId(id, "Item ID");
-
-    const theUser = await userDL.getUserByItemId(id);
-    const userId = theUser._id;
-
-    const deletedItem = await itemsDL.deleteItem(id);
-    if (!deletedItem) throw "Could Not Delete Item";
-    // res.status(200).json(deletedItem);
-
-    // Render The My Listings Page After Deletion
-    const d = await itemsDL.getItemsByUserId(userId);
-
-    res.render("/listing/userListings", {
-      itemsData: d,
-      title: "My Listings",
-    });
-    // TODO: Check with Professor If This Is a Good
+    let authenticatedUserId = req?.session?.passport?.user?._id;
     try {
-      let item = await itemsDL.deleteItem(id);
+      authenticatedUserId = checkId(authenticatedUserId, "User ID");
+    } catch (e) {
+      return res.status(400).send(e);
+    }
+    if (item) {
+      try {
+        if (!ObjectId(item.createdBy).equals(authenticatedUserId)) {
+          throw new Error("You don't have authorization to do this action");
+        }
+      } catch (e) {
+        return res.status(401).json({
+          success: false,
+          message: "You don't have authorization to do this action",
+        });
+      }
+    }
+
+    try {
+      await itemsDL.deleteItem(id, authenticatedUserId);
       return res.json({
         success: true,
         message: "Item deleted!",
@@ -511,3 +549,37 @@ router.route("/:id/suggestions").get(async (req, res) => {
 });
 
 module.exports = router;
+
+// Paginated
+// router.route("/my-listings/:id").get(async (req, res) => {
+//   let id = req.params.id;
+//   let page = req.query.page || 1;
+//   let limit = 10;
+//   let skip = (page - 1) * limit;
+
+//   try {
+//     id = checkId(req.params.id, "Item ID");
+//   } catch (e) {
+//     console.log(e)
+//     return res.status(400).render("error",{
+//       class: "error",
+//       message: "Error: Invalid ID or ID Not Provided",
+//     });
+//   }
+
+//   try {
+//     const items = await itemFunctions.getItemsByUserId(id);
+//     const count = items.length;
+//     const pages = Math.ceil(count / limit);
+//     const d = items.slice(skip, skip + limit);
+
+//     res.render("/listing/userListings", {
+//       itemsData: d, title: "My Listings", page, pages
+//     });
+//   } catch (e) {
+//     return res.status(404).render("error", {
+//       class: "error",
+//       message: e,
+//     });
+//   }
+// });

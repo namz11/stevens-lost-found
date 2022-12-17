@@ -1,7 +1,10 @@
 const { ObjectId } = require("mongodb");
 const { helpers, validations, checkId } = require("../utils/helpers");
 const { Item } = require("./models/item.model");
-const { itemsCollection } = require("../config/mongoCollections");
+const {
+  itemsCollection,
+  usersCollection,
+} = require("../config/mongoCollections");
 const levenshtein = require("js-levenshtein");
 const { Comment } = require("./models/comment.model");
 
@@ -51,25 +54,19 @@ const createItem = async (itemObj) => {
 
 const getItemsByUserId = async (userId) => {
   userId = checkId(userId, "User ID");
-  const theUser = await userFunctions.getUserById(userId);
+  const userDB = await usersCollection();
+  const theUser = await userDB.findOne({ _id: ObjectId(userId) });
   if (!theUser) {
     throw new Error("User with the given Id does not exist");
   }
+
   const itemDB = await itemsCollection();
+  const userItems = await itemDB
+    .find({ createdBy: ObjectId(userId) })
+    .toArray();
 
-  const theItems = await itemDB.find({}).toArray();
-
-  let foundItem = false;
-  let allItemsWithThatId = {};
-  for (let i = 0; i < theItems.length; i++) {
-    const currentItem = theItems[i];
-    if (currentItem.createdBy.toString() === userId) {
-      foundItem = true;
-      allItemsWithThatId = currentItem;
-    }
-  }
-  if (!foundItem) throw new Error("No Items Found With That Id");
-  return allItemsWithThatId;
+  if (!userItems) throw new Error("No Items Found With That Id");
+  return userItems;
 };
 
 const updateItem = async (id, itemObj) => {
@@ -160,24 +157,40 @@ const updateIsClaimedStatus = async (itemId) => {
   const theItem = await itemDB.findOne({ _id: ObjectId(itemId) });
   if (!theItem) throw new Error("No Item with the provided id exists");
 
+  if (theItem.type == "lost") {
+    action = "Found";
+  } else if (theItem.type == "found") {
+    action = "Claimed";
+  }
+
   let updatedItem = {
     isClaimed: true,
   };
 
-  const updatedInfo = await itemDB.updateOne(
-    { _id: ObjectId(itemId) },
-    { $set: updatedItem }
-  );
+  if (theItem.isClaimed === false) {
+    const updatedInfo = await itemDB.updateOne(
+      { _id: ObjectId(itemId) },
+      { $set: updatedItem }
+    );
 
-  if (updatedInfo.modifiedCount === 0) {
-    throw new Error("Could Not Update The Item");
+    if (updatedInfo.modifiedCount != 1) {
+      throw new Error("Could Not Update The Item");
+    }
+
+    return await getItemById(itemId);
+  } else {
+    // TODO: Handle Else Case
+    return `Item Already ${action}`;
   }
-
-  return await getItemById(itemId);
 };
 
-const deleteItem = async (id) => {
+const deleteItem = async (id, userId) => {
   var itemId = checkId(id, "invalid item id");
+
+  item = await getItemById(id);
+  if (!ObjectId(item.createdBy).equals(userId)) {
+    throw new Error("You don't have authorization to do this action");
+  }
 
   var items = await itemsCollection();
   var deletionInfo = await items.deleteOne({ _id: ObjectId(itemId) });
@@ -185,6 +198,7 @@ const deleteItem = async (id) => {
   if (deletionInfo.deletedCount === 0) {
     throw new Error("error in delete");
   }
+
   return true;
 };
 
@@ -208,52 +222,6 @@ const createComment = async (comment, createdBy, itemId) => {
     throw new Error("Update failed");
 
   return await getItemById(itemId);
-};
-
-const searchHelper = async (itemsData, searchString) => {
-  try {
-    if (!itemsData) throw "No Data Provided";
-    if (!searchString) throw "No Search String Provided";
-
-    let score1, score2, score3;
-    let count = 0;
-    const matchedEntries = [];
-    searchString = searchString.toLowerCase();
-    for (let i = 0; i < itemsData.length; i++) {
-      if (
-        itemsData[i].name.toLowerCase().includes(searchString) ||
-        itemsData[i].lostOrFoundLocation.toLowerCase().includes(searchString) ||
-        itemsData[i].description.toLowerCase().includes(searchString)
-      ) {
-        score1 = levenshtein(itemsData[i].name.toLowerCase(), searchString);
-        score2 = levenshtein(
-          itemsData[i].lostOrFoundLocation.toLowerCase(),
-          searchString
-        );
-        score3 = levenshtein(
-          itemsData[i].description.toLowerCase(),
-          searchString
-        );
-
-        let scores = [];
-        scores.push(score1);
-        scores.push(score2);
-        scores.push(score3);
-
-        scores.sort((a, b) => a - b);
-        count += 1;
-        itemsData[i].score = scores[0];
-        matchedEntries.push(itemsData[i]);
-      }
-    }
-    matchedEntries.sort((a, b) => a.score - b.score);
-    for (let i = 0; i < matchedEntries.length; i++) {
-      delete matchedEntries[i].score;
-    }
-    return matchedEntries;
-  } catch (e) {
-    console.log(e);
-  }
 };
 
 const getPaginatedItems = async (query) => {
@@ -286,7 +254,6 @@ module.exports = {
   getItemsByUserId,
   updateIsClaimedStatus,
   deleteItem,
-  searchHelper,
   createComment,
   getPaginatedItems,
 };
