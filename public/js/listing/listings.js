@@ -4,6 +4,7 @@ import { helpers } from "/public/js/helpers.js";
   document.addEventListener("DOMContentLoaded", function () {
     // Handler when the DOM is fully loaded
 
+    // sort
     const sortButtons = document.getElementsByClassName("sort-item");
     if (sortButtons) {
       Array.from(sortButtons).forEach((btn) => {
@@ -25,6 +26,8 @@ import { helpers } from "/public/js/helpers.js";
         });
       });
     }
+
+    // pagination
     const prevBtn = document.getElementById("prev-btn");
     const nextBtn = document.getElementById("next-btn");
     if (prevBtn) {
@@ -43,6 +46,31 @@ import { helpers } from "/public/js/helpers.js";
         event.stopImmediatePropagation();
         const queryParams = helpers.getQueryParams(location.search);
         queryParams["page"] = +queryParams["page"] + 1;
+        const search = helpers.getRequestParams(queryParams);
+        location.href = `${location.pathname}?${search}`;
+      });
+    }
+
+    // search
+    const searchButton = document.getElementById("search-button");
+    const searchInput = document.getElementById("search-input");
+
+    if (searchButton) {
+      searchButton.addEventListener("click", (event) => {
+        event.stopPropagation();
+        event.stopImmediatePropagation();
+        event.preventDefault();
+        document.getElementById("searchError").classList.add("hide");
+        const searchTerm = searchInput.value.trim();
+        if (searchTerm.length < 3) {
+          setTimeout(() => {
+            document.getElementById("searchError").classList.remove("hide");
+          }, 100);
+          return;
+        }
+        const queryParams = helpers.getQueryParams(`${location.search}`);
+        queryParams["search"] === searchTerm;
+        queryParams["page"] = 1;
         const search = helpers.getRequestParams(queryParams);
         location.href = `${location.pathname}?${search}`;
       });
@@ -150,7 +178,6 @@ function outsideClick(e) {
           });
       });
     }
-
     //#region claim btn
     let claimButtons = document.getElementsByClassName("claim-button");
     if (claimButtons) {
@@ -163,32 +190,6 @@ function outsideClick(e) {
         });
       });
     }
-
     //#endregion
   });
 })();
-
-// For Search
-const searchButton = document.getElementById("search-form-button");
-const searchInput = document.getElementById("search-form-input");
-
-if (searchButton) {
-  searchButton.addEventListener("click", (event) => {
-    event.preventDefault();
-    search();
-  });
-}
-
-if (searchInput) {
-  searchInput.addEventListener("keydown", (event) => {
-    if (event.key === "Enter") {
-      event.preventDefault();
-      search();
-    }
-  });
-}
-
-function search() {
-  const searchTerm = searchInput.value;
-  console.log(searchTerm);
-}

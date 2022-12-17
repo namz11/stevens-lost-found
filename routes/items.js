@@ -73,10 +73,26 @@ router.route("/my-listing").get(async (req, res) => {
   }
 
   try {
-    const d = await itemsDL.getItemsByUserId(authenticatedUserId);
+    let allUsers = await userDL.getAllUsers();
+    let items = await itemsDL.getItemsByUserId(authenticatedUserId);
+    if (items?.length) {
+      items = (items || []).map((item) => {
+        for (user of allUsers) {
+          if (ObjectId(user._id).equals(item.createdBy)) {
+            item = { ...item, userInfo: user };
+            break;
+          }
+        }
+        return {
+          ...item,
+          createdAt: helpers.formatDate(new Date(item.createdAt)),
+          dateLostOrFound: helpers.formatDate(new Date(item.dateLostOrFound)),
+        };
+      });
+    }
 
     return res.render("listing/myListings", {
-      items: d,
+      items,
       title: "My Listings",
     });
   } catch (e) {
@@ -131,6 +147,8 @@ router
         if (!validations.isNameValid(itemObj.name)) {
           throw new Error("Name field needs to have valid value");
         }
+
+        itemObj.description = xssCheck(itemObj?.description);
 
         itemObj.type = xssCheck(itemObj?.type);
         itemObj.type = validations.isTypeValid(itemObj.type);
@@ -192,7 +210,9 @@ router
         title: "Edit Item",
         item: {
           ...item,
-          dateLostOrFound: helpers.formatDate(new Date(item.dateLostOrFound)),
+          dateLostOrFound: helpers.getDateString(
+            new Date(item.dateLostOrFound)
+          ),
         },
         metaData: {
           dateLostOrFound: {
@@ -235,9 +255,11 @@ router
         itemId = checkId(itemId, "Item ID");
 
         itemObj.name = xssCheck(itemObj?.name);
-        if (!validations.isNameValid(itemOb.name)) {
+        if (!validations.isNameValid(itemObj?.name)) {
           throw new Error("Name field needs to have valid value");
         }
+
+        itemObj.description = xssCheck(itemObj?.description);
 
         itemObj.dateLostOrFound = xssCheck(itemObj?.dateLostOrFound);
         if (!validations.isDateValid(itemObj.dateLostOrFound)) {
@@ -445,7 +467,7 @@ router
             break;
           }
         }
-        return { ...c, createdAt: helpers.getDateString(c.createdAt) };
+        return { ...c, createdAt: helpers.formatDate(c.createdAt) };
       });
       let userId = checkId(item.createdBy, "User ID");
       user = await userDL.getUserById(userId);
@@ -525,7 +547,25 @@ router.route("/:id/suggestions").get(async (req, res) => {
   }
 
   try {
-    const suggestions = await itemsDL.getItemSuggestions(itemId);
+    let allUsers = await userDL.getAllUsers();
+    let suggestions = await itemsDL.getItemSuggestions(itemId);
+
+    if (suggestions?.length) {
+      suggestions = (suggestions || []).map((item) => {
+        for (user of allUsers) {
+          if (ObjectId(user._id).equals(item.createdBy)) {
+            item = { ...item, userInfo: user };
+            break;
+          }
+        }
+        return {
+          ...item,
+          createdAt: helpers.formatDate(new Date(item.createdAt)),
+          dateLostOrFound: helpers.formatDate(new Date(item.dateLostOrFound)),
+        };
+      });
+    }
+
     return res.render("item/suggestions", {
       title: "Suggestions",
       suggestions,

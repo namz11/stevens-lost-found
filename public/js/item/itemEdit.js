@@ -44,6 +44,7 @@ import { validations } from "/public/js/helpers.js";
         } else {
           const formData = new FormData();
           formData.append("name", form?.name?.value);
+          formData.append("description", form?.description?.value);
           formData.append("dateLostOrFound", form?.dateLostOrFound?.value);
           formData.append(
             "lostOrFoundLocation",
@@ -59,8 +60,12 @@ import { validations } from "/public/js/helpers.js";
             body: formData,
             headers,
           })
-            .then((resp) => resp.json())
+            .then((resp) => {
+              debugger;
+              resp.json();
+            })
             .then((res) => {
+              debugger;
               if (res.success) {
                 alert(res.message || "Item updated!");
                 editItemForm.reset();
@@ -75,37 +80,6 @@ import { validations } from "/public/js/helpers.js";
             });
         }
       });
-
-      // event listener - radio buttons
-      const typeRadioBtn = editItemForm.type;
-      if (typeRadioBtn) {
-        for (let i = 0; i < typeRadioBtn.length; i++) {
-          typeRadioBtn[i].addEventListener("change", function () {
-            editSecondaryItemForm.classList.remove("hide");
-            const dateElement = document.querySelector(
-              'label[for="itemDateLostOrFound"]'
-            );
-            const locElement = document.querySelector(
-              'label[for="itemLostOrFoundLocation"]'
-            );
-            const dateInput = document.getElementById("itemDateLostOrFound");
-            const locInput = document.getElementById("itemLostOrFoundLocation");
-            dateElement.innerHTML = "";
-            locElement.innerHTML = "";
-            if (this.value === "lost") {
-              dateElement.innerHTML =
-                "When did you lose the item?" + dateInput.outerHTML;
-              locElement.innerHTML =
-                "Where did you lose the item?" + locInput.outerHTML;
-            } else {
-              dateElement.innerHTML =
-                "When did you find the item?" + dateInput.outerHTML;
-              locElement.innerHTML =
-                "Where did you find the item?" + locInput.outerHTML;
-            }
-          });
-        }
-      }
 
       // event listener - picture input
       const pictureInput = document.querySelector("#itemPicture");

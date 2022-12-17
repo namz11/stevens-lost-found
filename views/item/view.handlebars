@@ -44,6 +44,16 @@
     </strong>
     {{item.createdAt}}
   </div>
+  <div>
+    <strong>
+      Contact them at
+    </strong>
+    <a href="mailto:{{user.email}}">
+      {{user.email}}
+    </a>
+    or
+    {{user.phone}}
+  </div>
   <div
     class="itemDisplayPicture my-3"
     style="background-image:url(http://localhost:3000/{{item.picture}})"

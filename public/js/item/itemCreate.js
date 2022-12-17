@@ -46,6 +46,7 @@ import { validations } from "/public/js/helpers.js";
         } else {
           const formData = new FormData();
           formData.append("name", form?.name?.value);
+          formData.append("description", form?.description?.value);
           formData.append("type", type);
           formData.append("dateLostOrFound", form?.dateLostOrFound?.value);
           formData.append(

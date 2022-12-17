@@ -8,15 +8,19 @@
       Items: Displaying {{items.length}} of {{count}} items
     </h3>
     {{! search }}
-    <div class="search-form">
+    <div>
       <input
-        id="search-form-input"
+        id="search-input"
         type="text"
-        placeholder="Search for items..."
+        placeholder="Search for name, description, location..."
+        class="w-50 me-3"
       />
-      <button id="search-form-button">
+      <button id="search-button" type="button" class="btn btn-primary">
         Search
       </button>
+      <span id="searchError" class="ps-3 text-danger hide">
+        Min 3 characters required to search
+      </span>
     </div>
     {{! sorting }}
     <div class="py-2 d-flex">
@@ -68,7 +72,7 @@
     {{#if items.length}}
       {{#each items}}
         <div class="suggestion">
-          <div class="content">
+          <div class="content {{#compare this.type "lost" operator="==="}}lost{{/compare}} {{#compare this.type "found" operator="==="}}found{{/compare}}">
             <div class="name">
               {{this.name}}
             </div>
@@ -106,34 +110,38 @@
               {{this.userInfo.firstName}}
               {{this.userInfo.lastName}}
             </div>
-            <div class="location">
-              {{#compare this.type "lost" operator="==="}}
-                Lost at:
-              {{/compare}}
-              {{#compare this.type "found" operator="==="}}
-                Found at:
-              {{/compare}}
-              {{this.lostOrFoundLocation}}
-            </div>
-            {{#compare this.type "found" operator="==="}}
-              <button
-                id="modal-btn"
-                class="button claim-button"
-                data-id="{{this._id}}"
-              >
-                Claim
-              </button>
-            {{/compare}}
             {{#compare this.type "lost" operator="==="}}
+              <div class="location">
+                Lost at:
+                <span class="fw-bold">
+                  {{this.lostOrFoundLocation}}
+                </span>
+              </div>
               <button
                 id="modal-btn"
-                class="button claim-button"
+                class="claim-button btn btn-success w-50 my-3"
                 data-id="{{this._id}}"
               >
                 Found
               </button>
             {{/compare}}
-            <a href="/items/{{this._id}}">
+            {{#compare this.type "found" operator="==="}}
+              <div class="location">
+                Found at:
+                <span class="fw-bold">
+                  {{this.lostOrFoundLocation}}
+                </span>
+              </div>
+              <button
+                id="modal-btn"
+                class="claim-button btn btn-warning w-50 my-3"
+                data-id="{{this._id}}"
+              >
+                Claim
+              </button>
+            {{/compare}}
+
+            <a href="/items/{{this._id}}" class="btn-link">
               See Details
             </a>
           </div>
