@@ -21,9 +21,11 @@ const main = async () => {
 
   let user1, user2, user3, user4, user5, user6;
   let item1, item2, item3, item4, item5, item6, item7; // lost items
-  let item8, item9, item10, item11; // lost items
+  let item8, item9, item10, item11, item12, item13; // lost items
+  let item14, item15, item16; // lost items
   let item101, item102, item103, item104, item105, item106; // found items
-  let item107, item108, item109, item110; // found items
+  let item107, item108, item109, item110, item111, item112; // found items
+  let item113, item114, item115; // found items
 
   //#region users
   try {
@@ -195,6 +197,51 @@ const main = async () => {
       dateLostOrFound: "2022-12-02T23:31",
       lostOrFoundLocation: "near griffit building side walk",
       createdBy: user6._id,
+    });
+    item12 = await itemsDL.createItem({
+      type: "lost",
+      name: "Umbrella",
+      description: "A black colour umbrella",
+      picture: "uploads/umbrella.png",
+      dateLostOrFound: "2022-12-02T23:31",
+      lostOrFoundLocation: "South Gateway 222",
+      createdBy: user2._id,
+    });
+    item13 = await itemsDL.createItem({
+      type: "lost",
+      name: "watch",
+      description: "Dilang Automatic Watch",
+      picture: "uploads/watch.png",
+      dateLostOrFound: "2022-12-02T23:31",
+      lostOrFoundLocation: "UCC Gym",
+      createdBy: user2._id,
+    });
+    item14 = await itemsDL.createItem({
+      type: "lost",
+      name: "Charger",
+      description: "a white colour iphone charger",
+      picture: "uploads/charger.png",
+      dateLostOrFound: "2022-12-02T23:31",
+      lostOrFoundLocation: "Library 2nd Floor",
+      createdBy: user2._id,
+    });
+    item15 = await itemsDL.createItem({
+      type: "lost",
+      name: "Bag",
+      description: "A red and black bag",
+      picture: "uploads/bag.png",
+      dateLostOrFound: "2022-12-02T23:31",
+      lostOrFoundLocation: "Babbio ",
+      createdBy: user2._id,
+    });
+    item16 = await itemsDL.createItem({
+      type: "lost",
+      name: "guess wallet",
+      description: "wallet with 300$",
+      picture: "uploads/wallet.png",
+      dateLostOrFound: "2022-12-02T23:31",
+      lostOrFoundLocation: "stevens shuttle gb777rr",
+      createdBy: user2._id,
     });
   } catch (e) {
     console.log(e);
