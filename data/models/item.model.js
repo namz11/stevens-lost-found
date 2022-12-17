@@ -15,6 +15,7 @@ class Item {
     // initialize other attributes
     this.comments = [];
     this.isClaimed = false;
+    this.claimedBy = "";
     this.createdAt = new Date().valueOf();
     this.createdBy = obj?.createdBy
       ? ObjectId(helpers.sanitizeString(obj?.createdBy))
