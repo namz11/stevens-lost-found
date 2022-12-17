@@ -45,7 +45,7 @@ const main = async () => {
         lastName: "patel",
         email: "vpatel10@stevens.edu",
         phoneNumber: "9876543210",
-        dob: "2000-02-23",
+        dob: "2000-03-23",
         password: hashedPassword,
       })
     );
@@ -55,7 +55,7 @@ const main = async () => {
         lastName: "patel",
         email: "apatel42@stevens.edu",
         phoneNumber: "9876543210",
-        dob: "2000-02-23",
+        dob: "2000-04-23",
         password: hashedPassword,
       })
     );
@@ -65,7 +65,7 @@ const main = async () => {
         lastName: "chaudhary",
         email: "lpavulur@stevens.edu",
         phoneNumber: "9876543210",
-        dob: "2000-02-23",
+        dob: "2000-05-23",
         password: hashedPassword,
       })
     );
@@ -75,7 +75,7 @@ const main = async () => {
         lastName: "thakkar",
         email: "rthakka6@stevens.edu",
         phoneNumber: "9876543210",
-        dob: "2000-02-23",
+        dob: "2000-06-23",
         password: hashedPassword,
       })
     );
@@ -87,7 +87,7 @@ const main = async () => {
         lastName: "hill",
         email: "nmashruwadmin@stevens.edu",
         phoneNumber: "9876543210",
-        dob: "2000-02-23",
+        dob: "2000-01-23",
         password: hashedPassword,
       })
     );
@@ -103,7 +103,7 @@ const main = async () => {
       name: "macbook pro",
       description: "m1 macbook pro 2021 model, space gray",
       picture: "uploads/macbook-pro.png",
-      dateLostOrFound: "2022-12-06T23:31",
+      dateLostOrFound: "2022-11-26T13:31",
       lostOrFoundLocation: "gateway south",
       createdBy: user1._id,
     });
@@ -112,7 +112,7 @@ const main = async () => {
       name: "earbuds",
       description: "nothing white earbuds signed by carl pei",
       picture: "uploads/nothing.jpeg",
-      dateLostOrFound: "2022-12-02T23:31",
+      dateLostOrFound: "2022-11-25T14:30",
       lostOrFoundLocation: "bowling arena",
       createdBy: user3._id,
     });
@@ -121,7 +121,7 @@ const main = async () => {
       name: "acer laptop",
       description: "acer laptop GREY color model abc34",
       picture: "uploads/acer.jpeg",
-      dateLostOrFound: "2022-12-02T23:31",
+      dateLostOrFound: "2022-12-01T12:23",
       lostOrFoundLocation: "babio",
       createdBy: user3._id,
     });
@@ -130,7 +130,7 @@ const main = async () => {
       name: "guess winter jacket",
       description: " black jacket with notes inside",
       picture: "uploads/guess-jacket.jpeg",
-      dateLostOrFound: "2022-12-02T23:31",
+      dateLostOrFound: "2022-11-29T10:30",
       lostOrFoundLocation: "tennis court",
       createdBy: user1._id,
     });
@@ -139,7 +139,7 @@ const main = async () => {
       name: "atilla attire",
       description: "atilla duck stevens mascot attire",
       picture: "uploads/atilla.jpg",
-      dateLostOrFound: "2022-12-02T23:31",
+      dateLostOrFound: "2022-12-04T20:03",
       lostOrFoundLocation: "babio 3rd floor",
       createdBy: user5._id,
     });
@@ -148,7 +148,7 @@ const main = async () => {
       name: "rayban glasses",
       description: "glasses in box, original rayban",
       picture: "uploads/glasses.png",
-      dateLostOrFound: "2022-12-02T23:31",
+      dateLostOrFound: "2022-11-30T14:10",
       lostOrFoundLocation: "ucc techflex",
       createdBy: user2._id,
     });
@@ -157,7 +157,7 @@ const main = async () => {
       name: "hard drive",
       description: "sony external hard drive",
       picture: "uploads/sony.jpeg",
-      dateLostOrFound: "2022-12-02T23:31",
+      dateLostOrFound: "2022-12-01T20:00",
       lostOrFoundLocation: "pierce dining",
       createdBy: user2._id,
     });
@@ -167,7 +167,7 @@ const main = async () => {
       description:
         "dior handbag with personal belongings like lipstick, charger, jewelry etc",
       picture: "uploads/handbag.png",
-      dateLostOrFound: "2022-12-02T23:31",
+      dateLostOrFound: "2022-12-06T15:01",
       lostOrFoundLocation: "howie 4th floor",
       createdBy: user1._id,
     });
@@ -176,7 +176,7 @@ const main = async () => {
       name: "cwid 20222343 duckcard",
       description: "",
       picture: "uploads/duckcard.png",
-      dateLostOrFound: "2022-12-02T23:31",
+      dateLostOrFound: "2022-11-18T09:00",
       lostOrFoundLocation: "buchard",
       createdBy: user4._id,
     });
@@ -185,7 +185,7 @@ const main = async () => {
       name: "guess wallet",
       description: "wallet with 300$",
       picture: "uploads/wallet.png",
-      dateLostOrFound: "2022-12-02T23:31",
+      dateLostOrFound: "2022-12-09T17:00",
       lostOrFoundLocation: "stevens shuttle gb777rr",
       createdBy: user2._id,
     });
@@ -194,7 +194,7 @@ const main = async () => {
       name: "my dog - arya",
       description: "golden pup",
       picture: "uploads/dog.jpeg",
-      dateLostOrFound: "2022-12-02T23:31",
+      dateLostOrFound: "2022-11-24T11:30",
       lostOrFoundLocation: "near griffit building side walk",
       createdBy: user6._id,
     });
@@ -212,36 +212,36 @@ const main = async () => {
       name: "watch",
       description: "Dilang Automatic Watch",
       picture: "uploads/watch.png",
-      dateLostOrFound: "2022-12-02T23:31",
+      dateLostOrFound: "2022-12-10T12:00",
       lostOrFoundLocation: "UCC Gym",
-      createdBy: user2._id,
+      createdBy: user5._id,
     });
     item14 = await itemsDL.createItem({
       type: "lost",
       name: "Charger",
       description: "a white colour iphone charger",
       picture: "uploads/charger.png",
-      dateLostOrFound: "2022-12-02T23:31",
+      dateLostOrFound: "2022-12-12T12:30",
       lostOrFoundLocation: "Library 2nd Floor",
-      createdBy: user2._id,
+      createdBy: user5._id,
     });
     item15 = await itemsDL.createItem({
       type: "lost",
       name: "Bag",
       description: "A red and black bag",
       picture: "uploads/bag.png",
-      dateLostOrFound: "2022-12-02T23:31",
-      lostOrFoundLocation: "Babbio ",
-      createdBy: user2._id,
+      dateLostOrFound: "2022-12-11T12:51",
+      lostOrFoundLocation: "Babbio 320",
+      createdBy: user3._id,
     });
     item16 = await itemsDL.createItem({
       type: "lost",
-      name: "guess wallet",
-      description: "wallet with 300$",
-      picture: "uploads/wallet.png",
-      dateLostOrFound: "2022-12-02T23:31",
-      lostOrFoundLocation: "stevens shuttle gb777rr",
-      createdBy: user2._id,
+      name: "Gloves",
+      description: "Columbia Gloves",
+      picture: "uploads/gloves.png",
+      dateLostOrFound: "2022-12-10T23:59",
+      lostOrFoundLocation: "North Gateway 1st floor",
+      createdBy: user4._id,
     });
   } catch (e) {
     console.log(e);
@@ -255,7 +255,7 @@ const main = async () => {
       name: "macbook air laptop",
       description: "m1 macbook air 2021 model, pink ",
       picture: "uploads/macbook-air.jpg",
-      dateLostOrFound: "2022-12-02T23:31",
+      dateLostOrFound: "2022-12-10T23:59",
       lostOrFoundLocation: "north building",
       createdBy: user2._id,
     });
@@ -264,7 +264,7 @@ const main = async () => {
       name: "michael kors jacket",
       description: "winter jacket with hoodie",
       picture: "uploads/mk-jacket.jpeg",
-      dateLostOrFound: "2022-12-02T23:31",
+      dateLostOrFound: "2022-12-09T17:00",
       lostOrFoundLocation: "outside gateway south",
       createdBy: user3._id,
     });
@@ -273,16 +273,16 @@ const main = async () => {
       name: "duckcard",
       description: "20112468 cwid card",
       picture: "uploads/duckcard2.png",
-      dateLostOrFound: "2022-12-02T23:31",
+      dateLostOrFound: "2022-12-11T12:51",
       lostOrFoundLocation: "babio viewing area",
       createdBy: user3._id,
     });
-    item14 = await itemsDL.createItem({
+    item104 = await itemsDL.createItem({
       type: "found",
       name: "samsung pen",
       description: "stylus pen",
       picture: "uploads/samsung-pen.jpg",
-      dateLostOrFound: "2022-12-02T23:31",
+      dateLostOrFound: "2022-12-03T19:00",
       lostOrFoundLocation: "ucc",
       createdBy: user1._id,
     });
@@ -291,7 +291,7 @@ const main = async () => {
       name: "ipad",
       description: "ipad black",
       picture: "uploads/ipad.png",
-      dateLostOrFound: "2022-12-02T23:31",
+      dateLostOrFound: "2022-11-29T12:00",
       lostOrFoundLocation: "babio 6rd floor",
       createdBy: user5._id,
     });
@@ -300,7 +300,7 @@ const main = async () => {
       name: "credit card",
       description: "amex gold credit card",
       picture: "uploads/cc.jpeg",
-      dateLostOrFound: "2022-12-02T23:31",
+      dateLostOrFound: "2022-11-19T13:45",
       lostOrFoundLocation: "ucc techflex",
       createdBy: user2._id,
     });
@@ -309,7 +309,7 @@ const main = async () => {
       name: "duckcard-2144402",
       description: "sony external hard drive",
       picture: "uploads/duckcard3.png",
-      dateLostOrFound: "2022-12-02T23:31",
+      dateLostOrFound: "2022-12-01T14:05",
       lostOrFoundLocation: "library",
       createdBy: user2._id,
     });
@@ -319,7 +319,7 @@ const main = async () => {
       description:
         "dior handbag with personal belongings like lipstick, charger, jewelry etc",
       picture: "uploads/lipstick.jpeg",
-      dateLostOrFound: "2022-12-02T23:31",
+      dateLostOrFound: "2022-12-09T10:45",
       lostOrFoundLocation: "gym",
       createdBy: user1._id,
     });
@@ -328,7 +328,7 @@ const main = async () => {
       name: "cowboy hat",
       description: "",
       picture: "uploads/hat.jpeg",
-      dateLostOrFound: "2022-12-02T23:31",
+      dateLostOrFound: "2022-12-05T14:00",
       lostOrFoundLocation: "football ground",
       createdBy: user4._id,
     });
@@ -337,9 +337,54 @@ const main = async () => {
       name: "card wallet",
       description: "wallet with many cards",
       picture: "uploads/wallet2.jpg",
-      dateLostOrFound: "2022-12-02T23:31",
+      dateLostOrFound: "2022-11-24T12:13",
       lostOrFoundLocation: "admin office",
       createdBy: user2._id,
+    });
+    item111 = await itemsDL.createItem({
+      type: "found",
+      name: "Laptop sleeve ",
+      description: "a blue laptop sleeve",
+      picture: "uploads/sleeve.jpg",
+      dateLostOrFound: "2022-11-19T13:45",
+      lostOrFoundLocation: "UCC Gallery",
+      createdBy: user2._id,
+    });
+    item112 = await itemsDL.createItem({
+      type: "found",
+      name: "A gym shaker",
+      description: "A black shaker",
+      picture: "uploads/shaker.jpeg",
+      dateLostOrFound: "2022-12-09T16:00",
+      lostOrFoundLocation: "Schaefer Gym",
+      createdBy: user3._id,
+    });
+    item113 = await itemsDL.createItem({
+      type: "found",
+      name: "Electric Scooter",
+      description: "Hiboy Scooter",
+      picture: "uploads/scooter.png",
+      dateLostOrFound: "2022-11-20T15:35",
+      lostOrFoundLocation: "outside howe center",
+      createdBy: user3._id,
+    });
+    item114 = await itemsDL.createItem({
+      type: "found",
+      name: "Powerbank",
+      description: "a white powerbank",
+      picture: "uploads/powerbank.jpg",
+      dateLostOrFound: "2022-12-04T13:41",
+      lostOrFoundLocation: "Library",
+      createdBy: user1._id,
+    });
+    item115 = await itemsDL.createItem({
+      type: "found",
+      name: "Keys",
+      description: "bunch of keys with stevens keychain",
+      picture: "uploads/keys.png",
+      dateLostOrFound: "2022-11-29T19:40",
+      lostOrFoundLocation: "Pierce Dining",
+      createdBy: user5._id,
     });
   } catch (e) {
     console.log(e);
@@ -347,7 +392,7 @@ const main = async () => {
   //#endregion
   // await connection.closeConnection();
 
-  console.log("DB seed successful. There are 6 users & 21 items.");
+  console.log("DB seed successful. There are 6 users & 31 items.");
   await connection.closeConnection();
 };
 
