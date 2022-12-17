@@ -10,7 +10,7 @@ const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
     user: "stevenslostandfound@gmail.com",
-    pass: "nobxkeewzuecsyma",
+    pass: "kmuzbvuvqjljvrsr",
   },
 });
 
@@ -63,21 +63,31 @@ const sendListingUpdateEmail = async ({
   actorId,
   actorNumber,
   action,
+  finderOrOwner,
 }) => {
   try {
     const mailOptions = {
       from: "stevenslostandfound@gmail.com",
       to: userId,
       subject: `Update: ${actor} has ${action} your item`,
-      html: `<p>Hi <strong>${user}</strong>, your <em>"${userItem}"</em> has been <strong>${action}</strong> by <em>${actor}</em>.</p> <br> 
-      <p>Here are the contact details of <em>${actor}</em>:</p><br> 
-      <ul>
-      <li>Name: ${actor}</li>
-      <li>Email: <a href = "mailto: ${actorId}">${actorId}</a></li>
-      <li>Number: ${actorNumber}</li>
-      <li>Has: ${action}</li>
-      </ul>`,
-      // TODO (AMAN): Display an image of the item
+      html: `<p>Dear <strong>${user}</strong>, <br>
+
+      We are glad to inform you that a '${action}' report for your <em>"${userItem}"</em> has been received. Feel free to contact the ${finderOrOwner} using the details given below:<br>
+
+           <ul>
+           <li>Name: ${actor}</li>
+           <li>Email: <a href = "mailto: ${actorId}">${actorId}</a></li>
+           <li>Number: ${actorNumber}</li>
+           </ul>
+
+      <br>
+      Please contact <em>${actor}</em> to arrange for the return/pickup of your item.<br>
+      <br>
+      Thank you for your patience.
+      <br>
+      <br>
+      Cheers,<br>
+      Stevens - Lost & Found`,
     };
 
     // Handle the result of the sendMail call
@@ -94,7 +104,7 @@ const sendListingUpdateEmail = async ({
 };
 
 const sendListingUpdateEmailToActor = async (
-  { user, userId, userItem, userNumber, actor, actorId, action },
+  { user, userId, userItem, userNumber, actor, actorId, action, finderOrOwner },
   res
 ) => {
   try {
@@ -102,12 +112,27 @@ const sendListingUpdateEmailToActor = async (
       from: "stevenslostandfound@gmail.com",
       to: actorId,
       subject: `Update for ${action} item: Here are the contact details for "${userItem}"`,
-      html: `<p>Hi ${actor}, here are the contact details of <em>${user}</em>, who posted for <em>${userItem}</em>:</p><br> 
-      <ul>
-      <li>Name: ${user}</li>
-      <li>Email: <a href = "mailto: ${userId}">${userId}</a></li>
-      <li>Number: ${userNumber}</li>
-      </ul>`,
+      html: `<p>Hi <strong>${actor}</strong>, <br>
+
+      We have received a <strong>'${action}'</strong> report for the item <em>"${userItem}"</em> by you. We have forwarded your contact information to the ${finderOrOwner} and encouraged them to reach out to you to arrange for the return/pickup of the item.<br>
+
+In the meantime, please do not hesitate to contact the ${finderOrOwner} using the following details if you need to discuss anything further:<br>
+      
+           <ul>
+           <li>Name: ${user}</li>
+           <li>Email: <a href = "mailto: ${userId}">${userId}</a></li>
+           <li>Number: ${userNumber}</li>
+           </ul>
+      <br>
+      Feel free to contact <em>${user}</em> to arrange for the return/pickup of your item.<br>
+      We are grateful for your efforts and hope to see you again soon!
+
+<br>
+<br>
+
+      Sincerely,<br>
+      Stevens - Lost & Found`,
+
       // TODO (AMAN): Display an image of the item
     };
 
