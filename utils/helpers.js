@@ -78,7 +78,7 @@ const authHelpers = {
     var todaysDate = new Date();
     yyyy = todaysDate.getFullYear() - 13;
     mm = todaysDate.getMonth() + 1;
-    dd = todaysDate.getDateString();
+    dd = todaysDate.getDate();
 
     tDate = `${mm}/${dd}/${yyyy}`;
 
