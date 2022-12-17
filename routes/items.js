@@ -302,50 +302,159 @@ router.route("/:id/comment").post(async (req, res) => {
   }
 });
 
-router.route("/:id/status").put(async (req, res) => {
-  // TODO (AMAN): Pass Actor Details Using Session
+// router.route("/:id/status").put(async (req, res) => {
+//   // router.route("/items/:id/status").put(async (req, res) => {
 
-  // get item details
-  theItem = itemsDL.getItemById(req.body.itemId);
+//   // TODO (AMAN): Pass Actor Details Using Session
 
-  // get user details
-  theUser = userDL.getUserById(req.body.userId);
+//   console.log("I am in routes");
+
+//   // get item details
+//   theItem = itemsDL.getItemById(req.body.itemId);
+
+//   // get user details
+//   theUser = userDL.getUserById(req.body.userId);
+
+//   if (theItem.type == "lost") {
+//     action = "Found";
+//   } else if (theItem.type == "found") {
+//     action = "Claim";
+//   }
+//   // update isClaimed status
+//   itIsClaimed = itemsDL.updateIsClaimedStatus(itemId);
+
+//   if (!itIsClaimed) throw new Error("Failed to update the status");
+//   console.log("I am in routes mid");
+//   // Send Email
+//   try {
+//     const toUser = sendListingUpdateEmail(
+//       {
+//         user: theUser.firstName,
+//         userId: theUser.email,
+//         userItem: theItem.name,
+//         // TODO (AMAN): Pass Actor Details Using Session
+//         actor: req.session.passport.firstName,
+//         actorId: req.session.passport.email,
+//         actorNumber: req.session.passport.phone,
+//         action: action,
+//       },
+//       res
+//     );
+
+//     const toActor = sendListingUpdateEmailToActor(
+//       {
+//         user: theUser.firstName,
+//         userId: theUser.email,
+//         userItem: theItem.name,
+//         // TODO (AMAN): Pass Actor Details Using Session
+//         actor: req.session.passport.firstName,
+//         actorId: req.session.passport.email,
+//         actorNumber: req.session.passport.phone,
+//         action: action,
+//       },
+//       res
+//     );
+
+//     if (!toUser)
+//       throw "Oops! Something Went Wrong: Failed to send email to user";
+//     if (!toActor) throw "Oops! Something Went Wrong: Failed to send email";
+
+//     // TODO (AMAN)
+//     // res.redirect("");
+//     // res.render("");
+//   } catch (e) {
+//     console.log(e);
+//     // TODO (AMAN)
+//     // res.redirect("");
+//     // res.render("");
+//   }
+// });
+// router.route("/:id/status").put(async (req, res) => {
+//   router.route("items/:id/status").put(async (req, res) => {
+
+//   console.log("I am in routes");
+//   // other code here
+// });
+
+router.route("/:id/status").post(async (req, res) => {
+  theItem = await itemsDL.getItemById(req.body.itemId);
+
+  theUser = await userDL.getUserById(theItem.createdBy);
 
   if (theItem.type == "lost") {
     action = "Found";
   } else if (theItem.type == "found") {
-    action = "Claim";
+    action = "Claimed";
   }
-  // update isClaimed status
-  itIsClaimed = itemsDL.updateIsClaimedStatus(itemId);
+
+  itIsClaimed = await itemsDL.updateIsClaimedStatus(req.body.itemId);
+  console.log(itIsClaimed);
 
   if (!itIsClaimed) throw new Error("Failed to update the status");
+  // console.log("I am in routes mid");
 
-  // Send Email
   try {
+    // TODO: Adjust this code once session thing gets fixed
+    // console.log(theUser.firstName);
+    // console.log(theUser.email);
+    // console.log(theItem.name);
+    // console.log(req.session.passport.firstName);
+    // console.log(req.session.passport.email);
+    // console.log(req.session.passport.phone);
+    // console.log(action);
+    //     const toUser = sendListingUpdateEmail(
+    //       {
+    //         user: theUser.firstName,
+    //         userId: theUser.email,
+    //         userItem: theItem.name,
+    //         // TODO (AMAN): Pass Actor Details Using Session
+    //         actor: req.session.passport.firstName,
+    //         actorId: req.session.passport.email,
+    //         actorNumber: req.session.passport.phone,
+    //         action: action,
+    //       },
+    //       res
+    //     );
+    //
+    // const toActor = sendListingUpdateEmailToActor(
+    //   {
+    //     user: theUser.firstName,
+    //     userId: theUser.email,
+    //     userItem: theItem.name,
+    //     // TODO (AMAN): Pass Actor Details Using Session
+    //     actor: req.session.passport.firstName,
+    //     actorId: req.session.passport.email,
+    //     actorNumber: req.session.passport.phone,
+    //     action: action,
+    //   },
+    //   res
+    // );
+    // TODO: Fix Session Variables
+    // Dummy
+    console.log(theUser.firstName);
+    console.log(theItem._id);
     const toUser = sendListingUpdateEmail(
       {
         user: theUser.firstName,
-        userId: theUser.email,
+        userId: "apatel42@stevens.edu",
         userItem: theItem.name,
         // TODO (AMAN): Pass Actor Details Using Session
-        actor: req.session.passport.firstName,
-        actorId: req.session.passport.email,
-        actorNumber: req.session.passport.phone,
+        actor: "Andrew",
+        actorId: "andrewbhaing@gmail.com",
+        actorNumber: "proper12",
         action: action,
       },
       res
     );
-
     const toActor = sendListingUpdateEmailToActor(
       {
         user: theUser.firstName,
-        userId: theUser.email,
+        userId: "apatel42@stevens.edu",
         userItem: theItem.name,
+        userNumber: theUser.phone,
         // TODO (AMAN): Pass Actor Details Using Session
-        actor: req.session.passport.firstName,
-        actorId: req.session.passport.email,
-        actorNumber: req.session.passport.phone,
+        actor: "Andrew",
+        actorId: "andrewbhaing@gmail.com",
         action: action,
       },
       res
@@ -354,16 +463,16 @@ router.route("/:id/status").put(async (req, res) => {
     if (!toUser)
       throw "Oops! Something Went Wrong: Failed to send email to user";
     if (!toActor) throw "Oops! Something Went Wrong: Failed to send email";
-
-    // TODO (AMAN)
-    // res.redirect("");
-    // res.render("");
   } catch (e) {
     console.log(e);
-    // TODO (AMAN)
     // res.redirect("");
     // res.render("");
   }
+
+  // res.json({
+  //   success: true,
+  //   message: "Item Claimed",
+  // });
 });
 
 router
@@ -487,90 +596,6 @@ router.route("/:id/suggestions").get(async (req, res) => {
 });
 
 module.exports = router;
-
-//#region new code
-// router.route("/listing").get(async (req, res) => {
-//   var noMatch = null;
-//   if(req.query.search){
-//       const buttonId = req.query.buttonId;
-//       if (buttonId === "search-form-lost-button") { //This condition will take care of dynamic content loading
-//           // Handle button 1 click...
-//           const regex = new RegExp(escapeRegex(req.query.search), 'gi');
-//           // Get all items from DB
-//           const itemDB = await itemsCollection();
-//           let d = itemDB.find({name: regex, lostOrFoundLocation: regex, description: regex}, function(err, allListings){
-//               if(err){
-//                   console.log(err);
-//               } else {
-//                   if(allListings.length < 1) {
-//                       noMatch = "No listings match that query, please try again.";
-//                   }
-//                   res.json({ data1: allListings, noMatch: noMatch }); // Return JSON response
-//               }
-//           });
-//       }
-
-//        else if (buttonId === "search-form-found-button") {
-//   // Handle button 2 click... //This condition will take care of dynamic content loading
-//   // If this happens use .html() upon success in ajax reuest to put the data into the html element
-//   const regex = new RegExp(escapeRegex(req.query.search), 'gi');
-//   // Get all items from DB
-//   const itemDB = await itemsCollection();
-//   let d = itemDB.find({name: regex, lostOrFoundLocation: regex, description: regex}, function(err, allListings){
-//       if(err){
-//           console.log(err);
-//       } else {
-//           if(allListings.length < 1) {
-//               noMatch = "No listings match that query, please try again.";
-//           }
-//           res.json({ data2: allListings, noMatch: noMatch }); // Return JSON response
-//       }
-//   });
-// }
-// } else{ //This code will load the listings default
-
-// const page1 = parseInt(req.query.page1) || 1;
-// const page2 = parseInt(req.query.page2) || 1;
-// let limit = 5;
-// const startIndex1 = (page1 - 1) * limit;
-// const endIndex1 = page1 * limit;
-// const startIndex2 = (page2 - 1) * limit;
-// const endIndex2 = page2 * limit;
-// let sortItem2 = req.body.sortItem1 || "createdAt";
-// let sortItem1 = req.body.sortItem2 || "createdAt";
-
-// if(req.query.search){
-
-// }
-
-// let data1 = await itemsDL.fetchingLostData(sortItem1);
-// let data2 = await itemsDL.fetchingFoundData(sortItem2);
-
-// if (endIndex1 > data1.length) {
-//   endIndex1 = data1.length - 1;
-// }
-// if (endIndex2 > data2.length) {
-//   endIndex2 = data2.length - 1;
-// }
-// if (startIndex1 < 0) {
-//   startIndex1 = 0;
-// }
-// if (startIndex2 < 0) {
-//   startIndex2 = 0;
-// }
-
-// data1 = data1.slice(startIndex1, endIndex1);
-// data2 = data2.slice(startIndex2, endIndex2);
-
-// return res.render("listing/listing", {
-//   data1: data1,
-//   data2: data2,
-//   page1: page1,
-//   page2: page2,
-// });
-// }
-// });
-//#endregion
 
 // Paginated
 // router.route("/my-listings/:id").get(async (req, res) => {
