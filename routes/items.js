@@ -440,9 +440,10 @@ router.route("/:id/status").post(async (req, res) => {
 router
   .route("/:id")
   .get(async (req, res) => {
-    let id = xssCheck(req.params.id);
-    let user, item, authenticatedUserId;
+    let id, user, item, authenticatedUserId;
+
     try {
+      id = xssCheck(req.params.id);
       id = checkId(id, "Item ID");
     } catch (e) {
       return res.status(400).send(e);
@@ -473,20 +474,21 @@ router
       let userId = checkId(item.createdBy, "User ID");
       user = await userDL.getUserById(userId);
       authenticatedUserId = req?.session?.passport?.user?._id;
+
+      const allowActions =
+        ObjectId(user._id).equals(authenticatedUserId) && !item.isClaimed;
+      let titleType = item.type.charAt(0).toUpperCase() + item.type.slice(1);
+      let titleName = item.name.charAt(0).toUpperCase() + item.name.slice(1);
+      return res.render("item/view", {
+        title: `${titleName} - ${titleType}`,
+        item,
+        user,
+        allowActions,
+        action: `/items/${id}/comment`,
+      });
     } catch (e) {
       return res.status(500).send("Internal Server Error");
     }
-    const allowActions =
-      ObjectId(user._id).equals(authenticatedUserId) && !item.isClaimed;
-    let titleType = item.type.charAt(0).toUpperCase() + item.type.slice(1);
-    let titleName = item.name.charAt(0).toUpperCase() + item.name.slice(1);
-    return res.render("item/view", {
-      title: `${titleName} - ${titleType}`,
-      item,
-      user,
-      allowActions,
-      action: `/items/${id}/comment`,
-    });
   })
   .delete(async (req, res) => {
     // delete item
