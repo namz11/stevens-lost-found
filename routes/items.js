@@ -1,4 +1,5 @@
 const express = require("express");
+const path = require("path");
 const { ObjectId } = require("mongodb");
 const router = express.Router();
 const { checkId, helpers, validations, xssCheck } = require("../utils/helpers");
@@ -17,14 +18,18 @@ router.get("/", (req, res) => {
 router.route("/listing/:type").get(async (req, res) => {
   try {
     const type = helpers.sanitizeString(req.params.type).toLowerCase();
+    if (type !== "lost" && type !== "found") {
+      return res.status(404).sendFile(path.resolve("static/404.html"));
+    }
+
     // item listing page - paginated
     const query = new QueryParams(
       { ...req.query, type },
-      { sortBy: "dateAdded" }
+      { sortBy: "createdAt" }
     );
     let allUsers = await userDL.getAllUsers();
     let data = await itemsDL.getPaginatedItems(query);
-    if (data?.item?.length) {
+    if (data?.items?.length) {
       data.items = (data?.items || []).map((item) => {
         for (user of allUsers) {
           if (ObjectId(user._id).equals(item.createdBy)) {
@@ -33,20 +38,25 @@ router.route("/listing/:type").get(async (req, res) => {
           }
         }
         return {
-          ...c,
-          createdAt: helpers.getDate(item.createdAt),
-          dateLostOrFound: helpers.getDate(item.dateLostOrFound),
+          ...item,
+          createdAt: helpers.getDate(new Date(item.createdAt)),
+          dateLostOrFound: helpers.getDate(new Date(item.dateLostOrFound)),
         };
       });
     }
-
+    const x = new QueryParams().deserialize(query);
     return res.render("listing/listing", {
       ...data,
       type,
-      query,
+      query: x,
+      nextClass:
+        query.size * query.page < data.count
+          ? "page-link"
+          : "page-link disabled",
+      prevClass: query.page != 1 ? "page-link" : "page-link disabled",
     });
   } catch (e) {
-    return res.status(400).send(e);
+    return res.status(500).send(e);
   }
 });
 
@@ -273,7 +283,7 @@ router
 
       try {
         itemObj.updatedBy = checkId(req.headers["x-user-id"], "User ID");
-        if (ObjectId(itemObj.updatedBy) !== ObjectId(itemById.createdBy)) {
+        if (!ObjectId(itemObj.updatedBy).equals(itemById.createdBy)) {
           throw new Error("You don't have authorization to do this action");
         }
       } catch (e) {

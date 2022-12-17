@@ -95,7 +95,7 @@ const updateItem = async (id, itemObj) => {
 
   itemObj.updatedBy = checkId(itemObj.updatedBy, "User ID");
   itemObj.updatedBy = ObjectId(itemObj.updatedBy);
-  if (itemObj.updatedBy !== ObjectId(itemById.createdBy)) {
+  if (!itemObj.updatedBy.equals(itemById.createdBy)) {
     throw new Error("You don't have authorization to do this action");
   }
   itemObj.updatedAt = new Date().valueOf();
@@ -259,9 +259,12 @@ const searchHelper = async (itemsData, searchString) => {
 const getPaginatedItems = async (query) => {
   const itemDB = await itemsCollection();
 
-  const count = await itemDB.find({ type: query?.type }).count();
+  const count = await itemDB.countDocuments({
+    type: query?.type,
+    isClaimed: false,
+  });
   const itemsList = await itemDB
-    .find({ type: query?.type })
+    .find({ type: query?.type, isClaimed: false })
     .sort({ [query?.sortBy]: query?.sortOrder })
     .skip(query?.page > 0 ? (query?.page - 1) * query?.size : 0)
     .limit(query?.size)

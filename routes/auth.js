@@ -208,7 +208,7 @@ router
             message: "Code has expired. Try again",
           });
         } else {
-          const compare = await bcrypt.compare(otp, verification.otp);
+          const compare = await bcrypt.compare(otp, verification?.otp || "");
           if (compare) {
             const userObj = await userDL.verifyUser(userId);
             await userVerificationDL.deleteMany(userId); // delete verification data after success

@@ -61,6 +61,32 @@ const helpers = {
       throw new Error("Invalid Date");
     }
   },
+  getQueryParams: (search) => {
+    let queryParams = {};
+    const params =
+      search.split("?").length > 1
+        ? location.search.split("?")[1].split("&")
+        : null;
+    (params || []).forEach((param) => {
+      param = param.split("=");
+      queryParams[param[0]] = decodeURIComponent(param[1] || "");
+    });
+    return Object.keys(queryParams).length > 0
+      ? queryParams
+      : new QueryParams({}, { sortBy: "dateAdded" });
+  },
+  getRequestParams(queryParams) {
+    let enCodedParamsStr = "";
+    const keys = Object.keys(queryParams);
+    keys.forEach((key) => {
+      if (helpers.sanitizeString("" + queryParams[key]) !== "") {
+        enCodedParamsStr += `${key}=${encodeURIComponent(
+          helpers.sanitizeString("" + queryParams[key])
+        )}&`;
+      }
+    });
+    return enCodedParamsStr.replace(/\&$/, "");
+  },
 };
 
 const validations = {
@@ -179,5 +205,38 @@ const authHelpers = {
     return str;
   },
 };
+
+class QueryParams {
+  constructor(values, defaultValues) {
+    if (values) {
+      Object.assign(this, values);
+      this.page = +this.page || 1;
+      this.size = +this.size || 10;
+      this.search = helpers.sanitizeString(this.search);
+      const sortField = helpers.sanitizeString(this.sort);
+
+      if (sortField !== "") {
+        this.sortBy =
+          sortField === "dateAdded"
+            ? "createdAt"
+            : sortField === "actionDate"
+            ? "dateLostOrFound"
+            : defaultValues?.sortBy;
+      } else {
+        this.sortBy;
+      }
+      this.sortBy = defaultValues?.sortBy;
+
+      this.sortOrder = +this.order || 1;
+    }
+  }
+
+  deserialize(query) {
+    return {
+      ...query,
+      sortBy: query.sortBy === "dateLostOrFound" ? "actionDate" : "createdAt",
+    };
+  }
+}
 
 export { helpers, regexValidators, validations, authHelpers };
