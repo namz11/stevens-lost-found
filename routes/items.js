@@ -1,9 +1,10 @@
 // TODO: Deal With Sessions
 
 const express = require("express");
+const path = require("path");
 const { ObjectId } = require("mongodb");
 const router = express.Router();
-const { checkId, helpers, validations } = require("../utils/helpers");
+const { checkId, helpers, validations, xssCheck } = require("../utils/helpers");
 const { itemImageUpload } = require("../utils/multer");
 const {
   sendListingUpdateEmail,
@@ -19,14 +20,18 @@ router.get("/", (req, res) => {
 router.route("/listing/:type").get(async (req, res) => {
   try {
     const type = helpers.sanitizeString(req.params.type).toLowerCase();
+    if (type !== "lost" && type !== "found") {
+      return res.status(404).sendFile(path.resolve("static/404.html"));
+    }
+
     // item listing page - paginated
     const query = new QueryParams(
       { ...req.query, type },
-      { sortBy: "dateAdded" }
+      { sortBy: "createdAt" }
     );
     let allUsers = await userDL.getAllUsers();
     let data = await itemsDL.getPaginatedItems(query);
-    if (data?.item?.length) {
+    if (data?.items?.length) {
       data.items = (data?.items || []).map((item) => {
         for (user of allUsers) {
           if (ObjectId(user._id).equals(item.createdBy)) {
@@ -35,20 +40,25 @@ router.route("/listing/:type").get(async (req, res) => {
           }
         }
         return {
-          ...c,
-          createdAt: helpers.getDate(item.createdAt),
-          dateLostOrFound: helpers.getDate(item.dateLostOrFound),
+          ...item,
+          createdAt: helpers.formatDate(new Date(item.createdAt)),
+          dateLostOrFound: helpers.formatDate(new Date(item.dateLostOrFound)),
         };
       });
     }
-
+    const x = new QueryParams().deserialize(query);
     return res.render("listing/listing", {
       ...data,
       type,
-      query,
+      query: x,
+      nextClass:
+        query.size * query.page < data.count
+          ? "page-link"
+          : "page-link disabled",
+      prevClass: query.page != 1 ? "page-link" : "page-link disabled",
     });
   } catch (e) {
-    return res.status(400).send(e);
+    return res.status(500).send(e);
   }
 });
 
@@ -81,8 +91,8 @@ router
       action: `/items/add`,
       metaData: {
         dateLostOrFound: {
-          max: helpers.getDate(new Date()),
-          min: helpers.getDate(
+          max: helpers.getDateString(new Date()),
+          min: helpers.getDateString(
             new Date(new Date().setFullYear(new Date().getFullYear() - 1))
           ),
         },
@@ -114,17 +124,24 @@ router
       }
 
       try {
-        if (!validations.isNameValid(itemObj?.name)) {
+        itemObj.name = xssCheck(itemObj?.name);
+        if (!validations.isNameValid(itemObj.name)) {
           throw new Error("Name field needs to have valid value");
         }
-        itemObj.type = validations.isTypeValid(itemObj?.type);
+
+        itemObj.type = xssCheck(itemObj?.type);
+        itemObj.type = validations.isTypeValid(itemObj.type);
         if (!itemObj.type) {
           throw new Error("Type field needs to have valid value");
         }
-        if (!validations.isDateValid(itemObj?.dateLostOrFound)) {
+
+        itemObj.dateLostOrFound = xssCheck(itemObj?.dateLostOrFound);
+        if (!validations.isDateValid(itemObj.dateLostOrFound)) {
           throw new Error("Date field needs to have valid value");
         }
-        if (!validations.isLocationValid(itemObj?.lostOrFoundLocation)) {
+
+        itemObj.lostOrFoundLocation = xssCheck(itemObj?.lostOrFoundLocation);
+        if (!validations.isLocationValid(itemObj.lostOrFoundLocation)) {
           throw new Error("Location field needs to have valid value");
         }
       } catch (e) {
@@ -171,12 +188,12 @@ router
         action: `/items/edit/${itemId}`,
         item: {
           ...item,
-          dateLostOrFound: helpers.getDate(new Date(item.dateLostOrFound)),
+          dateLostOrFound: helpers.formatDate(new Date(item.dateLostOrFound)),
         },
         metaData: {
           dateLostOrFound: {
-            max: helpers.getDate(new Date()),
-            min: helpers.getDate(
+            max: helpers.getDateString(new Date()),
+            min: helpers.getDateString(
               new Date(new Date().setFullYear(new Date().getFullYear() - 1))
             ),
           },
@@ -210,15 +227,21 @@ router
       }
 
       try {
-        itemId = checkId(req.params.id, "Item ID");
+        itemId = xssCheck(req.params.id);
+        itemId = checkId(itemId, "Item ID");
 
-        if (!validations.isNameValid(itemObj?.name)) {
+        itemObj.name = xssCheck(itemObj?.name);
+        if (!validations.isNameValid(itemOb.name)) {
           throw new Error("Name field needs to have valid value");
         }
-        if (!validations.isDateValid(itemObj?.dateLostOrFound)) {
+
+        itemObj.dateLostOrFound = xssCheck(itemObj?.dateLostOrFound);
+        if (!validations.isDateValid(itemObj.dateLostOrFound)) {
           throw new Error("Date field needs to have valid value");
         }
-        if (!validations.isLocationValid(itemObj?.lostOrFoundLocation)) {
+
+        itemObj.lostOrFoundLocation = xssCheck(itemObj?.lostOrFoundLocation);
+        if (!validations.isLocationValid(itemObj.lostOrFoundLocation)) {
           throw new Error("Location field needs to have valid value");
         }
       } catch (e) {
@@ -253,7 +276,7 @@ router
 
       try {
         itemObj.updatedBy = checkId(req.headers["x-user-id"], "User ID");
-        if (ObjectId(itemObj.updatedBy) !== ObjectId(itemById.createdBy)) {
+        if (!ObjectId(itemObj.updatedBy).equals(itemById.createdBy)) {
           throw new Error("You don't have authorization to do this action");
         }
       } catch (e) {
@@ -285,8 +308,11 @@ router.route("/:id/comment").post(async (req, res) => {
   let authenticatedUserId = req?.session?.passport?.user?._id;
 
   try {
+    id = xssCheck(id);
     id = checkId(id, "Item ID");
     authenticatedUserId = checkId(authenticatedUserId, "User ID");
+
+    comment = xssCheck(comment);
     if (!helpers.isStringValid(comment)) {
       throw new Error("Cannot have empty comment");
     }
@@ -302,84 +328,14 @@ router.route("/:id/comment").post(async (req, res) => {
   }
 });
 
-// router.route("/:id/status").put(async (req, res) => {
-//   // router.route("/items/:id/status").put(async (req, res) => {
-
-//   // TODO (AMAN): Pass Actor Details Using Session
-
-//   console.log("I am in routes");
-
-//   // get item details
-//   theItem = itemsDL.getItemById(req.body.itemId);
-
-//   // get user details
-//   theUser = userDL.getUserById(req.body.userId);
-
-//   if (theItem.type == "lost") {
-//     action = "Found";
-//   } else if (theItem.type == "found") {
-//     action = "Claim";
-//   }
-//   // update isClaimed status
-//   itIsClaimed = itemsDL.updateIsClaimedStatus(itemId);
-
-//   if (!itIsClaimed) throw new Error("Failed to update the status");
-//   console.log("I am in routes mid");
-//   // Send Email
-//   try {
-//     const toUser = sendListingUpdateEmail(
-//       {
-//         user: theUser.firstName,
-//         userId: theUser.email,
-//         userItem: theItem.name,
-//         // TODO (AMAN): Pass Actor Details Using Session
-//         actor: req.session.passport.firstName,
-//         actorId: req.session.passport.email,
-//         actorNumber: req.session.passport.phone,
-//         action: action,
-//       },
-//       res
-//     );
-
-//     const toActor = sendListingUpdateEmailToActor(
-//       {
-//         user: theUser.firstName,
-//         userId: theUser.email,
-//         userItem: theItem.name,
-//         // TODO (AMAN): Pass Actor Details Using Session
-//         actor: req.session.passport.firstName,
-//         actorId: req.session.passport.email,
-//         actorNumber: req.session.passport.phone,
-//         action: action,
-//       },
-//       res
-//     );
-
-//     if (!toUser)
-//       throw "Oops! Something Went Wrong: Failed to send email to user";
-//     if (!toActor) throw "Oops! Something Went Wrong: Failed to send email";
-
-//     // TODO (AMAN)
-//     // res.redirect("");
-//     // res.render("");
-//   } catch (e) {
-//     console.log(e);
-//     // TODO (AMAN)
-//     // res.redirect("");
-//     // res.render("");
-//   }
-// });
-// router.route("/:id/status").put(async (req, res) => {
-//   router.route("items/:id/status").put(async (req, res) => {
-
-//   console.log("I am in routes");
-//   // other code here
-// });
-
 router.route("/:id/status").post(async (req, res) => {
-  theItem = await itemsDL.getItemById(req.body.itemId);
+  // get item details
+  let itemId = xssCheck(req.body.itemId);
+  theItem = itemsDL.getItemById(theItem);
 
-  theUser = await userDL.getUserById(theItem.createdBy);
+  // get user details
+  let userId = xssCheck(req.body.userId);
+  theUser = userDL.getUserById(userId);
 
   if (theItem.type == "lost") {
     action = "Found";
@@ -435,27 +391,28 @@ router.route("/:id/status").post(async (req, res) => {
     console.log(theItem._id);
     const toUser = sendListingUpdateEmail(
       {
-        user: theUser.firstName,
-        userId: "apatel42@stevens.edu",
-        userItem: theItem.name,
+        user: xssCheck(theUser.firstName),
+        userId: xssCheck(theUser.email),
+        userItem: xssCheck(theItem.name),
         // TODO (AMAN): Pass Actor Details Using Session
-        actor: "Andrew",
-        actorId: "andrewbhaing@gmail.com",
-        actorNumber: "proper12",
-        action: action,
+        actor: xssCheck(someone.something),
+        actorId: xssCheck(someone.something),
+        actorNumber: xssCheck(someone.something),
+        action: xssCheck(someone.something),
       },
       res
     );
+
     const toActor = sendListingUpdateEmailToActor(
       {
-        user: theUser.firstName,
-        userId: "apatel42@stevens.edu",
-        userItem: theItem.name,
-        userNumber: theUser.phone,
+        user: xssCheck(theUser.firstName),
+        userId: xssCheck(theUser.email),
+        userItem: xssCheck(theItem.name),
         // TODO (AMAN): Pass Actor Details Using Session
-        actor: "Andrew",
-        actorId: "andrewbhaing@gmail.com",
-        action: action,
+        actor: xssCheck(someone.something),
+        actorId: xssCheck(someone.something),
+        actorNumber: xssCheck(someone.something),
+        action: xssCheck(someone.something),
       },
       res
     );
@@ -463,22 +420,17 @@ router.route("/:id/status").post(async (req, res) => {
     if (!toUser)
       throw "Oops! Something Went Wrong: Failed to send email to user";
     if (!toActor) throw "Oops! Something Went Wrong: Failed to send email";
+
+    // TODO (AMAN)
   } catch (e) {
     console.log(e);
-    // res.redirect("");
-    // res.render("");
   }
-
-  // res.json({
-  //   success: true,
-  //   message: "Item Claimed",
-  // });
 });
 
 router
   .route("/:id")
   .get(async (req, res) => {
-    let id = req.params.id;
+    let id = xssCheck(req.params.id);
     let user, item, authenticatedUserId;
     try {
       id = checkId(id, "Item ID");
@@ -490,8 +442,8 @@ router
       item = await itemsDL.getItemById(id);
       item = {
         ...item,
-        dateLostOrFound: helpers.getDate(new Date(item.dateLostOrFound)),
-        createdAt: helpers.getDate(new Date(item.createdAt)),
+        dateLostOrFound: helpers.formatDate(new Date(item.dateLostOrFound)),
+        createdAt: helpers.formatDate(new Date(item.createdAt)),
       };
     } catch (e) {
       return res.status(404).send("Item not found");
@@ -506,7 +458,7 @@ router
             break;
           }
         }
-        return { ...c, createdAt: helpers.getDate(c.createdAt) };
+        return { ...c, createdAt: helpers.getDateString(c.createdAt) };
       });
       let userId = checkId(item.createdBy, "User ID");
       user = await userDL.getUserById(userId);
@@ -526,7 +478,7 @@ router
   })
   .delete(async (req, res) => {
     // delete item
-    let id = req.params.id,
+    let id = xssCheck(req.params.id),
       item;
 
     try {
@@ -574,7 +526,8 @@ router.route("/:id/suggestions").get(async (req, res) => {
   // TODO validations
   let itemId;
   try {
-    itemId = checkId(req.params.id, "Item ID");
+    itemId = xssCheck(req.params.id);
+    itemId = checkId(itemId, "Item ID");
   } catch (e) {
     return res.status(400).json({
       success: false,

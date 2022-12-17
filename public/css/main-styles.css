@@ -48,3 +48,11 @@ body {
   background-position: center;
   background-size: cover;
 }
+
+.itemDisplayPicture-sm {
+  width: 320px;
+  height: 180px;
+  border: 1px solid black;
+  background-position: center;
+  background-size: cover;
+}

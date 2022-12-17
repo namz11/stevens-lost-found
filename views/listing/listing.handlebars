@@ -7,17 +7,16 @@
     </div>
 
     <h3>
-      Lost Items: Displaying
-      {{query.size}}
-      of
-      {{count}}
-      items
+      <span class="text-capitalize">
+        {{type}}
+      </span>
+      Items: Displaying {{items.length}} of {{count}} items
     </h3>
     <div class="py-2 d-flex">
       SORT BY:
 
       {{#compare query.sortBy "dateAdded" operator="==="}}
-        <span class="sort-item active" data-type="lost" data-field="dateAdded">
+        <span class="sort-item active" data-field="dateAdded">
           Date Added
           {{#compare query.sortOrder "1" operator="=="}}
             <span class="asc">
@@ -30,22 +29,21 @@
             </span>
           {{/compare}}
         </span>
-        <span class="sort-item">
-          Lost Date
+        <span class="sort-item text-capitalize" data-field="actionDate">
+          {{type}} Date
         </span>
       {{/compare}}
 
-      {{#compare query.sortBy "lostDate" operator="==="}}
-        <span class="sort-item">
+      {{#compare query.sortBy "actionDate" operator="==="}}
+        <span class="sort-item" data-field="dateAdded">
           Date Added
         </span>
         <span
-          class="sort-item active"
-          data-type="lost"
-          data-field="lostDate"
+          class="sort-item active text-capitalize"
+          data-field="actionDate"
           data-val=""
         >
-          Lost Date
+          {{type}} Date
           {{#compare query.sortOrder "1" operator="=="}}
             <span class="asc">
               ↑
@@ -87,6 +85,13 @@
             </div>
             <div class="description">
               {{this.description}}
+            </div>
+            <div
+              class="itemDisplayPicture-sm my-3"
+              style="background-image:url(http://localhost:3000/{{
+                this.picture
+              }})"
+            >
             </div>
           </div>
           <div class="action">
@@ -230,7 +235,7 @@
     <nav aria-label="Page navigation example">
       <ul class="pagination">
         <li class="page-item">
-          <a class="page-link" href="#" aria-label="Previous">
+          <a id="prev-btn" class="{{prevClass}}" aria-label="Previous">
             <span aria-hidden="true">
               &laquo;
             </span>
@@ -242,7 +247,7 @@
           </a>
         </li>
         <li class="page-item">
-          <a class="page-link" href="#" aria-label="Next">
+          <a id="next-btn" class="{{nextClass}}" aria-label="Next">
             <span aria-hidden="true">
               &raquo;
             </span>
