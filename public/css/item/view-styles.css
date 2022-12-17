@@ -4,8 +4,13 @@
   border-color: var(--black-color);
   padding: 6px;
 }
+
 .user {
   font-size: 12px;
   color: var(--black-color);
   font-style: italic;
+}
+
+.colorBlue {
+  color: #004db8 !important;
 }
