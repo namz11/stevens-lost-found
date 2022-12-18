@@ -67,10 +67,10 @@ import { validations } from "/public/js/helpers.js";
               if (res.success) {
                 alert(res.message || "Item created!");
                 itemForm.reset();
-                document.querySelector(
-                  "#itemDisplayPicture"
-                ).style.backgroundImage = "";
+                document.querySelector("#itemDisplayPicture").src = "";
+                document.querySelector("#itemDisplayPicture").alt = "";
                 secondaryItemForm.classList.add("hide");
+                location.href = `/items/${res.data._id}/suggestions`;
               } else {
                 alert(res.message || "Something went wrong.");
               }
@@ -134,10 +134,16 @@ import { validations } from "/public/js/helpers.js";
 
           const reader = new FileReader();
           reader.addEventListener("load", () => {
+            document
+              .querySelector("#itemDisplayPicture")
+              .classList.remove("hide");
             const uploaded_image = reader.result;
             document.querySelector(
               "#itemDisplayPicture"
-            ).style.backgroundImage = `url(${uploaded_image})`;
+            ).src = `${uploaded_image}`;
+            document.querySelector(
+              "#itemDisplayPicture"
+            ).alt = `this contains the image uploaded by user currently`;
           });
           reader.readAsDataURL(this.files[0]);
         }

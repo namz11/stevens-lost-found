@@ -44,16 +44,21 @@ body {
   width: 400px;
   height: 300px;
   border: 1px solid black;
-  background-position: center;
-  background-size: cover;
 }
-
+.itemDisplayPicture img {
+  object-fit: contain;
+  width: 100%;
+  height: 100%;
+}
+.itemDisplayPicture-sm img {
+  object-fit: contain;
+  width: 100%;
+  height: 100%;
+}
 .itemDisplayPicture-sm {
   width: 320px;
   height: 180px;
   border: 1px solid black;
-  background-position: center;
-  background-size: cover;
 }
 
 .colorBlueFooter {

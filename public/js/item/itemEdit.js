@@ -83,7 +83,8 @@ import { validations } from "/public/js/helpers.js";
       if (picPath) {
         document.querySelector(
           "#itemDisplayPicture"
-        ).style.backgroundImage = `url(http://localhost:3000/${picPath})`;
+        ).src = `http://localhost:3000/${picPath}`;
+        document.querySelector("#itemDisplayPicture").alt = `${picPath}`;
       }
 
       pictureInput.addEventListener("change", function () {
@@ -109,7 +110,10 @@ import { validations } from "/public/js/helpers.js";
             const uploaded_image = reader.result;
             document.querySelector(
               "#itemDisplayPicture"
-            ).style.backgroundImage = `url(${uploaded_image})`;
+            ).src = `${uploaded_image}`;
+            document.querySelector(
+              "#itemDisplayPicture"
+            ).alt = `this contains the image uploaded by user currently`;
           });
           reader.readAsDataURL(this.files[0]);
         }

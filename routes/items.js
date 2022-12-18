@@ -82,10 +82,19 @@ router.route("/my-listing").get(async (req, res) => {
     let items = await itemsDL.getItemsByUserId(authenticatedUserId);
     if (items?.length) {
       items = (items || []).map((item) => {
+        let foundClaimed = false,
+          foundCreated = false;
         for (user of allUsers) {
+          if (foundClaimed && foundCreated) break;
           if (ObjectId(user._id).equals(item.createdBy)) {
             item = { ...item, userInfo: user };
-            break;
+            foundCreated = true;
+          }
+          if (item.isClaimed) {
+            if (ObjectId(user._id).equals(item.createdBy)) {
+              item = { ...item, claimedUserInfo: user };
+              foundClaimed = true;
+            }
           }
         }
         return {
@@ -199,7 +208,7 @@ router
   .route("/edit/:id")
   .get(async (req, res) => {
     // edit item page
-    let itemId;
+    let itemId, authenticatedUserId;
     try {
       itemId = checkId(req.params.id, "Item ID");
     } catch (e) {
@@ -210,11 +219,22 @@ router
     }
 
     try {
+      authenticatedUserId = req?.session?.passport?.user?._id;
+      authenticatedUserId = checkId(authenticatedUserId, "User ID");
+    } catch (e) {
+      return res.status(400).send(e);
+    }
+
+    try {
       let item = await itemsDL.getItemById(itemId);
+
+      const allowEdit =
+        ObjectId(user._id).equals(authenticatedUserId) && !item.isClaimed;
 
       return res.render("item/edit", {
         action: `/items/edit/${itemId}`,
         title: "Edit Item",
+        allowEdit,
         item: {
           ...item,
           dateLostOrFound: helpers.getDateString(
@@ -435,6 +455,13 @@ router.route("/:id/status").post(async (req, res) => {
     },
     res
   );
+
+  if (finderOrOwner == "finder") {
+    finderOrOwner = "owner";
+  } else if (finderOrOwner == "owner") {
+    finderOrOwner = "finder";
+  }
+
   return sendListingUpdateEmailToActor(
     {
       user: xssCheck(userFullName),
@@ -550,8 +577,7 @@ router
   });
 
 router.route("/:id/suggestions").get(async (req, res) => {
-  // TODO validations
-  let itemId;
+  let itemId, item;
   try {
     itemId = xssCheck(req.params.id);
     itemId = checkId(itemId, "Item ID");
@@ -560,6 +586,44 @@ router.route("/:id/suggestions").get(async (req, res) => {
       success: false,
       message: e.message || "Something went wrong",
     });
+  }
+
+  try {
+    item = await itemsDL.getItemById(itemId);
+  } catch (e) {
+    return res.status(404).send("Item not found");
+  }
+
+  let authenticatedUserId = req?.session?.passport?.user?._id;
+  try {
+    authenticatedUserId = checkId(authenticatedUserId, "User ID");
+  } catch (e) {
+    return res.status(400).send(e);
+  }
+  if (item) {
+    try {
+      if (!ObjectId(item.createdBy).equals(authenticatedUserId)) {
+        throw new Error("You don't have authorization to do this action");
+      }
+    } catch (e) {
+      return res.status(401).json({
+        success: false,
+        message: "You don't have authorization to do this action",
+      });
+    }
+    try {
+      if (item.isClaimed) {
+        return res.status(401).json({
+          success: false,
+          message: "Item has already been claimed!",
+        });
+      }
+    } catch (e) {
+      return res.status(500).json({
+        success: false,
+        message: "Something went wrong!",
+      });
+    }
   }
 
   try {
@@ -584,6 +648,7 @@ router.route("/:id/suggestions").get(async (req, res) => {
 
     return res.render("item/suggestions", {
       title: "Suggestions",
+      item,
       suggestions,
     });
   } catch (e) {

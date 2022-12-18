@@ -4,9 +4,10 @@
   </h1>
 
   <form action="{{action}}" method="POST" id="itemForm">
-
     <div class="form-group">
-      <label>What do you want to report?</label>
+      <label>
+        What do you want to report?
+      </label>
       <label for="itemTypeLost" class="btn btn-primary">
         <input id="itemTypeLost" type="radio" name="type" value="lost" />
         I lost an item
@@ -91,7 +92,14 @@
       </div>
 
       <div class="form-group">
-        <div id="itemDisplayPicture" class="itemDisplayPicture"></div>
+        <div class="itemDisplayPicture">
+          <img
+            id="itemDisplayPicture"
+            src="http://localhost:3000/{{item.picture}}"
+            alt="{{item.picture}}"
+            class="hide"
+          />
+        </div>
       </div>
 
       <div class="form-group">

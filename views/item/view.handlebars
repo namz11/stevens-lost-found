@@ -54,11 +54,10 @@
     or
     {{user.phone}}
   </div>
-  <div
-    class="itemDisplayPicture my-3"
-    style="background-image:url(http://localhost:3000/{{item.picture}})"
-  >
+  <div class="itemDisplayPicture my-3">
+    <img src="http://localhost:3000/{{item.picture}}" alt="{{item.picture}}" />
   </div>
+
   <div class="my-3 d-flex">
     {{#if allowActions}}
       <a href="/items/edit/{{item._id}}" class="me-4 btn btn-primary px-4">

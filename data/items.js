@@ -112,16 +112,45 @@ const getItemSuggestions = async (id) => {
   id = checkId(id, "Item ID");
 
   const itemById = await getItemById(id);
-  const itemsList = await getItems();
 
+  let nameRegex = new RegExp([".*", itemById?.name, ".*"].join(""), "gi");
+  let descRegex = new RegExp(
+    [".*", itemById?.description, ".*"].join(""),
+    "gi"
+  );
+  const itemDB = await itemsCollection();
+  const itemsList = await itemDB
+    .find({
+      $and: [
+        {
+          $or: [
+            { name: nameRegex },
+            { description: nameRegex },
+            { lostOrFoundLocation: nameRegex },
+            { name: descRegex },
+            { description: descRegex },
+            { lostOrFoundLocation: descRegex },
+          ],
+        },
+        {
+          type: { $ne: itemById?.type },
+          isClaimed: false,
+        },
+      ],
+    })
+    .limit(10)
+    .toArray();
+
+  // const itemsList = await getItems();
   // get only opposite type suggestions
-  let suggestions = itemsList
-    .filter((it) => it.type !== itemById.type)
-    .map((item) => getLevenshteinScore(itemById, item))
-    .sort((x, y) => x.score - y.score)
-    .slice(0, 5);
+  // let suggestions = itemsList
+  //   .filter((it) => it.type !== itemById.type)
+  //   .map((item) => getLevenshteinScore(itemById, item))
+  //   .sort((x, y) => x.score - y.score)
+  //   .slice(0, 5);
+  // return suggestions;
 
-  return suggestions;
+  return itemsList;
 };
 
 const getLevenshteinScore = (obj1, obj2) => {

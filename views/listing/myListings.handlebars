@@ -38,10 +38,8 @@
             </div>
             <div
               class="itemDisplayPicture-sm my-3"
-              style="background-image:url(http://localhost:3000/{{
-                this.picture
-              }})"
             >
+    <img src="http://localhost:3000/{{this.picture}}" alt="{{this.picture}}" />
             </div>
           </div>
           <div class="action">
@@ -60,6 +58,12 @@
                 {{this.lostOrFoundLocation}}
               </span>
             </div>
+            {{#if this.isClaimed}}
+             <div class="claimed-by fs-6 text-dark p-3 my-2">
+             {{this.claimedUserInfo.firstName}} {{this.claimedUserInfo.lastName}}
+              claimed this item
+            </div>
+            {{/if}}
             <button
               type="button"
               data-id="{{this._id}}"
@@ -70,9 +74,11 @@
             <a href="/items/{{this._id}}" class="btn-link colorBlue">
               See Details
             </a>
+            {{#compare this.isClaimed false operator="==="}}
             <a href="/items/edit/{{this._id}}" class="my-2 btn-link colorBlue">
               Edit Details
             </a>
+            {{/compare}}
           </div>
         </div>
       {{/each}}
