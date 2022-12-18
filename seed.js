@@ -20,12 +20,14 @@ const main = async () => {
   );
 
   let user1, user2, user3, user4, user5, user6;
-  let item1, item2, item3, item4, item5, item6, item7; // lost items
-  let item8, item9, item10, item11, item12, item13; // lost items
-  let item14, item15, item16; // lost items
+  let item1, item2, item3, item4, item5, item6; // lost items
+  let item7, item8, item9, item10, item11, item12; // lost items
+  let item13, item14, item15, item16, item17, item18; // lost items
+  let item19, item20, item21; // lost items
   let item101, item102, item103, item104, item105, item106; // found items
   let item107, item108, item109, item110, item111, item112; // found items
-  let item113, item114, item115; // found items
+  let item113, item114, item115, item116, item117, item118; // found items
+  let item119, item120; // found items
 
   //#region users
   try {
@@ -249,6 +251,51 @@ const main = async () => {
       lostOrFoundLocation: "North Gateway 1st floor",
       createdBy: user4._id,
     });
+    item17 = await itemsDL.createItem({
+      type: "lost",
+      name: "Sun Glasses",
+      description: "Club Master black sunglsses",
+      picture: "uploads/sunglasses.png",
+      dateLostOrFound: "2022-12-01T20:00",
+      lostOrFoundLocation: "Tenis Count",
+      createdBy: user2._id,
+    });
+    item18 = await itemsDL.createItem({
+      type: "lost",
+      name: "Computer Mouse",
+      description: "black colour mouse",
+      picture: "uploads/mouse.png",
+      dateLostOrFound: "2022-12-06T15:01",
+      lostOrFoundLocation: "North Building 210",
+      createdBy: user1._id,
+    });
+    item19 = await itemsDL.createItem({
+      type: "lost",
+      name: "Water Bottle",
+      description: "A tupperware waterbottle",
+      picture: "uploads/bottle.png",
+      dateLostOrFound: "2022-11-18T09:00",
+      lostOrFoundLocation: "Howe center",
+      createdBy: user4._id,
+    });
+    item20 = await itemsDL.createItem({
+      type: "lost",
+      name: "Notebook",
+      description: "A notebook with spiral",
+      picture: "",
+      dateLostOrFound: "2022-12-09T17:00",
+      lostOrFoundLocation: "Library 2nd floor",
+      createdBy: user2._id,
+    });
+    item21 = await itemsDL.createItem({
+      type: "lost",
+      name: "Apple pencil",
+      description: "A white apple pencil gen 2",
+      picture: "",
+      dateLostOrFound: "2022-11-24T11:30",
+      lostOrFoundLocation: "Kiddie Hall",
+      createdBy: user6._id,
+    });
   } catch (e) {
     console.log(e);
   }
@@ -392,13 +439,58 @@ const main = async () => {
       lostOrFoundLocation: "Pierce Dining",
       createdBy: user5._id,
     });
+    item116 = await itemsDL.createItem({
+      type: "found",
+      name: "Book",
+      description: "Think and grow rich by N Hill",
+      picture: "uploads/cc.jpeg",
+      dateLostOrFound: "2022-11-19T13:45",
+      lostOrFoundLocation: "palmer garden",
+      createdBy: user2._id,
+    });
+    item117 = await itemsDL.createItem({
+      type: "found",
+      name: "Iphone",
+      description: "iphone 14 pro deep purple",
+      picture: "",
+      dateLostOrFound: "2022-12-01T14:05",
+      lostOrFoundLocation: "Tech flex",
+      createdBy: user2._id,
+    });
+    item118 = await itemsDL.createItem({
+      type: "found",
+      name: "Cap",
+      description: "A black nike cap",
+      picture: "uploads/cap.jpeg",
+      dateLostOrFound: "2022-12-09T10:45",
+      lostOrFoundLocation: "gym",
+      createdBy: user1._id,
+    });
+    item119 = await itemsDL.createItem({
+      type: "found",
+      name: "Macbook air",
+      description: "A gold colour macbook",
+      picture: "uploads/macbook.jpeg",
+      dateLostOrFound: "2022-12-05T14:00",
+      lostOrFoundLocation: "football ground",
+      createdBy: user4._id,
+    });
+    item120 = await itemsDL.createItem({
+      type: "found",
+      name: "Pendrive",
+      description: "128GB sony pendrive",
+      picture: "",
+      dateLostOrFound: "2022-11-24T12:13",
+      lostOrFoundLocation: "admin office",
+      createdBy: user2._id,
+    });
   } catch (e) {
     console.log(e);
   }
   //#endregion
   // await connection.closeConnection();
 
-  console.log("DB seed successful. There are 6 users & 31 items.");
+  console.log("DB seed successful. There are 6 users & 41 items.");
   await connection.closeConnection();
 };
 

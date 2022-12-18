@@ -29,6 +29,7 @@ router.route("/listing/:type").get(async (req, res) => {
       { ...req.query, type },
       { sortBy: "createdAt" }
     );
+    let titleType = type.charAt(0).toUpperCase() + type.slice(1); //this is to Capitalize Type for title page
     let allUsers = await userDL.getAllUsers();
     let data = await itemsDL.getPaginatedItems(query);
     if (data?.items?.length) {
@@ -50,6 +51,7 @@ router.route("/listing/:type").get(async (req, res) => {
     return res.render("listing/listing", {
       ...data,
       type,
+      title: `${titleType} Listing`,
       query: x,
       nextClass:
         query.size * query.page < data.count
@@ -72,10 +74,26 @@ router.route("/my-listing").get(async (req, res) => {
   }
 
   try {
-    const d = await itemsDL.getItemsByUserId(authenticatedUserId);
+    let allUsers = await userDL.getAllUsers();
+    let items = await itemsDL.getItemsByUserId(authenticatedUserId);
+    if (items?.length) {
+      items = (items || []).map((item) => {
+        for (user of allUsers) {
+          if (ObjectId(user._id).equals(item.createdBy)) {
+            item = { ...item, userInfo: user };
+            break;
+          }
+        }
+        return {
+          ...item,
+          createdAt: helpers.formatDate(new Date(item.createdAt)),
+          dateLostOrFound: helpers.formatDate(new Date(item.dateLostOrFound)),
+        };
+      });
+    }
 
     return res.render("listing/myListings", {
-      items: d,
+      items,
       title: "My Listings",
     });
   } catch (e) {
@@ -90,6 +108,7 @@ router
 
     return res.render("item/create", {
       action: `/items/add`,
+      title: "Add Item",
       metaData: {
         dateLostOrFound: {
           max: helpers.getDateString(new Date()),
@@ -129,6 +148,8 @@ router
         if (!validations.isNameValid(itemObj.name)) {
           throw new Error("Name field needs to have valid value");
         }
+
+        itemObj.description = xssCheck(itemObj?.description);
 
         itemObj.type = xssCheck(itemObj?.type);
         itemObj.type = validations.isTypeValid(itemObj.type);
@@ -187,9 +208,12 @@ router
 
       return res.render("item/edit", {
         action: `/items/edit/${itemId}`,
+        title: "Edit Item",
         item: {
           ...item,
-          dateLostOrFound: helpers.formatDate(new Date(item.dateLostOrFound)),
+          dateLostOrFound: helpers.getDateString(
+            new Date(item.dateLostOrFound)
+          ),
         },
         metaData: {
           dateLostOrFound: {
@@ -210,12 +234,6 @@ router
   .put(
     (req, res, next) => itemImageUpload(req, res, next),
     async (req, res) => {
-      itemImageUpload(req, res, function (err) {
-        if (err) {
-          return;
-        }
-      });
-
       let itemId, itemObj, itemById;
       try {
         itemObj = req.body;
@@ -232,9 +250,11 @@ router
         itemId = checkId(itemId, "Item ID");
 
         itemObj.name = xssCheck(itemObj?.name);
-        if (!validations.isNameValid(itemOb.name)) {
+        if (!validations.isNameValid(itemObj?.name)) {
           throw new Error("Name field needs to have valid value");
         }
+
+        itemObj.description = xssCheck(itemObj?.description);
 
         itemObj.dateLostOrFound = xssCheck(itemObj?.dateLostOrFound);
         if (!validations.isDateValid(itemObj.dateLostOrFound)) {
@@ -261,17 +281,24 @@ router
         });
       }
 
-      if (item.isClaimed) {
-        return res.status(400).json({
-          success: false,
-          message: "Item has been claimed. Action unavailable.",
-        });
-      }
+      try {
+        if (itemById.isClaimed) {
+          return res.status(400).json({
+            success: false,
+            message: "Item has been claimed. Action unavailable.",
+          });
+        }
 
-      if (helpers.compareItemObjects(itemById, itemObj)) {
-        return res.status(400).json({
+        if (helpers.compareItemObjects(itemById, itemObj)) {
+          return res.status(400).json({
+            success: false,
+            message: "Please change atleast 1 value to update",
+          });
+        }
+      } catch (e) {
+        return res.status(500).json({
           success: false,
-          message: "Please change atleast 1 value to update",
+          message: e.message || "Something went wrong",
         });
       }
 
@@ -305,7 +332,7 @@ router
 
 router.route("/:id/comment").post(async (req, res) => {
   let id = req.params.id;
-  const { comment } = req.body;
+  let { comment } = req.body;
   let authenticatedUserId = req?.session?.passport?.user?._id;
 
   try {
@@ -418,9 +445,10 @@ router.route("/:id/status").post(async (req, res) => {
 router
   .route("/:id")
   .get(async (req, res) => {
-    let id = xssCheck(req.params.id);
-    let user, item, authenticatedUserId;
+    let id, user, item, authenticatedUserId;
+
     try {
+      id = xssCheck(req.params.id);
       id = checkId(id, "Item ID");
     } catch (e) {
       return res.status(400).send(e);
@@ -446,23 +474,26 @@ router
             break;
           }
         }
-        return { ...c, createdAt: helpers.getDateString(c.createdAt) };
+        return { ...c, createdAt: helpers.formatDate(new Date(c.createdAt)) };
       });
       let userId = checkId(item.createdBy, "User ID");
       user = await userDL.getUserById(userId);
       authenticatedUserId = req?.session?.passport?.user?._id;
+
+      const allowActions =
+        ObjectId(user._id).equals(authenticatedUserId) && !item.isClaimed;
+      let titleType = item.type.charAt(0).toUpperCase() + item.type.slice(1);
+      let titleName = item.name.charAt(0).toUpperCase() + item.name.slice(1);
+      return res.render("item/view", {
+        title: `${titleName} - ${titleType}`,
+        item,
+        user,
+        allowActions,
+        action: `/items/${id}/comment`,
+      });
     } catch (e) {
       return res.status(500).send("Internal Server Error");
     }
-    const allowActions =
-      ObjectId(user._id).equals(authenticatedUserId) && !item.isClaimed;
-    return res.render("item/view", {
-      title: "Item Page",
-      item,
-      user,
-      allowActions,
-      action: `/items/${id}/comment`,
-    });
   })
   .delete(async (req, res) => {
     // delete item
@@ -524,8 +555,27 @@ router.route("/:id/suggestions").get(async (req, res) => {
   }
 
   try {
-    const suggestions = await itemsDL.getItemSuggestions(itemId);
+    let allUsers = await userDL.getAllUsers();
+    let suggestions = await itemsDL.getItemSuggestions(itemId);
+
+    if (suggestions?.length) {
+      suggestions = (suggestions || []).map((item) => {
+        for (user of allUsers) {
+          if (ObjectId(user._id).equals(item.createdBy)) {
+            item = { ...item, userInfo: user };
+            break;
+          }
+        }
+        return {
+          ...item,
+          createdAt: helpers.formatDate(new Date(item.createdAt)),
+          dateLostOrFound: helpers.formatDate(new Date(item.dateLostOrFound)),
+        };
+      });
+    }
+
     return res.render("item/suggestions", {
+      title: "Suggestions",
       suggestions,
     });
   } catch (e) {

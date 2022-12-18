@@ -44,6 +44,16 @@
     </strong>
     {{item.createdAt}}
   </div>
+  <div>
+    <strong>
+      Contact them at
+    </strong>
+    <a href="mailto:{{user.email}}" class="colorBlue">
+      {{user.email}}
+    </a>
+    or
+    {{user.phone}}
+  </div>
   <div
     class="itemDisplayPicture my-3"
     style="background-image:url(http://localhost:3000/{{item.picture}})"
@@ -76,9 +86,9 @@
 </div>
 
 <section class="p-4 mb-5">
-  <h2>
+  <h1>
     Comments
-  </h2>
+  </h1>
   {{#each item.comments}}
     <div class="comment">
       <div>

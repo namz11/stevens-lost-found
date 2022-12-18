@@ -51,7 +51,6 @@ import { helpers, validations, authHelpers } from "/public/js/helpers.js";
         })
           .then((resp) => {
             if (resp.status === 401) {
-              // TODO display error
               handleError("Wrong username or password");
               return null;
             } else {
@@ -64,7 +63,6 @@ import { helpers, validations, authHelpers } from "/public/js/helpers.js";
                 sessionStorage.setItem("user", JSON.stringify(res.data));
                 location.href = "/";
               } else {
-                // TODO display error if res.message is there else show alert
                 return handleError(res.message || "Something went wrong.");
               }
             }

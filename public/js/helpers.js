@@ -64,9 +64,7 @@ const helpers = {
   getQueryParams: (search) => {
     let queryParams = {};
     const params =
-      search.split("?").length > 1
-        ? location.search.split("?")[1].split("&")
-        : null;
+      search.split("?").length > 1 ? search.split("?")[1].split("&") : null;
     (params || []).forEach((param) => {
       param = param.split("=");
       queryParams[param[0]] = decodeURIComponent(param[1] || "");

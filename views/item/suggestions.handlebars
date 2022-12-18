@@ -1,7 +1,7 @@
-<div class="suggestions-wrapper">
+<div class="p-5">
   {{#each suggestions}}
     <div class="suggestion">
-      <div class="content">
+      <div class="content {{#compare this.type "lost" operator="==="}}lost{{/compare}} {{#compare this.type "found" operator="==="}}found{{/compare}}">
         <div class="name">
           {{this.name}}
         </div>
@@ -26,24 +26,51 @@
         <div class="description">
           {{this.description}}
         </div>
+         <div
+              class="itemDisplayPicture-sm my-3"
+              style="background-image:url(http://localhost:3000/{{
+                this.picture
+              }})"
+            >
+            </div>
       </div>
       <div class="action">
         <div class="author">
-          {{this.createdBy}}
+          {{this.userInfo.firstName}}
+          {{this.userInfo.lastName}}
         </div>
-        <div class="location">
-          {{#compare this.type "lost" operator="==="}}
+        {{#compare this.type "lost" operator="==="}}
+          <div class="location">
             Lost at:
-          {{/compare}}
-          {{#compare this.type "found" operator="==="}}
+            <span class="fw-bold">
+              {{this.lostOrFoundLocation}}
+            </span>
+          </div>
+          <button
+            id="modal-btn"
+            class="claim-button btn btn-success w-50 my-3"
+            data-id="{{this._id}}"
+          >
+            Found
+          </button>
+        {{/compare}}
+        {{#compare this.type "found" operator="==="}}
+          <div class="location">
             Found at:
-          {{/compare}}
-          {{this.lostOrFoundLocation}}
-        </div>
-        <button type="button" data-id="{{this._id}}" class="claim-btn">
-          Claim
-        </button>
-        <a href="/items/{{this._id}}">
+            <span class="fw-bold">
+              {{this.lostOrFoundLocation}}
+            </span>
+          </div>
+          <button
+            id="modal-btn"
+            class="claim-button btn btn-warning w-50 my-3"
+            data-id="{{this._id}}"
+          >
+            Claim
+          </button>
+        {{/compare}}
+
+        <a href="/items/{{this._id}}" class="btn-link">
           See Details
         </a>
       </div>
