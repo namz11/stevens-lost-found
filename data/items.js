@@ -180,8 +180,7 @@ const updateIsClaimedStatus = async (itemId, idOfTheFinderOrClaimer) => {
 
     return await getItemById(itemId);
   } else {
-    // TODO: Handle Else Case
-    return `Item Already ${action}`;
+    return "Item Already claimed";
   }
 };
 

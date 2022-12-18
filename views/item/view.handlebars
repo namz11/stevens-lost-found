@@ -64,7 +64,12 @@
       <a href="/items/edit/{{item._id}}" class="me-4 btn btn-primary px-4">
         Edit
       </a>
-      <button id="deleteBtn" type="button" class="me-4 btn btn-danger px-4">
+      <button
+        id="deleteBtn"
+        type="button"
+        data-id="{{item._id}}"
+        class="delete-btn me-4 btn btn-danger px-4"
+      >
         Delete
       </button>
     {{/if}}
@@ -99,6 +104,38 @@
     </div>
   {{/each}}
 
+  <div id="delete-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1>
+          Delete Listing?
+        </h1>
+        <span
+          class="close"
+          onclick="document.getElementById('delete-modal').style.display='none'"
+        >
+          &times;
+        </span>
+      </div>
+      <div class="modal-body">
+        <p>
+          Are you sure you want to delete this listing?
+        </p>
+        <button
+          type="button"
+          id="close-this-modal"
+          onclick="document.getElementById('delete-modal').style.display='none'"
+          class="button"
+        >
+          Cancel
+        </button>
+        <button id="confirm-delete-btn" class="button">
+          Confirm
+        </button>
+      </div>
+    </div>
+  </div>
+
   <div>
     <form id="comment-form" action="{{action}}" method="post">
       <label for="comment">
@@ -122,5 +159,24 @@
     </form>
   </div>
 </section>
+
+<div id="success_tic" class="modal-fade modal" role="dialog">
+  <div class="modal-content">
+    <div class="modal-body">
+      <div class="page-body">
+        <div class="head">
+          <h3 style="margin-top:5px;">
+            Listing Deleted Successfully!
+          </h3>
+          <div class="checkmark-circle">
+            <div class="background"></div>
+            <div class="checkmark draw"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <link rel="stylesheet" href="/public/css/item/view-styles.css" />
 <script src="/public/js/item/view.js" type="module"></script>

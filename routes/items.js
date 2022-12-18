@@ -65,8 +65,9 @@ router.route("/listing/:type").get(async (req, res) => {
 });
 
 router.route("/my-listing").get(async (req, res) => {
-  let authenticatedUserId = req?.session?.passport?.user?._id;
+  let authenticatedUserId;
   try {
+    authenticatedUserId = req?.session?.passport?.user?._id;
     authenticatedUserId = checkId(authenticatedUserId, "User ID");
   } catch (e) {
     return res.status(400).send(e);
@@ -356,34 +357,38 @@ router.route("/:id/comment").post(async (req, res) => {
 });
 
 router.route("/:id/status").post(async (req, res) => {
-  let itemId = xssCheck(req.body.itemId);
-  theItem = await itemsDL.getItemById(itemId);
-
-  // get user details
-  let userId = xssCheck(req.body.userId);
-  theUser = await userDL.getUserById(theItem.createdBy);
-
-  if (theItem.type == "lost") {
-    action = "found";
-  } else if (theItem.type == "found") {
-    action = "claimed";
-  }
-
-  if (theItem.type == "lost") {
-    finderOrOwner = "finder";
-  } else if (theItem.type == "found") {
-    finderOrOwner = "owner";
-  }
-  let idOfTheFinderOrClaimer = req.session.passport.user._id;
-  itIsClaimed = await itemsDL.updateIsClaimedStatus(
-    itemId,
-    idOfTheFinderOrClaimer
-  );
-  console.log(itIsClaimed);
-
-  if (!itIsClaimed) throw new Error("Failed to update the status");
-
   try {
+    let itemId = xssCheck(req.body.itemId);
+    theItem = await itemsDL.getItemById(itemId);
+
+    // get user details
+    let userId = xssCheck(req.body.userId);
+    theUser = await userDL.getUserById(theItem.createdBy);
+
+    if (theItem.type == "lost") {
+      action = "found";
+    } else if (theItem.type == "found") {
+      action = "claimed";
+    }
+
+    if (theItem.type == "lost") {
+      finderOrOwner = "finder";
+    } else if (theItem.type == "found") {
+      finderOrOwner = "owner";
+    }
+    let idOfTheFinderOrClaimer = req.session.passport.user._id;
+
+    itIsClaimed = await itemsDL.updateIsClaimedStatus(
+      itemId,
+      idOfTheFinderOrClaimer
+    );
+    console.log(itIsClaimed);
+
+    if (!itIsClaimed) throw new Error("Failed to update the status");
+
+    if (itIsClaimed === "Item Already claimed")
+      throw new Error("Already Claimed");
+
     userFullName = theUser.firstName + " " + theUser.lastName;
     actorFullName =
       req.session.passport.user.firstName +

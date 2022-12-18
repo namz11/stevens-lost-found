@@ -1,4 +1,3 @@
-// // Open Main Model
 function openDeleteModal(id) {
   const modal = document.querySelector("#delete-modal");
   const confirmBtn = document.querySelector("#confirm-delete-btn");
@@ -26,9 +25,6 @@ function closeSuccessModal() {
 
 (function () {
   document.addEventListener("DOMContentLoaded", function () {
-    // Handler when the DOM is fully loaded
-
-    //#region confirm btn
     let confirmBtn = document.getElementById("confirm-delete-btn");
     if (confirmBtn) {
       confirmBtn.addEventListener("click", (event) => {
@@ -62,9 +58,7 @@ function closeSuccessModal() {
           });
       });
     }
-    //#endregion
 
-    //#region delete btn
     let deleteButtons = document.getElementsByClassName("delete-btn");
     if (deleteButtons) {
       Array.from(deleteButtons).forEach((btn) => {
@@ -76,7 +70,5 @@ function closeSuccessModal() {
         });
       });
     }
-
-    //#endregion
   });
 })();
