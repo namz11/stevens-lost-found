@@ -25,7 +25,7 @@ const authHelpers = {
     if (!str) {
       throw new Error("Enter a email");
     }
-
+    str = str.toLowerCase();
     const stevensEmailRegex = /^[a-zA-Z0-9_.+-]+@stevens.edu$/;
     if (!stevensEmailRegex.test(str)) {
       throw new Error(
