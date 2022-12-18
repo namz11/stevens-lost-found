@@ -69,7 +69,7 @@ import { helpers } from "/public/js/helpers.js";
           return;
         }
         const queryParams = helpers.getQueryParams(`${location.search}`);
-        queryParams["search"] === searchTerm;
+        queryParams["search"] = searchTerm;
         queryParams["page"] = 1;
         const search = helpers.getRequestParams(queryParams);
         location.href = `${location.pathname}?${search}`;
@@ -77,8 +77,6 @@ import { helpers } from "/public/js/helpers.js";
     }
   });
 })();
-
-// Get DOM Elements
 
 (function () {
   document.addEventListener("DOMContentLoaded", function () {
