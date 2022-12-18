@@ -5,7 +5,7 @@ const {
   itemsCollection,
   usersCollection,
 } = require("../config/mongoCollections");
-const levenshtein = require("js-levenshtein");
+// const levenshtein = require("js-levenshtein");
 const { Comment } = require("./models/comment.model");
 
 const getItemById = async (id) => {
@@ -113,6 +113,7 @@ const getItemSuggestions = async (id) => {
 
   const itemById = await getItemById(id);
 
+  // TODO fix
   let nameRegex = new RegExp([".*", itemById?.name, ".*"].join(""), "gi");
   let descRegex = new RegExp(
     [".*", itemById?.description, ".*"].join(""),
@@ -167,7 +168,7 @@ const updateIsClaimedStatus = async (itemId, idOfTheFinderOrClaimer) => {
 
   let updatedItem = {
     isClaimed: true,
-    claimedBy: idOfTheFinderOrClaimer,
+    claimedBy: ObjectId(idOfTheFinderOrClaimer),
     claimedAt: new Date().valueOf(),
   };
 

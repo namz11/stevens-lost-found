@@ -28,7 +28,8 @@ const sendOTPVerificationEmail = async ({ userId, email, redirect }, res) => {
       from: "stevenslostandfound@gmail.com",
       to: email || "nmashruw@stevens.edu",
       subject: "Verify Your Email",
-      html: `<p>Enter <strong>${otp}</strong> in the <a href='http://localhost:3000/auth/verify'>app</a> to verify your email address and complete registration to start using the application.</p><p>Note: This otp is valid only for 24h hours.</p>`,
+      html: `<p>Enter <strong>${otp}</strong> in the <a href='http://localhost:3000/auth/verify'>app</a> to verify your email address and complete registration to start using the application.</p><p>Note: This otp is valid only for 24h hours.</p> <br><p>If you cannot click on the link provided, copy paste http://localhost:3000/auth/verify in your browser.</p><br><br> Cheers,<br>
+      Stevens - Lost & Found`,
     };
 
     let verifyObj = await userVerificationDL.createUserVerification({
@@ -156,7 +157,8 @@ const sendForgotPasswordLinkEmail = async ({ id, email, redirect }, res) => {
       from: "stevenslostandfound@gmail.com",
       to: email || "stevenslostandfound@gmail.com",
       subject: "Reset Your Password",
-      html: `<p><a href='${url}'>Click here to reset your password</a></p> <p>Reset your password and start using the application.</p>`,
+      html: `<p><a href='${url}'>Click here to reset your password</a></p> <p>Reset your password and start using the application.</p><br><p>If you cannot click on the link provided, copy paste ${url} in your browser.</p><br><br> Cheers,<br>
+      Stevens - Lost & Found`,
     };
 
     await transporter.sendMail(mailOptions);

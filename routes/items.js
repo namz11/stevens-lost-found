@@ -91,7 +91,7 @@ router.route("/my-listing").get(async (req, res) => {
             foundCreated = true;
           }
           if (item.isClaimed) {
-            if (ObjectId(user._id).equals(item.createdBy)) {
+            if (ObjectId(user._id).equals(item.claimedBy)) {
               item = { ...item, claimedUserInfo: user };
               foundClaimed = true;
             }

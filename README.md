@@ -6,27 +6,21 @@ The birth of this idea was during last tuesday’s CS546 lecture, when we found 
 
 # Set up
 
+Navigate to the root of the project & run the below scripts -
+
 1. Install the node_modules using npm
 
 ```
 npm install
 ```
 
-2. Navigate to the root of the project & run the script -
-
-```
-npm run setup
-```
-
-This will create an uploads folder in the root of the project, this folder will be served to the client using express
-
-3. Populate the Db
+2. Populate the Db
 
 ```
 npm run seed
 ```
 
-4. Run the server
+3. Run the server
 
 ```
 npm start
