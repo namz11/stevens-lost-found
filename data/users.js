@@ -3,6 +3,9 @@ const { helpers, checkId, authHelpers } = require("../utils/helpers");
 const { User } = require("./models/user.model");
 const { usersCollection } = require("../config/mongoCollections");
 const { itemsCollection } = require("../config/mongoCollections");
+const bcrypt = require("bcryptjs");
+
+const saltRounds = 10;
 
 const getUserById = async (userId) => {
   userId = checkId(userId, "User ID");
