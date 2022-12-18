@@ -28,7 +28,7 @@ const main = async () => {
   let item107, item108, item109, item110, item111, item112; // found items
   let item113, item114, item115, item116, item117, item118; // found items
   let item119, item120; // found items
-
+  let comment01, comment02, comment03, comment04; //comment
   //#region users
   try {
     user1 = await userDL.enterUserFromSeedFile(
@@ -484,6 +484,26 @@ const main = async () => {
       lostOrFoundLocation: "admin office",
       createdBy: user2._id,
     });
+    comment01 = await itemsDL.createComment(
+      "I think i saw it at 4pm",
+      user4._id,
+      item1._id
+    );
+    comment02 = await itemsDL.createComment(
+      "Did you lost it near babbio",
+      user3._id,
+      item4._id
+    );
+    comment03 = await itemsDL.createComment(
+      "This seems to be mine",
+      user2._id,
+      item110._id
+    );
+    comment04 = await itemsDL.createComment(
+      "I think it belongs to me",
+      user1._id,
+      item120._id
+    );
   } catch (e) {
     console.log(e);
   }
