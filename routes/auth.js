@@ -174,7 +174,7 @@ router
       userPassword = authHelpers.checkPassword(userPassword);
       const userPasswordUpdate = await userDL.updatePassword(
         req.params.id,
-        req.body.newPassword
+        userPassword
       );
       res.redirect("/auth/login");
     } catch (e) {
