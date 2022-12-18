@@ -32,14 +32,10 @@
         <span class="sort-item active" data-field="dateAdded">
           Date Added
           {{#compare query.sortOrder "1" operator="=="}}
-            <span class="asc">
               ↑
-            </span>
           {{/compare}}
           {{#compare query.sortOrder "-1" operator="=="}}
-            <span class="desc">
               ↓
-            </span>
           {{/compare}}
         </span>
         <span class="sort-item text-capitalize" data-field="actionDate">
@@ -58,14 +54,10 @@
         >
           {{type}} Date
           {{#compare query.sortOrder "1" operator="=="}}
-            <span class="asc">
               ↑
-            </span>
           {{/compare}}
           {{#compare query.sortOrder "-1" operator="=="}}
-            <span class="desc">
               ↓
-            </span>
           {{/compare}}
         </span>
       {{/compare}}
