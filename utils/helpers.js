@@ -56,7 +56,8 @@ const authHelpers = {
     if (!reg.test(str)) {
       throw new Error(`Enter a valid ${varName}`);
     }
-    let newStr = str.charAt(0).toUpperCase() + str.slice(1); //this is to Capitalize Name
+    let backOfName = str.slice(1);
+    let newStr = str.charAt(0).toUpperCase() + backOfName.toLowerCase(); //this is to Capitalize Name
     return newStr;
   },
   checkDOB: (date) => {
