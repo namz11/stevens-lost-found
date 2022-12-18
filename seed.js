@@ -29,6 +29,7 @@ const main = async () => {
   let item113, item114, item115, item116, item117, item118; // found items
   let item119, item120; // found items
   let comment01, comment02, comment03, comment04; //comment
+  let comment05, comment06, comment07, comment08; //comment
   //#region users
   try {
     user1 = await userDL.enterUserFromSeedFile(
@@ -496,10 +497,26 @@ const main = async () => {
     );
     comment03 = await itemsDL.createComment(
       "This seems to be mine",
-      user2._id,
+      user1._id,
       item110._id
     );
     comment04 = await itemsDL.createComment(
+      "Can you give me some proof?",
+      user2._id,
+      item120._id
+    );
+    comment05 = await itemsDL.createComment(
+      "Are you sure?",
+      user1._id,
+      item1._id
+    );
+    comment06 = await itemsDL.createComment("Yes, maybe", user2._id, item4._id);
+    comment07 = await itemsDL.createComment(
+      "Can you give me some description",
+      user2._id,
+      item110._id
+    );
+    comment08 = await itemsDL.createComment(
       "I think it belongs to me",
       user1._id,
       item120._id
