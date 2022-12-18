@@ -14,7 +14,11 @@ const { itemsDL, userDL } = require("../data");
 const { QueryParams } = require("../data/models/queryParams.model");
 
 router.get("/", (req, res) => {
-  return res.redirect("/items/listing/lost");
+  try {
+    return res.redirect("/items/listing/lost");
+  } catch (e) {
+    return res.status(404).sendFile(path.resolve("static/404.html"));
+  }
 });
 
 router.route("/listing/:type").get(async (req, res) => {
@@ -105,19 +109,22 @@ router
   .route("/add")
   .get(async (req, res) => {
     // create item page
-
-    return res.render("item/create", {
-      action: `/items/add`,
-      title: "Add Item",
-      metaData: {
-        dateLostOrFound: {
-          max: helpers.getDateString(new Date()),
-          min: helpers.getDateString(
-            new Date(new Date().setFullYear(new Date().getFullYear() - 1))
-          ),
+    try {
+      return res.render("item/create", {
+        action: `/items/add`,
+        title: "Add Item",
+        metaData: {
+          dateLostOrFound: {
+            max: helpers.getDateString(new Date()),
+            min: helpers.getDateString(
+              new Date(new Date().setFullYear(new Date().getFullYear() - 1))
+            ),
+          },
         },
-      },
-    });
+      });
+    } catch (e) {
+      return res.status(404).sendFile(path.resolve("static/404.html"));
+    }
   })
   .post(
     (req, res, next) => itemImageUpload(req, res, next),

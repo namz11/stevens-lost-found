@@ -9,6 +9,7 @@ const bcrypt = require("bcryptjs");
 const passport = require("passport");
 const initializePassport = require("../utils/passport");
 const { checkId, authHelpers, xssCheck } = require("../utils/helpers");
+const path = require("path");
 
 const saltRounds = 10;
 
@@ -41,14 +42,22 @@ const isUserVerified = (req, res, next) => {
 };
 
 router.get("/", (req, res) => {
-  return res.redirect("/auth/login");
+  try {
+    return res.redirect("/auth/login");
+  } catch (e) {
+    return res.status(404).sendFile(path.resolve("static/404.html"));
+  }
 });
 
 router
   .route("/register")
   .get(isUserAuthenticated, async (req, res) => {
     // renders register page
-    return res.render("auth/register", { title: "Register", layout: "main" });
+    try {
+      return res.render("auth/register", { title: "Register", layout: "main" });
+    } catch (e) {
+      return res.status(404).sendFile(path.resolve("static/404.html"));
+    }
   })
   .post(isUserAuthenticated, async (req, res) => {
     // create user
@@ -99,7 +108,11 @@ router
 router
   .route("/login")
   .get(isUserAuthenticated, async (req, res) => {
-    return res.render("auth/login", { title: "Login", layout: "main" });
+    try {
+      return res.render("auth/login", { title: "Login", layout: "main" });
+    } catch (e) {
+      return res.status(404).sendFile(path.resolve("static/404.html"));
+    }
   })
   .post(takingInUser, async (req, res, next) => {
     passport.authenticate("local", {})(req, res, function (err, use, info) {
@@ -111,10 +124,14 @@ router
   .route("/forgot-password")
   .get(async (req, res) => {
     // renders page where user can set new pwd
-    res.render("auth/forgotPassword", {
-      title: "Forgot Password",
-      layout: "main",
-    });
+    try {
+      return res.render("auth/forgotPassword", {
+        title: "Forgot Password",
+        layout: "main",
+      });
+    } catch (e) {
+      return res.status(404).sendFile(path.resolve("static/404.html"));
+    }
   })
   .post(async (req, res) => {
     // post new pwd to DB
@@ -141,11 +158,15 @@ router
 router
   .route("/reset-password/:id")
   .get(async (req, res) => {
-    return res.render("auth/resetPassword", {
-      layout: "main",
-      title: "Reset Password",
-      id: req.params.id,
-    });
+    try {
+      return res.render("auth/resetPassword", {
+        layout: "main",
+        title: "Reset Password",
+        id: req.params.id,
+      });
+    } catch (e) {
+      return res.status(404).sendFile(path.resolve("static/404.html"));
+    }
   })
   .post(async (req, res) => {
     try {
@@ -171,10 +192,14 @@ router
   .route("/verify")
   .get(isUserVerified, async (req, res) => {
     // renders page where user can enter otp
-    return res.render("auth/verifyUser", {
-      title: "Verify User",
-      layout: "main",
-    });
+    try {
+      return res.render("auth/verifyUser", {
+        title: "Verify User",
+        layout: "main",
+      });
+    } catch (e) {
+      return res.status(404).sendFile(path.resolve("static/404.html"));
+    }
   })
   .post(async (req, res) => {
     let { userId, otp } = req.body;
