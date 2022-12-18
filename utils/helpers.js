@@ -32,7 +32,7 @@ const authHelpers = {
         "Enter an email address from Stevens Institute of Technology"
       );
     }
-    return str;
+    return str.toLowerCase();
   },
   checkPassword: (str) => {
     if (!str) {

@@ -4,10 +4,12 @@ const mongoCollections = require("../config/mongoCollections");
 const auth = mongoCollections.usersCollection;
 const { ObjectId } = require("mongodb");
 const { userDL } = require("../data");
+const { authHelpers } = require("../utils/helpers");
 
 function initialize(passport) {
   const authenticateUser = async (req, email, password, done) => {
     const readData = await auth();
+    email = authHelpers.checkEmail(email);
     const user = await readData.findOne({ email: email });
 
     if (user === null) {
