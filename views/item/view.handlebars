@@ -86,7 +86,6 @@
     {{else}}
       {{#compare item.type "lost" operator="==="}}
         <button
-          id="modal-btn"
           class="claim-button-views btn btn-success"
           data-id="{{item._id}}"
           data-type="{{item.type}}"
@@ -96,7 +95,6 @@
       {{/compare}}
       {{#compare item.type "found" operator="==="}}
         <button
-          id="modal-btn"
           class="claim-button-views btn btn-warning"
           data-id="{{item._id}}"
           data-type="{{item.type}}"
