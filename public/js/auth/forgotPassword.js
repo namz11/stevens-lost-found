@@ -4,7 +4,7 @@ import { authHelpers } from "/public/js/helpers.js";
     // Handler when the DOM is fully loaded
 
     const forgotPasswordForm = document.getElementById("forgotPasswordForm");
-    const errorHandle = document.getElementById("error");
+    const errorHandle = document.getElementById("forgotPwdError");
 
     if (forgotPasswordForm) {
       //setup event listeners for form

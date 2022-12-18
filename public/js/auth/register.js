@@ -4,7 +4,7 @@ import { authHelpers } from "/public/js/helpers.js";
     // Handler when the DOM is fully loaded
 
     const registerForm = document.getElementById("register");
-    const errorHandle = document.getElementById("error");
+    const errorHandle = document.getElementById("registerError");
 
     if (registerForm) {
       //setup event listeners for form

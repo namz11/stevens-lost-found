@@ -4,7 +4,7 @@ import { helpers, validations, authHelpers } from "/public/js/helpers.js";
     // Handler when the DOM is fully loaded
 
     const loginForm = document.getElementById("login");
-    const errorHandle = document.getElementById("error");
+    const errorHandle = document.getElementById("loginError");
     let emailE = document.getElementById("email");
     let passwordE = document.getElementById("pass");
 
