@@ -2,6 +2,8 @@
 <div class="p-5">
   <h2>Do any of these items belong to you?</h2>
   <p>We have searched our databases for items similar to your listing - <strong>{{item.name}}</strong>!</p>
+
+  {{#if suggestions.length}}
   {{#each suggestions}}
     <div class="suggestion">
       <div class="content {{#compare this.type "lost" operator="==="}}lost{{/compare}} {{#compare this.type "found" operator="==="}}found{{/compare}}">
@@ -79,6 +81,9 @@
       </div>
     </div>
   {{/each}}
+  {{else}}
+  <p class="fw-bold text-danger">Sorry! We could not find any similar items.</p>
+  {{/if}}
 </div>
 
 <div id="claimModalSuggestions" class="modal">
