@@ -227,16 +227,57 @@ const createComment = async (comment, createdBy, itemId) => {
 const getPaginatedItems = async (query) => {
   const itemDB = await itemsCollection();
 
-  const count = await itemDB.countDocuments({
-    type: query?.type,
-    isClaimed: false,
-  });
-  const itemsList = await itemDB
-    .find({ type: query?.type, isClaimed: false })
-    .sort({ [query?.sortBy]: query?.sortOrder })
-    .skip(query?.page > 0 ? (query?.page - 1) * query?.size : 0)
-    .limit(query?.size)
-    .toArray();
+  let count, itemsList;
+
+  if (query.search.trim() !== "") {
+    let regex = new RegExp([".*", query?.search, ".*"].join(""), "gi");
+    count = await itemDB.countDocuments({
+      $and: [
+        {
+          $or: [
+            { name: regex },
+            { description: regex },
+            { lostOrFoundLocation: regex },
+          ],
+        },
+        {
+          type: query?.type,
+          isClaimed: false,
+        },
+      ],
+    });
+    itemsList = await itemDB
+      .find({
+        $and: [
+          {
+            $or: [
+              { name: regex },
+              { description: regex },
+              { lostOrFoundLocation: regex },
+            ],
+          },
+          {
+            type: query?.type,
+            isClaimed: false,
+          },
+        ],
+      })
+      .sort({ [query?.sortBy]: query?.sortOrder })
+      .skip(query?.page > 0 ? (query?.page - 1) * query?.size : 0)
+      .limit(query?.size)
+      .toArray();
+  } else {
+    count = await itemDB.countDocuments({
+      type: query?.type,
+      isClaimed: false,
+    });
+    itemsList = await itemDB
+      .find({ type: query?.type, isClaimed: false })
+      .sort({ [query?.sortBy]: query?.sortOrder })
+      .skip(query?.page > 0 ? (query?.page - 1) * query?.size : 0)
+      .limit(query?.size)
+      .toArray();
+  }
 
   if (!itemsList) throw new Error("Could not get items");
   return {
