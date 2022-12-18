@@ -1,13 +1,5 @@
 form {
-  padding: 15px 10px;
-}
-
-form div {
-  margin-top: 10px;
-}
-
-form input {
-  margin-left: 5px;
+  border-radius: 0.25rem;
 }
 
 form button {
@@ -17,4 +9,25 @@ form button {
 
 #btnResendOtp {
   margin-left: 20px;
+}
+
+.form-group {
+  padding: 1rem;
+  padding-bottom: 0px;
+}
+
+label {
+  display: block;
+  font-size: 1.125rem;
+  margin-bottom: 0.5rem;
+}
+
+input[type="text"],
+input[type="datetime-local"] {
+  border: 1px solid #ddd;
+  border-radius: 0.25rem;
+  box-sizing: border-box;
+  font-size: 1rem;
+  padding: 0.5rem;
+  width: 100%;
 }

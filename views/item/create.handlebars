@@ -1,29 +1,31 @@
-<article>
+<article class="py-5 px-5">
   <h1>
     Create Item
   </h1>
 
   <form action="{{action}}" method="POST" id="itemForm">
-    What do you want to report?
-    <div>
-      <label for="itemTypeLost">
+
+    <div class="form-group">
+      <label>What do you want to report?</label>
+      <label for="itemTypeLost" class="btn btn-primary">
         <input id="itemTypeLost" type="radio" name="type" value="lost" />
         I lost an item
       </label>
-      <label for="itemTypeFound">
+      <label for="itemTypeFound" class="btn btn-primary">
         <input id="itemTypeFound" type="radio" name="type" value="found" />
         I found an item
       </label>
     </div>
 
     <div id="secondaryItemForm" class="hide">
-      <div>
+      <div class="form-group">
         <label for="itemName">
           Name
           <input
             id="itemName"
             type="text"
             name="name"
+            class="form-control"
             value="{{item.name}}"
             placeholder="Name..."
             required
@@ -31,25 +33,27 @@
         </label>
       </div>
 
-      <div>
+      <div class="form-group">
         <label for="itemDescription">
           Description
           <input
             id="itemDescription"
             type="text"
             name="description"
+            class="form-control"
             placeholder="Describe the item..."
             value="{{item.description}}"
           />
         </label>
       </div>
 
-      <div>
+      <div class="form-group">
         <label for="itemLostOrFoundLocation">
           <input
             id="itemLostOrFoundLocation"
             type="text"
             name="lostOrFoundLocation"
+            class="form-control"
             placeholder="Location..."
             value="{{item.lostOrFoundLocation}}"
             required
@@ -57,12 +61,13 @@
         </label>
       </div>
 
-      <div>
+      <div class="form-group">
         <label for="itemDateLostOrFound">
           <input
             id="itemDateLostOrFound"
             type="datetime-local"
             name="dateLostOrFound"
+            class="form-control"
             placeholder="Approx date time..."
             value="{{item.dateLostOrFound}}"
             min="{{metaData.dateLostOrFound.min}}"
@@ -72,32 +77,38 @@
         </label>
       </div>
 
-      <div>
+      <div class="form-group">
         <label for="itemPicture">
           <input
             id="itemPicture"
             type="file"
             name="picture"
+            class="form-control"
             placeholder="Upload a picture..."
             accept="image/jpeg, image/png, image/jpg"
           />
         </label>
       </div>
 
-      <div id="itemDisplayPicture" class="itemDisplayPicture"></div>
+      <div class="form-group">
+        <div id="itemDisplayPicture" class="itemDisplayPicture"></div>
+      </div>
 
-      <button
-        type="submit"
-        formenctype="multipart/form-data"
-        class="btn btn-primary"
-      >
-        Create Item
-      </button>
+      <div class="form-group">
+        <button
+          type="submit"
+          formenctype="multipart/form-data"
+          class="btn btn-primary"
+        >
+          Create Item
+        </button>
+      </div>
     </div>
 
     <ul id="createItemErrors" class="hide">
     </ul>
   </form>
 </article>
+
 <script src="/public/js/item/itemCreate.js" type="module"></script>
 <link rel="stylesheet" href="/public/css/form-styles.css" />
