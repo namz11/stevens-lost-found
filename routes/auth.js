@@ -184,14 +184,12 @@ router
       userId = checkId(userId, "User ID");
       otp = xssCheck(otp);
     } catch (e) {
-      console.log(e);
       return res.status(400).send(e);
     }
 
     try {
       const userById = await userDL.getUserById(userId);
     } catch (e) {
-      console.log(e);
       return res.status(404).send(new Error("User not found"));
     }
 
@@ -242,14 +240,12 @@ router.route("/resend-otp").post(async (req, res) => {
     userId = checkId(userId, "User ID");
     email = xssCheck(email);
   } catch (e) {
-    console.log(e);
     return res.status(400).send(e);
   }
 
   try {
     const userById = await userDL.getUserById(userId);
   } catch (e) {
-    console.log(e);
     return res.status(404).send(new Error("User not found"));
   }
 
@@ -257,7 +253,6 @@ router.route("/resend-otp").post(async (req, res) => {
     await userVerificationDL.deleteMany(userId);
     return sendOTPVerificationEmail({ userId, email }, res);
   } catch (e) {
-    console.log(e);
     return res.status(500).send(e);
   }
 });

@@ -1,3 +1,4 @@
+// Open Main Model
 function openDeleteModal(id) {
   const modal = document.querySelector("#delete-modal");
   const confirmBtn = document.querySelector("#confirm-delete-btn");
@@ -8,18 +9,21 @@ function openDeleteModal(id) {
     modal.style.display = "block";
   }
 }
+// Close Main Model
 function closeDeleteModal() {
   const modal = document.querySelector("#delete-modal");
   if (modal) {
     modal.style.display = "none";
   }
 }
+// Open success modal
 function openSuccessModal() {
-  const successModal = document.querySelector("#success_tic");
+  const successModal = document.querySelector("#myListingSuccessModal");
   successModal.style.display = "block";
 }
+// Close success modal
 function closeSuccessModal() {
-  const successModal = document.querySelector("#success_tic");
+  const successModal = document.querySelector("#myListingSuccessModal");
   successModal.style.display = "none";
 }
 
@@ -42,7 +46,6 @@ function closeSuccessModal() {
           .then((resp) => resp.json())
           .then((res) => {
             if (res.success) {
-              // TODO show success tic here
               closeDeleteModal();
               openSuccessModal();
               setTimeout(() => {

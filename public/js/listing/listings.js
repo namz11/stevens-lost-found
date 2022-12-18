@@ -79,96 +79,83 @@ import { helpers } from "/public/js/helpers.js";
 })();
 
 // Get DOM Elements
-const modal = document.querySelector("#modal");
-const modalBtn = document.querySelector("#modal-btn");
-const closeBtn = document.querySelector(".close");
-const modal2 = document.querySelector("#modal-inner");
-const confirmNoBtn = document.querySelector("#confirm-no-btn");
-const confirmYesBtn = document.querySelector("#confirm-yes-btn");
-
-// Events
-modalBtn.addEventListener("click", openModal);
-closeBtn.addEventListener("click", closeModal);
-window.addEventListener("click", outsideClick);
-
-confirmNoBtn.addEventListener("click", closeModal);
-confirmYesBtn.addEventListener("click", openModal2);
-
-// Open Main Model
-function openModal(id) {
-  const modal = document.querySelector("#modal");
-  const confirmYesBtn = document.querySelector("#confirm-yes-btn");
-  if (confirmYesBtn) {
-    confirmYesBtn.setAttribute("data-id", id);
-  }
-  if (modal) {
-    modal.style.display = "block";
-  }
-}
-
-function openModal2() {
-  modal2.style.display = "block";
-  modal.style.display = "none";
-
-  setTimeout(function () {
-    modal2.style.display = "none";
-  }, 3500);
-}
-
-// Close Main Modal
-function closeModal() {
-  const modal = document.querySelector("#modal");
-  if (modal) {
-    modal.style.display = "none";
-  }
-}
-
-// Close If Outside Click
-function outsideClick(e) {
-  if (e.target == modal) {
-    modal.style.display = "none";
-  }
-}
 
 (function () {
   document.addEventListener("DOMContentLoaded", function () {
-    const confirmButton = document.querySelector("#confirm-yes-btn");
+    const claimModal = document.querySelector("#claimModal");
+    const claimModalText = document.querySelector("#claimModalText");
+    const claimModalTitle = document.querySelector("#claimModalTitle");
+    const successModal = document.querySelector("#successModal");
+    const confirmBtn = document.querySelector("#confirmBtn");
 
-    if (confirmButton) {
-      confirmButton.addEventListener("click", (event) => {
+    function openClaimModal(id, type) {
+      if (confirmBtn) {
+        confirmBtn.setAttribute("data-id", id);
+      }
+      if (claimModal) {
+        claimModal.style.display = "block";
+        const closeBtn = document.getElementsByClassName("close-btn");
+        if (closeBtn) {
+          Array.from(closeBtn).forEach((btn) => {
+            btn.addEventListener("click", (event) => {
+              event.preventDefault();
+              event.stopPropagation();
+              event.stopImmediatePropagation();
+
+              closeClaimModal();
+            });
+          });
+        }
+
+        if (type === "found") {
+          claimModalText.innerHTML =
+            "Are you sure this item is yours and you want to claim it?";
+          claimModalTitle.innerHTML = "Claim item?";
+        } else if (type === "lost") {
+          claimModalText.innerHTML = "Are you sure you have found this item?";
+          claimModalTitle.innerHTML = "Found item?";
+          claimModal.style.display = "block";
+        }
+      }
+    }
+
+    function closeClaimModal() {
+      if (confirmBtn) {
+        confirmBtn.setAttribute("data-id", "");
+      }
+      if (claimModal) {
+        claimModal.style.display = "none";
+        claimModalText.innerHTML = "";
+        claimModalTitle.innerHTML = "";
+      }
+    }
+
+    if (confirmBtn) {
+      confirmBtn.addEventListener("click", (event) => {
         event.preventDefault();
 
         const theItemId = event.target.getAttribute("data-id");
-        const theUserId = event.target.getAttribute("data-user");
-
-        console.log(theItemId);
-
-        let data = {
-          itemId: theItemId,
-          userId: theUserId,
-        };
-
-        console.log(`/items/${theItemId}/status`);
-        console.log(`/${theItemId}/status`);
 
         fetch(`/items/${theItemId}/status`, {
-          // fetch(`/${theItemId}/status`, {
           method: "POST",
           headers: {
             Accept: "application/json, text/plain, */*",
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(data),
         })
-          // .then((resp) => resp.json())
-          .then((resp) => {
-            console.log(resp.status);
-            return resp.json();
-          })
+          .then((resp) => resp.json())
           .then((res) => {
-            if (res.success) {
-              alert(res.message || "Item Claimed");
-              location.href = "/items/my-listing";
+            if (res?.success) {
+              successModal.style.display = "block";
+              closeClaimModal();
+
+              setTimeout(() => {
+                successModal.style.display = "none";
+                if (res?.emailSent === false) {
+                  alert(res.message || "Error occurred while sending email.");
+                }
+                window.location.reload();
+              }, 2000);
             } else {
               alert(res.message || "Something went wrong.");
             }
@@ -178,6 +165,7 @@ function outsideClick(e) {
           });
       });
     }
+
     //#region claim btn
     let claimButtons = document.getElementsByClassName("claim-button");
     if (claimButtons) {
@@ -185,8 +173,9 @@ function outsideClick(e) {
         btn.addEventListener("click", (event) => {
           event.stopPropagation();
           event.stopImmediatePropagation();
-          const theItemId = event.target.getAttribute("data-id");
-          openModal(theItemId);
+          const itemId = event.target.getAttribute("data-id");
+          const type = event.target.getAttribute("data-type");
+          openClaimModal(itemId, type);
         });
       });
     }

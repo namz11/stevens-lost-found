@@ -122,6 +122,7 @@
                 id="modal-btn"
                 class="claim-button btn btn-success w-50 my-3"
                 data-id="{{this._id}}"
+                data-type="{{this.type}}"
               >
                 Found
               </button>
@@ -137,6 +138,7 @@
                 id="modal-btn"
                 class="claim-button btn btn-warning w-50 my-3"
                 data-id="{{this._id}}"
+                data-type="{{this.type}}"
               >
                 Claim
               </button>
@@ -176,90 +178,36 @@
   </div>
 </div>
 
-{{#compare this.type "found" operator="==="}}
-  <div id="modal" class="modal">
+<div id="claimModal" class="modal">
     <div class="modal-content">
-      <div class="modal-header">
-        <span class="close">
+      <div class="modal-header d-flex justify-content-between">
+        <span class="w-100 fs-4" id="claimModalTitle"></span>
+        <span class="close-btn close">
           &times;
         </span>
-        <h2>
-          {{this.name}}
-        </h2>
       </div>
       <div class="modal-body">
-        <p>
-          Are you sure this item is yours and you want to claim it?
+        <p id="claimModalText" class="fs-5">
         </p>
         <button
-          id="confirm-yes-btn"
+          id="confirmBtn"
           data-user="{{this.createdBy}}"
-          class="button"
+          class="btn btn-success w-25"
         >
           Yes
         </button>
-        <button id="confirm-no-btn" class="button">
+        <button class="close-btn btn btn-outline-secondary w-25">
           No
         </button>
-        <p>
+        <p class="my-3">
           Once you click 'Yes', the user who created this listing will be notified via email.
         </p>
       </div>
-      <div class="modal-footer">
-        <h3>
-          Found Item
-        </h3>
-      </div>
     </div>
-  </div>
-{{/compare}}
+</div>
 
-{{#compare this.type "lost" operator="==="}}
-  <div id="modal" class="modal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <span class="close">
-          &times;
-        </span>
-        <h2>
-          {{this.name}}
-        </h2>
-      </div>
-      <div class="modal-body">
-        <p>
-          Are you sure you have found this item?
-        </p>
-
-        <button
-          id="confirm-yes-btn"
-          data-user="{{this.createdBy}}"
-          class="button"
-        >
-          Yes
-        </button>
-
-        <button id="confirm-no-btn" class="button">
-          No
-        </button>
-
-        <p>
-          Once you click 'Yes', the user who created this listing will be notified via email.
-        </p>
-      </div>
-      <div class="modal-footer">
-        <h3>
-          Found Item
-        </h3>
-      </div>
-    </div>
-  </div>
-{{/compare}}
-
-<div id="modal-inner" class="modal-fade modal" role="dialog">
+<div id="successModal" class="modal-fade modal success_tic" role="dialog">
   <div class="modal-content">
-    {{! <div class="modal-header">
-      <button id="success-close-btn" data-dismiss="modal">&times;</button>
-    </div> }}
     <div class="modal-body">
       <div class="page-body">
         <div class="head">

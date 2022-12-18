@@ -127,7 +127,6 @@ router
         itemObj = req.body;
         itemObj.picture = req?.file?.path;
       } catch (e) {
-        console.log(e);
         return res.status(500).json({
           success: false,
           message: e.message || "Something went wrong",
@@ -357,89 +356,91 @@ router.route("/:id/comment").post(async (req, res) => {
 });
 
 router.route("/:id/status").post(async (req, res) => {
+  let itemId, theItem, theUser, action, finderOrOwner, idOfTheFinderOrClaimer;
   try {
-    let itemId = xssCheck(req.body.itemId);
+    itemId = xssCheck(req.params.id);
+    itemId = checkId(itemId, "Item ID");
+
+    idOfTheFinderOrClaimer = req.session.passport.user._id;
+    idOfTheFinderOrClaimer = checkId(idOfTheFinderOrClaimer, "User ID");
+  } catch (e) {
+    return res.status(400).json({
+      success: false,
+      message: e.message,
+    });
+  }
+
+  try {
     theItem = await itemsDL.getItemById(itemId);
-
-    // get user details
-    let userId = xssCheck(req.body.userId);
     theUser = await userDL.getUserById(theItem.createdBy);
+  } catch (e) {
+    return res.status(404).json({
+      success: false,
+      message: "Cannot find item or user",
+    });
+  }
 
+  try {
     if (theItem.type == "lost") {
       action = "found";
-    } else if (theItem.type == "found") {
-      action = "claimed";
-    }
-
-    if (theItem.type == "lost") {
       finderOrOwner = "finder";
     } else if (theItem.type == "found") {
+      action = "claimed";
       finderOrOwner = "owner";
     }
-    let idOfTheFinderOrClaimer = req.session.passport.user._id;
 
     itIsClaimed = await itemsDL.updateIsClaimedStatus(
       itemId,
       idOfTheFinderOrClaimer
     );
-    console.log(itIsClaimed);
 
     if (!itIsClaimed) throw new Error("Failed to update the status");
 
-    if (itIsClaimed === "Item Already claimed")
-      throw new Error("Already Claimed");
-
-    userFullName = theUser.firstName + " " + theUser.lastName;
-    actorFullName =
-      req.session.passport.user.firstName +
-      " " +
-      req.session.passport.user.lastName;
-
-    console.log(userFullName);
-    console.log(actorFullName);
-
-    const toUser = sendListingUpdateEmail(
-      {
-        user: xssCheck(theUser.firstName),
-        userId: xssCheck(theUser.email),
-        userItem: xssCheck(theItem.name),
-        actor: xssCheck(actorFullName),
-        actorId: xssCheck(req.session.passport.user.email),
-        actorNumber: xssCheck(req.session.passport.user.phone),
-        action: xssCheck(action),
-        finderOrOwner: xssCheck(finderOrOwner),
-      },
-      res
-    );
-
-    if (finderOrOwner == "finder") {
-      finderOrOwner = "owner";
-    } else if (finderOrOwner == "owner") {
-      finderOrOwner = "finder";
+    if (itIsClaimed === "Item Already claimed") {
+      return res.status(500).json({
+        success: false,
+        message: "Item already Claimed!",
+      });
     }
-
-    const toActor = sendListingUpdateEmailToActor(
-      {
-        user: xssCheck(userFullName),
-        userId: xssCheck(theUser.email),
-        userItem: xssCheck(theItem.name),
-        userNumber: xssCheck(theUser.phone),
-        actor: xssCheck(req.session.passport.user.firstName),
-        actorId: xssCheck(req.session.passport.user.email),
-        action: xssCheck(action),
-        finderOrOwner: xssCheck(finderOrOwner),
-      },
-      res
-    );
-
-    if (!toUser)
-      throw "Oops! Something Went Wrong: Failed to send email to user";
-    if (!toActor) throw "Oops! Something Went Wrong: Failed to send email";
-
-    // TODO (AMAN)
   } catch (e) {
-    console.log(e);
+    return res.status(500).json({
+      success: false,
+      message: "Something went wrong!",
+    });
   }
+
+  let userFullName = theUser.firstName + " " + theUser.lastName;
+  let actorFullName =
+    req.session.passport.user.firstName +
+    " " +
+    req.session.passport.user.lastName;
+
+  sendListingUpdateEmail(
+    {
+      user: xssCheck(theUser.firstName),
+      userId: xssCheck(theUser.email),
+      userItem: xssCheck(theItem.name),
+      actor: xssCheck(actorFullName),
+      actorId: xssCheck(req.session.passport.user.email),
+      actorNumber: xssCheck(req.session.passport.user.phone),
+      action: xssCheck(action),
+      finderOrOwner: xssCheck(finderOrOwner),
+    },
+    res
+  );
+  return sendListingUpdateEmailToActor(
+    {
+      user: xssCheck(userFullName),
+      userId: xssCheck(theUser.email),
+      userItem: xssCheck(theItem.name),
+      userNumber: xssCheck(theUser.phone),
+      actor: xssCheck(req.session.passport.user.firstName),
+      actorId: xssCheck(req.session.passport.user.email),
+      action: xssCheck(action),
+      finderOrOwner: xssCheck(finderOrOwner),
+    },
+    res
+  );
 });
 
 router

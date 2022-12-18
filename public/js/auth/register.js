@@ -25,7 +25,6 @@ import { authHelpers } from "/public/js/helpers.js";
         let passwordEntered = document.getElementById("pass");
 
         try {
-          console.log(firstNameEntered);
           firstNameEntered = authHelpers.checkName(
             firstNameEntered.value,
             "First Name"

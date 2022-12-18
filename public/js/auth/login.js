@@ -22,13 +22,11 @@ import { helpers, validations, authHelpers } from "/public/js/helpers.js";
         let emailEnteredByUser = emailE.value;
         let passwordEnteredByUser = passwordE.value;
         try {
-          console.log(emailEnteredByUser);
           emailEnteredByUser = authHelpers.checkEmail(emailEnteredByUser);
           passwordEnteredByUser = authHelpers.checkPassword(
             passwordEnteredByUser
           );
         } catch (e) {
-          console.log(emailEnteredByUser.value);
           document
             .getElementById("email")
             .setAttribute("value", emailEnteredByUser);

@@ -15,25 +15,22 @@ function closeDeleteModal() {
   }
 }
 function openSuccessModal() {
-  const successModal = document.querySelector("#success_tic");
+  const successModal = document.querySelector("#viewSuccessModal");
   successModal.style.display = "block";
 }
 function closeSuccessModal() {
-  const successModal = document.querySelector("#success_tic");
+  const successModal = document.querySelector("#viewSuccessModal");
   successModal.style.display = "none";
 }
 
 (function () {
   document.addEventListener("DOMContentLoaded", function () {
     let confirmBtn = document.getElementById("confirm-delete-btn");
-    console.log(confirmBtn);
     if (confirmBtn) {
       confirmBtn.addEventListener("click", (event) => {
         event.stopPropagation();
         event.stopImmediatePropagation();
         const theItemId = event.target.getAttribute("data-id");
-        console.log("hey there");
-        console.log(theItemId);
         fetch(`/items/${theItemId}`, {
           method: "DELETE",
           headers: {

@@ -47,7 +47,6 @@ const sendOTPVerificationEmail = async ({ userId, email, redirect }, res) => {
       });
     }
   } catch (error) {
-    console.log(error);
     return res.status(500).json({
       success: false,
       message: "Some error occurred. Try again.",
@@ -95,11 +94,12 @@ const sendListingUpdateEmail = async ({
     return result;
   } catch (error) {
     // Handle any errors that may occur
-    console.log(error);
-    return {
-      success: false,
-      message: "Please Try Again",
-    };
+    return res.status(500).json({
+      success: true,
+      emailSent: false,
+      message:
+        "Unable to send email to the user who listed the item. Please contact website admin.",
+    });
   }
 };
 
@@ -130,10 +130,8 @@ In the meantime, please do not hesitate to contact the ${finderOrOwner} using th
 <br>
 <br>
 
-      Sincerely,<br>
+      Cheers,<br>
       Stevens - Lost & Found`,
-
-      // TODO (AMAN): Display an image of the item
     };
 
     await transporter.sendMail(mailOptions);
@@ -142,10 +140,10 @@ In the meantime, please do not hesitate to contact the ${finderOrOwner} using th
       message: "Email sent successfully",
     });
   } catch (error) {
-    console.log(error);
     return res.status(500).json({
-      success: false,
-      message: "Please Try Again",
+      success: true,
+      emailSent: false,
+      message: "Unable to send email to you. Please contact website admin.",
     });
   }
 };
@@ -172,7 +170,6 @@ const sendForgotPasswordLinkEmail = async ({ id, email, redirect }, res) => {
       });
     }
   } catch (error) {
-    console.log(error);
     return res.status(500).json({
       success: false,
       message: "Some error occurred. Try again.",
