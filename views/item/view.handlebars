@@ -74,13 +74,37 @@
       </button>
     {{/if}}
     {{#if item.isClaimed}}
-      <strong>
-        This item has been claimed
-      </strong>
+      {{#compare item.type "lost" operator="==="}}
+        <strong>
+          This item has been found
+        </strong>
+      {{/compare}}
+      {{#compare item.type "found" operator="==="}}
+        <strong>
+          This item has been claimed
+        </strong>
+      {{/compare}}
     {{else}}
-      <button id="claimBtn" type="button" class="btn btn-warning px-4">
-        Claim
-      </button>
+      {{#compare item.type "lost" operator="==="}}
+        <button
+          id="modal-btn"
+          class="claim-button-views btn btn-success"
+          data-id="{{item._id}}"
+          data-type="{{item.type}}"
+        >
+          Found
+        </button>
+      {{/compare}}
+      {{#compare item.type "found" operator="==="}}
+        <button
+          id="modal-btn"
+          class="claim-button-views btn btn-warning"
+          data-id="{{item._id}}"
+          data-type="{{item.type}}"
+        >
+          Claim
+        </button>
+      {{/compare}}
     {{/if}}
   </div>
 </div>
@@ -177,6 +201,62 @@
     </div>
   </div>
 </div>
+
+<div id="claimModalViews" class="modal">
+  <div class="modal-content">
+    <div class="modal-header d-flex justify-content-between">
+      <span class="w-100 fs-4" id="claimModalTitleViews"></span>
+      <span class="close-btn close">
+        &times;
+      </span>
+    </div>
+    <div class="modal-body">
+      <p id="claimModalTextViews" class="fs-5">
+      </p>
+      <button
+        id="confirmBtnViews"
+        data-user="{{item.createdBy}}"
+        class="btn btn-success w-25"
+      >
+        Yes
+      </button>
+      <button class="close-btn btn btn-outline-secondary w-25">
+        No
+      </button>
+      <p class="my-3">
+        Once you click 'Yes', the user who created this listing will be notified
+        via email.
+      </p>
+    </div>
+  </div>
+</div>
+
+<div id="successModalViews" class="modal-fade modal success_tic" role="dialog">
+  <div class="modal-content">
+    <div class="modal-body">
+      <div class="page-body">
+        <div class="head">
+          <h2 style="margin-top:5px;">
+            The user has been notified!
+          </h2>
+          <h2 style="margin-top:5px;">
+            You will shortly receive an email with additional details of the
+            user who posted this listing
+          </h2>
+          <div class="checkmark-circle">
+            <div class="background"></div>
+            <div class="checkmark draw"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/public/js/listing/listings.js" type="module"></script>
+<link rel="stylesheet" href="/public/css/modal-styles.css" />
+<link rel="stylesheet" href="/public/css/listing/paginating.css" />
+<link rel="stylesheet" href="/public/css/item/suggestions-styles.css" />
 
 <link rel="stylesheet" href="/public/css/item/view-styles.css" />
 <link rel="stylesheet" href="/public/css/modal-styles.css" />
