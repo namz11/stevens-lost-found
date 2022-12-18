@@ -153,33 +153,6 @@ const getItemSuggestions = async (id) => {
   return itemsList;
 };
 
-const getLevenshteinScore = (obj1, obj2) => {
-  // check how much obj2 matches with obj1
-  let { name, description, lostOrFoundLocation } = obj1;
-  name = helpers.sanitizeString(name);
-  description = helpers.sanitizeString(description);
-  lostOrFoundLocation = helpers.sanitizeString(lostOrFoundLocation);
-
-  let { name: name2, description: desc2, lostOrFoundLocation: loc2 } = obj2;
-  name2 = helpers.sanitizeString(name2);
-  desc2 = helpers.sanitizeString(desc2);
-  loc2 = helpers.sanitizeString(loc2);
-
-  let score;
-
-  score = levenshtein(name, name2);
-  score += levenshtein(name, desc2);
-  score += levenshtein(lostOrFoundLocation, loc2);
-  score += desc2 ? levenshtein(lostOrFoundLocation, desc2) : 0;
-  if (description.length) {
-    score += levenshtein(description, name2);
-    score += desc2.length ? levenshtein(description, desc2) : 0;
-    score += levenshtein(description, loc2);
-  }
-
-  return { ...obj2, score };
-};
-
 const updateIsClaimedStatus = async (itemId, idOfTheFinderOrClaimer) => {
   itemId = checkId(itemId, "Item ID");
   const itemDB = await itemsCollection();
@@ -195,6 +168,7 @@ const updateIsClaimedStatus = async (itemId, idOfTheFinderOrClaimer) => {
   let updatedItem = {
     isClaimed: true,
     claimedBy: idOfTheFinderOrClaimer,
+    claimedAt: new Date().valueOf(),
   };
 
   if (theItem.isClaimed === false) {

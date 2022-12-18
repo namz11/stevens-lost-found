@@ -16,6 +16,7 @@ class Item {
     this.comments = [];
     this.isClaimed = false;
     this.claimedBy = "";
+    this.claimedAt = null;
     this.createdAt = new Date().valueOf();
     this.createdBy = obj?.createdBy
       ? ObjectId(helpers.sanitizeString(obj?.createdBy))
