@@ -371,7 +371,9 @@ router.route("/:id/comment").post(async (req, res) => {
       throw new Error("Cannot have empty comment");
     }
   } catch (e) {
-    return res.status(400).send(e);
+    return res
+      .status(400)
+      .json({ success: false, message: e.message || "Something went wrong" });
   }
 
   try {
