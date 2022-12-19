@@ -170,6 +170,7 @@ const helpers = {
       throw new Error("Invalid Date");
     }
   },
+  // https://bobbyhadz.com/blog/javascript-format-date-mm-dd-yyyy
   padTo2Digits: (num) => {
     return num.toString().padStart(2, "0");
   },

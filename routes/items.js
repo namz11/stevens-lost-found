@@ -1,5 +1,3 @@
-// TODO: Deal With Sessions
-
 const express = require("express");
 const path = require("path");
 const { ObjectId } = require("mongodb");
@@ -207,7 +205,6 @@ router
 router
   .route("/edit/:id")
   .get(async (req, res) => {
-    // edit item page
     let itemId, authenticatedUserId;
     try {
       itemId = checkId(req.params.id, "Item ID");
@@ -358,11 +355,13 @@ router
   );
 
 router.route("/:id/comment").post(async (req, res) => {
-  let id = req.params.id;
-  let { comment } = req.body;
-  let authenticatedUserId = req?.session?.passport?.user?._id;
+  let id, comment, authenticatedUserId;
 
   try {
+    id = req.params.id;
+    comment = req.body.comment;
+    authenticatedUserId = req?.session?.passport?.user?._id;
+
     id = xssCheck(id);
     id = checkId(id, "Item ID");
     authenticatedUserId = checkId(authenticatedUserId, "User ID");
@@ -374,14 +373,16 @@ router.route("/:id/comment").post(async (req, res) => {
   } catch (e) {
     return res
       .status(400)
-      .json({ success: false, message: e.message || "Something went wrong" });
+      .render("error", { message: e.message || "Something went wrong" });
   }
 
   try {
     let item = await itemsDL.createComment(comment, authenticatedUserId, id);
     return res.redirect("/items/" + id);
   } catch (e) {
-    return res.status(500).send(e);
+    return res
+      .status(500)
+      .render("error", { message: e.message || "Something went wrong" });
   }
 });
 
@@ -439,45 +440,53 @@ router.route("/:id/status").post(async (req, res) => {
     });
   }
 
-  let userFullName = theUser.firstName + " " + theUser.lastName;
-  let actorFullName =
-    req.session.passport.user.firstName +
-    " " +
-    req.session.passport.user.lastName;
+  try {
+    let userFullName = theUser.firstName + " " + theUser.lastName;
+    let actorFullName =
+      req.session.passport.user.firstName +
+      " " +
+      req.session.passport.user.lastName;
 
-  sendListingUpdateEmail(
-    {
-      user: xssCheck(theUser.firstName),
-      userId: xssCheck(theUser.email),
-      userItem: xssCheck(theItem.name),
-      actor: xssCheck(actorFullName),
-      actorId: xssCheck(req.session.passport.user.email),
-      actorNumber: xssCheck(req.session.passport.user.phone),
-      action: xssCheck(action),
-      finderOrOwner: xssCheck(finderOrOwner),
-    },
-    res
-  );
+    sendListingUpdateEmail(
+      {
+        user: xssCheck(theUser.firstName),
+        userId: xssCheck(theUser.email),
+        userItem: xssCheck(theItem.name),
+        actor: xssCheck(actorFullName),
+        actorId: xssCheck(req.session.passport.user.email),
+        actorNumber: xssCheck(req.session.passport.user.phone),
+        action: xssCheck(action),
+        finderOrOwner: xssCheck(finderOrOwner),
+      },
+      res
+    );
 
-  if (finderOrOwner == "finder") {
-    finderOrOwner = "owner";
-  } else if (finderOrOwner == "owner") {
-    finderOrOwner = "finder";
+    if (finderOrOwner == "finder") {
+      finderOrOwner = "owner";
+    } else if (finderOrOwner == "owner") {
+      finderOrOwner = "finder";
+    }
+
+    return sendListingUpdateEmailToActor(
+      {
+        user: xssCheck(userFullName),
+        userId: xssCheck(theUser.email),
+        userItem: xssCheck(theItem.name),
+        userNumber: xssCheck(theUser.phone),
+        actor: xssCheck(req.session.passport.user.firstName),
+        actorId: xssCheck(req.session.passport.user.email),
+        action: xssCheck(action),
+        finderOrOwner: xssCheck(finderOrOwner),
+      },
+      res
+    );
+  } catch (e) {
+    return res.status(500).json({
+      success: true,
+      emailSent: false,
+      message: "Unable to send emails. Please contact website admin.",
+    });
   }
-
-  return sendListingUpdateEmailToActor(
-    {
-      user: xssCheck(userFullName),
-      userId: xssCheck(theUser.email),
-      userItem: xssCheck(theItem.name),
-      userNumber: xssCheck(theUser.phone),
-      actor: xssCheck(req.session.passport.user.firstName),
-      actorId: xssCheck(req.session.passport.user.email),
-      action: xssCheck(action),
-      finderOrOwner: xssCheck(finderOrOwner),
-    },
-    res
-  );
 });
 
 router
@@ -535,10 +544,10 @@ router
   })
   .delete(async (req, res) => {
     // delete item
-    let id = xssCheck(req.params.id),
-      item;
+    let id, item, authenticatedUserId;
 
     try {
+      id = xssCheck(req.params.id);
       id = checkId(id, "Item ID");
     } catch (e) {
       return res.status(400).send(e);
@@ -549,8 +558,8 @@ router
       return res.status(404).send("item not found");
     }
 
-    let authenticatedUserId = req?.session?.passport?.user?._id;
     try {
+      authenticatedUserId = req?.session?.passport?.user?._id;
       authenticatedUserId = checkId(authenticatedUserId, "User ID");
     } catch (e) {
       return res.status(400).send(e);
@@ -580,7 +589,8 @@ router
   });
 
 router.route("/:id/suggestions").get(async (req, res) => {
-  let itemId, item;
+  let itemId, item, authenticatedUserId;
+
   try {
     itemId = xssCheck(req.params.id);
     itemId = checkId(itemId, "Item ID");
@@ -597,12 +607,13 @@ router.route("/:id/suggestions").get(async (req, res) => {
     return res.status(404).send("Item not found");
   }
 
-  let authenticatedUserId = req?.session?.passport?.user?._id;
   try {
+    authenticatedUserId = req?.session?.passport?.user?._id;
     authenticatedUserId = checkId(authenticatedUserId, "User ID");
   } catch (e) {
     return res.status(400).send(e);
   }
+
   if (item) {
     try {
       if (!ObjectId(item.createdBy).equals(authenticatedUserId)) {

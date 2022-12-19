@@ -136,7 +136,6 @@ router
   .post(async (req, res) => {
     // post new pwd to DB
     // redirect to login
-
     try {
       let userEmail = xssCheck(req.body.email);
       userEmail = authHelpers.checkEmail(userEmail);
@@ -202,9 +201,11 @@ router
     }
   })
   .post(async (req, res) => {
-    let { userId, otp } = req.body;
+    let userId, otp;
 
     try {
+      userId = req.body.userId;
+      otp = req.body.otp;
       userId = xssCheck(userId);
       userId = checkId(userId, "User ID");
       otp = xssCheck(otp);
@@ -258,9 +259,11 @@ router
   });
 
 router.route("/resend-otp").post(async (req, res) => {
-  let { userId, email } = req.body;
+  let userId, email;
 
   try {
+    userId = req.body.userId;
+    email = req.body.email;
     userId = xssCheck(userId);
     userId = checkId(userId, "User ID");
     email = xssCheck(email);
