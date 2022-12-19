@@ -10,6 +10,7 @@ const {
 } = require("../utils/mailer");
 const { itemsDL, userDL } = require("../data");
 const { QueryParams } = require("../data/models/queryParams.model");
+const { title } = require("process");
 
 router.get("/", (req, res) => {
   try {
@@ -373,7 +374,10 @@ router.route("/:id/comment").post(async (req, res) => {
   } catch (e) {
     return res
       .status(400)
-      .render("error", { message: e.message || "Something went wrong" });
+      .render("error", {
+        title: "error",
+        message: e.message || "Something went wrong",
+      });
   }
 
   try {
