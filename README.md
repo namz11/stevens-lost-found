@@ -43,6 +43,22 @@ We have created 6 users and multiple items. Below are the email addresses of tho
 
 Admin@123 is the password for each user.
 
+# Email Credentials
+
+Below are the credentials for the gmail account which sends out all the emails-
+
+```
+email: stevenslostandfound@gmail.com
+password: Stevens@LS01
+```
+
+You will be prompted for OTP to login, please contact Vatsal at +1 202 492 7991
+
+# Video Presentation
+
+- [YouTube](https://youtu.be/VTkXBE-sT8c)
+- [GoogleDrive](https://drive.google.com/file/d/1h1Fvr4GoVU63ftj4rhadTKO9FHgvNivR/view?usp=sharing)
+
 # members
 
 - [iamvatsalpatel](https://github.com/iamvatsalpatel) Vatsal Patel

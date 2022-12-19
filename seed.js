@@ -1,10 +1,3 @@
-// create 4 users
-
-// create found 10 items
-// create found 10 items
-
-// create comments on each item
-
 const { itemsDL, userDL } = require("./data");
 const connection = require("./config/mongoConnection");
 const bcrypt = require("bcryptjs");
@@ -87,13 +80,11 @@ const main = async () => {
         isVerified: true,
       })
     );
-    // TODO
-    // email: "phill@stevens.edu",
     user6 = await userDL.enterUserFromSeedFile(
       ...Object.values({
         firstName: "patrick",
         lastName: "hill",
-        email: "nmashruwadmin@stevens.edu",
+        email: "phill@stevens.edu",
         phoneNumber: "9876543210",
         dob: "2000-01-23",
         password: hashedPassword,
@@ -525,7 +516,6 @@ const main = async () => {
     console.log(e);
   }
   //#endregion
-  // await connection.closeConnection();
 
   console.log("DB seed successful. There are 6 users & 41 items.");
   await connection.closeConnection();
