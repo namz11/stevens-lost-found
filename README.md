@@ -52,7 +52,7 @@ email: stevenslostandfound@gmail.com
 password: Stevens@LS01
 ```
 
-You will be prompted for OTP to login, please contact Vatsal at +1 202 492 7991
+You will be prompted for OTP to login, please contact Vatsal at +1 201 492 7991
 
 # Video Presentation
 
