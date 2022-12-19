@@ -38,7 +38,7 @@ router.route("/listing/:type").get(async (req, res) => {
     let data = await itemsDL.getPaginatedItems(query);
     if (data?.items?.length) {
       data.items = (data?.items || []).map((item) => {
-        for (user of allUsers) {
+        for (let user of allUsers) {
           if (ObjectId(user._id).equals(item.createdBy)) {
             item = { ...item, userInfo: user };
             break;
@@ -84,7 +84,7 @@ router.route("/my-listing").get(async (req, res) => {
       items = (items || []).map((item) => {
         let foundClaimed = false,
           foundCreated = false;
-        for (user of allUsers) {
+        for (let user of allUsers) {
           if (foundClaimed && foundCreated) break;
           if (ObjectId(user._id).equals(item.createdBy)) {
             item = { ...item, userInfo: user };
@@ -227,6 +227,7 @@ router
 
     try {
       let item = await itemsDL.getItemById(itemId);
+      let user = await userDL.getUserById(item?.createdBy);
 
       const allowEdit =
         ObjectId(user._id).equals(authenticatedUserId) && !item.isClaimed;
@@ -253,7 +254,7 @@ router
     } catch (e) {
       return res.status(404).json({
         success: false,
-        message: "Item not found",
+        message: "Item or user not found",
       });
     }
   })
@@ -634,7 +635,7 @@ router.route("/:id/suggestions").get(async (req, res) => {
 
     if (suggestions?.length) {
       suggestions = (suggestions || []).map((item) => {
-        for (user of allUsers) {
+        for (let user of allUsers) {
           if (ObjectId(user._id).equals(item.createdBy)) {
             item = { ...item, userInfo: user };
             break;
